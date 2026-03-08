@@ -1,0 +1,50 @@
+{
+  "id": "b6dd984d-cabc-418d-b981-9d6b484676ab",
+  "image_path": "data/sample_wardrobe/image.png",
+  "image_name": "image.png",
+  "extracted_at": "2026-03-08T11:30:30.538993",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "trousers",
+    "product_type": "wide_leg_pleated_trousers",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "beige",
+      "secondary": null,
+      "color_palette": [
+        "beige"
+      ],
+      "hex_codes": [
+        "#DDCDBB"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "polyester",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "relaxed",
+      "structure": "semi_structured",
+      "volume": "high"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "minimalist",
+      "classic",
+      "modern",
+      "elegant"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

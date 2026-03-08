@@ -1,0 +1,350 @@
+{
+  "version": "1.0.0",
+  "description": "Configuration for outfit scoring system - defines which criteria to use and their weights",
+  
+  "scoring_profiles": {
+    "default": {
+      "name": "Balanced Scoring",
+      "description": "Standard balanced scoring for everyday outfits",
+      "criteria": {
+        "seven_point": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "7-Point Rule",
+          "description": "Balance between basics and statement pieces",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "color_harmony": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Color Harmony",
+          "description": "How well colors work together",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "three_color": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "3-Color Rule",
+          "description": "Outfit uses 3 or fewer main colors",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "proportion": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Proportions",
+          "description": "Visual balance using rule of thirds",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "volume_balance": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Volume Balance",
+          "description": "Balance between top and bottom volumes",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "pattern_mixing": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Pattern Mixing",
+          "description": "Compatibility of patterns in outfit",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "design_principles": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Design Principles",
+          "description": "Fashion design fundamentals (balance, harmony, emphasis)",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "creativity": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Creativity",
+          "description": "Fashion-forward and rule-breaking elements",
+          "show_in_summary": false,
+          "show_details": true
+        }
+      }
+    },
+    
+    "minimalist": {
+      "name": "Minimalist Focus",
+      "description": "Emphasizes simplicity, color harmony, and clean proportions",
+      "criteria": {
+        "seven_point": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "7-Point Rule",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "color_harmony": {
+          "enabled": true,
+          "weight": 0.25,
+          "display_name": "Color Harmony",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "three_color": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "3-Color Rule",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "proportion": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Proportions",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "volume_balance": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Volume Balance",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "pattern_mixing": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "Pattern Mixing",
+          "show_in_summary": false,
+          "show_details": false
+        },
+        "design_principles": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Design Principles",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "creativity": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "Creativity",
+          "show_in_summary": false,
+          "show_details": false
+        }
+      }
+    },
+    
+    "creative": {
+      "name": "Creative & Bold",
+      "description": "For fashion-forward looks that embrace rule-breaking",
+      "criteria": {
+        "seven_point": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "7-Point Rule",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "color_harmony": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Color Harmony",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "three_color": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "3-Color Rule",
+          "show_in_summary": false,
+          "show_details": false
+        },
+        "proportion": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Proportions",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "volume_balance": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Volume Balance",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "pattern_mixing": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Pattern Mixing",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "design_principles": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Design Principles",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "creativity": {
+          "enabled": true,
+          "weight": 0.25,
+          "display_name": "Creativity",
+          "show_in_summary": true,
+          "show_details": true
+        }
+      }
+    },
+    
+    "business": {
+      "name": "Business Professional",
+      "description": "Conservative scoring for professional settings",
+      "criteria": {
+        "seven_point": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "7-Point Rule",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "color_harmony": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Color Harmony",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "three_color": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "3-Color Rule",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "proportion": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Proportions",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "volume_balance": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "Volume Balance",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "pattern_mixing": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Pattern Mixing",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "design_principles": {
+          "enabled": true,
+          "weight": 0.05,
+          "display_name": "Design Principles",
+          "show_in_summary": false,
+          "show_details": false
+        },
+        "creativity": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "Creativity",
+          "show_in_summary": false,
+          "show_details": false
+        }
+      }
+    },
+    
+    "casual": {
+      "name": "Casual Everyday",
+      "description": "Relaxed scoring for everyday casual wear",
+      "criteria": {
+        "seven_point": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "7-Point Rule",
+          "show_in_summary": false,
+          "show_details": false
+        },
+        "color_harmony": {
+          "enabled": true,
+          "weight": 0.25,
+          "display_name": "Color Harmony",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "three_color": {
+          "enabled": true,
+          "weight": 0.15,
+          "display_name": "3-Color Rule",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "proportion": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Proportions",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "volume_balance": {
+          "enabled": true,
+          "weight": 0.20,
+          "display_name": "Volume Balance",
+          "show_in_summary": true,
+          "show_details": true
+        },
+        "pattern_mixing": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Pattern Mixing",
+          "show_in_summary": true,
+          "show_details": false
+        },
+        "design_principles": {
+          "enabled": false,
+          "weight": 0.0,
+          "display_name": "Design Principles",
+          "show_in_summary": false,
+          "show_details": false
+        },
+        "creativity": {
+          "enabled": true,
+          "weight": 0.10,
+          "display_name": "Creativity",
+          "show_in_summary": true,
+          "show_details": false
+        }
+      }
+    }
+  },
+  
+  "output_settings": {
+    "include_all_scores": false,
+    "include_disabled_scores": false,
+    "include_details_for_hidden": false,
+    "grade_thresholds": {
+      "A+": 0.90,
+      "A": 0.85,
+      "A-": 0.80,
+      "B+": 0.75,
+      "B": 0.70,
+      "B-": 0.65,
+      "C+": 0.60,
+      "C": 0.55,
+      "C-": 0.50,
+      "D": 0.40,
+      "F": 0.0
+    }
+  },
+  
+  "default_profile": "default"
+}

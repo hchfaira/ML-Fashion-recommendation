@@ -1,0 +1,24 @@
+{
+    "category_compatibility": {
+        "top_bottom": 1.0,
+        "top_outerwear": 0.9,
+        "top_shoes": 0.7,
+        "top_accessory": 0.8,
+        "bottom_shoes": 0.85,
+        "bottom_outerwear": 0.8,
+        "dress_outerwear": 0.9,
+        "dress_shoes": 0.9,
+        "dress_accessory": 0.85,
+        "outerwear_shoes": 0.7,
+        "outerwear_accessory": 0.75
+    },
+    "style_compatibility_groups": {
+        "casual": ["relaxed", "comfortable", "everyday", "casual", "weekend"],
+        "formal": ["professional", "polished", "elegant", "sophisticated", "refined"],
+        "sporty": ["athletic", "sporty", "activewear", "functional"],
+        "trendy": ["trendy", "fashionable", "statement", "bold"],
+        "classic": ["timeless", "classic", "traditional", "preppy"],
+        "edgy": ["edgy", "rock", "punk", "alternative", "streetwear"]
+    },
+    "default_compatibility_score": 0.5
+}

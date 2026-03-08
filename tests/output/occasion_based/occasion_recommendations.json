@@ -1,0 +1,17 @@
+{
+  "casual": {
+    "outfit": "button_down + dress_pants + sneakers",
+    "score": 0.6278833333333333,
+    "grade": "C+"
+  },
+  "business": {
+    "outfit": "button_down + dress_pants + sneakers",
+    "score": 0.6278833333333333,
+    "grade": "C+"
+  },
+  "date": {
+    "outfit": "button_down + dress_pants + sneakers",
+    "score": 0.6278833333333333,
+    "grade": "C+"
+  }
+}

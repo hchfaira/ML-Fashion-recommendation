@@ -1,0 +1,40 @@
+======================================================================
+🏆 OUTFIT SELECTION REPORT
+======================================================================
+
+Total combinations evaluated: 27
+Top 5 outfits:
+
+🥇 button_down + dress_pants + sneakers
+   Overall Score: 62.8%
+   Grade: C+
+   └─ Color: 90% | 7-Point: 40% | Pattern: 100%
+
+🥈 button_down + jeans + sneakers
+   Overall Score: 61.8%
+   Grade: C+
+   └─ Color: 90% | 7-Point: 40% | Pattern: 100%
+
+🥉 button_down + dress_pants + loafers
+   Overall Score: 61.1%
+   Grade: C+
+   └─ Color: 90% | 7-Point: 40% | Pattern: 95%
+
+#4 button_down + jeans + loafers
+   Overall Score: 60.9%
+   Grade: C+
+   └─ Color: 90% | 7-Point: 40% | Pattern: 95%
+
+#5 button_down + chinos + sneakers
+   Overall Score: 60.8%
+   Grade: C+
+   └─ Color: 85% | 7-Point: 40% | Pattern: 100%
+
+----------------------------------------
+Statistics:
+   Best:  62.8%
+   Worst: 56.1%
+   Avg:   58.8%
+   Range: 6.7%
+
+======================================================================

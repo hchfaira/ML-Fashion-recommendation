@@ -1,0 +1,392 @@
+{
+  "garments": [
+    {
+      "id": "top-001",
+      "image_url": null,
+      "image_path": "wardrobe/tops/white_tshirt.jpg",
+      "attributes": {
+        "category": "top",
+        "subcategory": "t-shirt",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "white",
+          "secondary": null,
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "casual",
+          "minimalist",
+          "basic"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "summer"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900157",
+      "metadata": {}
+    },
+    {
+      "id": "top-002",
+      "image_url": null,
+      "image_path": "wardrobe/tops/blue_shirt.jpg",
+      "attributes": {
+        "category": "top",
+        "subcategory": "shirt",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "navy",
+          "secondary": "white",
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "smart casual",
+          "classic",
+          "workwear"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "smart_casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "fall"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900162",
+      "metadata": {}
+    },
+    {
+      "id": "bottom-001",
+      "image_url": null,
+      "image_path": "wardrobe/bottoms/blue_jeans.jpg",
+      "attributes": {
+        "category": "bottom",
+        "subcategory": "jeans",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "blue",
+          "secondary": null,
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "casual",
+          "denim",
+          "versatile"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "fall",
+          "winter"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900167",
+      "metadata": {}
+    },
+    {
+      "id": "bottom-002",
+      "image_url": null,
+      "image_path": "wardrobe/bottoms/chinos.jpg",
+      "attributes": {
+        "category": "bottom",
+        "subcategory": "chinos",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "beige",
+          "secondary": null,
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "smart casual",
+          "classic",
+          "workwear"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "smart_casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "summer",
+          "fall"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900171",
+      "metadata": {}
+    },
+    {
+      "id": "shoes-001",
+      "image_url": null,
+      "image_path": "wardrobe/shoes/white_sneakers.jpg",
+      "attributes": {
+        "category": "shoes",
+        "subcategory": "sneakers",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "white",
+          "secondary": null,
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "casual",
+          "sporty",
+          "minimalist"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "summer"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900175",
+      "metadata": {}
+    },
+    {
+      "id": "shoes-002",
+      "image_url": null,
+      "image_path": "wardrobe/shoes/brown_loafers.jpg",
+      "attributes": {
+        "category": "shoes",
+        "subcategory": "loafers",
+        "product_type": null,
+        "outfit_role": null,
+        "color": {
+          "primary": "brown",
+          "secondary": null,
+          "accent": null,
+          "color_palette": [],
+          "hex_codes": [],
+          "color_temperature": null,
+          "color_depth": null,
+          "contrast_level": null
+        },
+        "material": null,
+        "pattern": {
+          "type": "solid",
+          "scale": null,
+          "density": null,
+          "description": null,
+          "pattern_colors": []
+        },
+        "silhouette_profile": null,
+        "silhouette": null,
+        "fit": null,
+        "style_identity": null,
+        "style_tags": [
+          "smart casual",
+          "classic",
+          "elegant"
+        ],
+        "styling_compatibility": null,
+        "occasion_profile": null,
+        "formality_level": "smart_casual",
+        "seasonality": null,
+        "season_suitable": [
+          "spring",
+          "summer",
+          "fall"
+        ],
+        "versatility": null,
+        "neckline": null,
+        "sleeves": null,
+        "length_type": null,
+        "waist_rise": null,
+        "closure": null,
+        "details": {
+          "has_pockets": false,
+          "distressed": false,
+          "embellishments": [],
+          "transparency": "opaque",
+          "lined": false,
+          "reversible": false
+        },
+        "confidence_score": 0.0
+      },
+      "embedding": null,
+      "created_at": "2026-03-08T11:07:42.900179",
+      "metadata": {}
+    }
+  ],
+  "updated_at": "2026-03-08T11:07:42.901249"
+}

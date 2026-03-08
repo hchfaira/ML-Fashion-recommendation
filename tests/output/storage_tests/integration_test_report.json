@@ -1,0 +1,33 @@
+{
+  "statistics": {
+    "storage_type": "json",
+    "base_path": "/Users/hchfaira/work/repositories/LLM_project/tests/output/storage_tests/json_storage",
+    "total_garments": 6,
+    "total_outfits": 1,
+    "total_compatibility_relations": 8,
+    "garments_by_category": {
+      "top": 2,
+      "bottom": 2,
+      "shoes": 2
+    }
+  },
+  "outfit_paths_found": 4,
+  "best_outfit": {
+    "id": "best-outfit-001",
+    "items": [
+      {
+        "category": "top",
+        "color": "white"
+      },
+      {
+        "category": "bottom",
+        "color": "blue"
+      },
+      {
+        "category": "shoes",
+        "color": "white"
+      }
+    ],
+    "overall_score": 0.85
+  }
+}

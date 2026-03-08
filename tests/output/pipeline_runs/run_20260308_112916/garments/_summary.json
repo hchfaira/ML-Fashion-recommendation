@@ -1,0 +1,17 @@
+{
+  "total_garments": 6,
+  "by_category": {
+    "top": 2,
+    "bottom": 3,
+    "outerwear": 1
+  },
+  "extraction_timestamp": "2026-03-08T11:30:30.540203",
+  "garment_files": [
+    "00_top_image copy 2.json",
+    "01_top_image copy 3.json",
+    "02_bottom_image copy.json",
+    "03_bottom_image.json",
+    "04_bottom_image2.json",
+    "05_outerwear_image copy 4.json"
+  ]
+}

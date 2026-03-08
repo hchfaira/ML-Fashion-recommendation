@@ -1,0 +1,50 @@
+{
+  "id": "7e285e06-a8e4-4bb7-97b4-518886998680",
+  "image_path": "data/sample_wardrobe/image2.png",
+  "image_name": "image2.png",
+  "extracted_at": "2026-03-08T11:20:01.020816",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "pants",
+    "product_type": "high-waisted flare pants",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "tan",
+      "secondary": null,
+      "color_palette": [
+        "tan"
+      ],
+      "hex_codes": [
+        "#B89B74"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "medium"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "semi_structured",
+      "volume": "low"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "minimalist",
+      "elegant"
+    ],
+    "seasons": [
+      "spring",
+      "fall",
+      "winter"
+    ]
+  }
+}

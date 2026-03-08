@@ -1,0 +1,51 @@
+{
+  "id": "3a5b2d47-0a8e-4cf7-9066-9c8046309f70",
+  "image_path": "data/sample_wardrobe/image copy 4.png",
+  "image_name": "image copy 4.png",
+  "extracted_at": "2026-03-08T11:30:30.539733",
+  "attributes": {
+    "category": "outerwear",
+    "subcategory": "blazer",
+    "product_type": "single-breasted blazer",
+    "outfit_role": "layering_piece",
+    "color": {
+      "primary": "lavender",
+      "secondary": null,
+      "color_palette": [
+        "lavender"
+      ],
+      "hex_codes": [
+        "#B8A0E0"
+      ],
+      "color_temperature": "cool",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "polyester",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "regular",
+      "structure": "semi_structured",
+      "volume": "medium"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "elegant",
+      "minimalist",
+      "preppy"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

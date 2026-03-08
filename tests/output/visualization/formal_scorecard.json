@@ -1,0 +1,294 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T08:12:37.116038",
+    "num_items": 4
+  },
+  "garments": [
+    {
+      "id": "8f708631-2bca-421f-9ebd-34509618cf2d",
+      "image_url": null,
+      "image_path": null,
+      "category": "outerwear",
+      "subcategory": "blazer",
+      "color": {
+        "primary": "navy",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#1E3A5F"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "business",
+      "season_suitable": [
+        "fall",
+        "winter",
+        "spring"
+      ],
+      "silhouette": "structured",
+      "fit": "tailored",
+      "style_tags": [
+        "business",
+        "classic",
+        "tailored"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "ec89f373-d8be-4ee0-b660-58721dd44ac6",
+      "image_url": null,
+      "image_path": null,
+      "category": "top",
+      "subcategory": "dress_shirt",
+      "color": {
+        "primary": "white",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#FFFFFF"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "business",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall",
+        "winter"
+      ],
+      "silhouette": "fitted",
+      "fit": "tailored",
+      "style_tags": [
+        "business",
+        "classic"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "cba7910d-dbbd-42db-bc65-2787812125f3",
+      "image_url": null,
+      "image_path": null,
+      "category": "bottom",
+      "subcategory": "dress_pants",
+      "color": {
+        "primary": "charcoal",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#36454F"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "business",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall",
+        "winter"
+      ],
+      "silhouette": "straight",
+      "fit": "tailored",
+      "style_tags": [
+        "business",
+        "classic"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "9fcd1a6b-b521-4c6a-bc33-ef906bb9571c",
+      "image_url": null,
+      "image_path": null,
+      "category": "shoes",
+      "subcategory": "oxford",
+      "color": {
+        "primary": "black",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#000000"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "formal",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall",
+        "winter"
+      ],
+      "silhouette": "classic",
+      "fit": "regular",
+      "style_tags": [
+        "business",
+        "classic",
+        "formal"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.5,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.4,
+    "volume_balance": 0.3333,
+    "pattern_mixing": 0.9,
+    "design_principles": 0.723,
+    "total_style": 0.51,
+    "creativity": 0.36,
+    "overall": 0.6378
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 5,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "8f708631-2bca-421f-9ebd-34509618cf2d",
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "navy",
+          "points": 2,
+          "point_type": "statement",
+          "reasons": [
+            "statement blazer"
+          ]
+        },
+        {
+          "garment_id": "ec89f373-d8be-4ee0-b660-58721dd44ac6",
+          "category": "top",
+          "subcategory": "dress_shirt",
+          "color": "white",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "cba7910d-dbbd-42db-bc65-2787812125f3",
+          "category": "bottom",
+          "subcategory": "dress_pants",
+          "color": "charcoal",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "9fcd1a6b-b521-4c6a-bc33-ef906bb9571c",
+          "category": "shoes",
+          "subcategory": "oxford",
+          "color": "black",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        }
+      ]
+    },
+    "three_color": {
+      "color_count": 1,
+      "passes": true,
+      "colors": [
+        "navy"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "medium (1/2)",
+      "bottom_portion": "mid-rise (neutral)"
+    },
+    "volume_balance": {
+      "top_volume": "regular",
+      "bottom_volume": "regular",
+      "balance_type": "all_regular"
+    },
+    "pattern_mixing": {
+      "pattern_count": 0,
+      "solid_count": 4,
+      "has_scale_contrast": true,
+      "grade": "A"
+    },
+    "design_principles": {
+      "grade": "B",
+      "proportion": 0.7,
+      "balance": 0.9,
+      "harmony": 1.0,
+      "emphasis": 0.5,
+      "style": "classic"
+    },
+    "total_style": {
+      "grade": "D",
+      "seven_point": 0.5,
+      "color": 0.7,
+      "proportion": 0.4,
+      "volume": 0.333
+    },
+    "creativity": {
+      "level": "moderate",
+      "rules_broken": 1,
+      "is_successful": false,
+      "fashion_forward": 0.184
+    }
+  },
+  "summary": {
+    "overall_score": 0.64,
+    "overall_percentage": "64%",
+    "grade": "C+",
+    "categories": [
+      "outerwear",
+      "top",
+      "bottom",
+      "shoes"
+    ],
+    "primary_colors": [
+      "navy",
+      "white",
+      "charcoal",
+      "black"
+    ]
+  }
+}

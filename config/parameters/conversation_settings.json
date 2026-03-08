@@ -1,0 +1,25 @@
+{
+    "tone_presets": {
+        "professional": "professional, concise, and informative",
+        "friendly": "warm, friendly, and encouraging",
+        "luxury": "sophisticated, refined, and aspirational",
+        "casual": "relaxed, fun, and conversational",
+        "expert": "knowledgeable, detailed, and authoritative"
+    },
+    "intent_patterns": {
+        "get_recommendation": ["recommend", "suggest", "what should i wear", "outfit for"],
+        "explain": ["why", "explain", "how does", "tell me about"],
+        "compare": ["which is better", "compare", "difference between"],
+        "improve": ["how can i improve", "what's wrong", "better option"],
+        "preference": ["i like", "i prefer", "i don't like", "avoid"],
+        "occasion": ["for work", "for a date", "going to", "event"]
+    },
+    "intent_system_additions": {
+        "get_recommendation": "\nYou're helping the user find outfit options.",
+        "explain": "\nYou're explaining style concepts and why things work.",
+        "compare": "\nYou're helping compare outfit options objectively.",
+        "improve": "\nYou're giving constructive suggestions for improvement.",
+        "preference": "\nYou're learning about the user's style preferences."
+    },
+    "default_conversation_history_length": 10
+}

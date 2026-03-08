@@ -1,0 +1,491 @@
+{
+  "total_combinations": 27,
+  "rankings": [
+    {
+      "rank": 1,
+      "name": "button_down + dress_pants + sneakers",
+      "overall_score": 0.6279,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 1.0,
+        "design_principles": 0.697,
+        "total_style": 0.48,
+        "creativity": 0.35,
+        "overall": 0.6279
+      }
+    },
+    {
+      "rank": 2,
+      "name": "button_down + jeans + sneakers",
+      "overall_score": 0.6176,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 1.0,
+        "design_principles": 0.762,
+        "total_style": 0.48,
+        "creativity": 0.15,
+        "overall": 0.6176
+      }
+    },
+    {
+      "rank": 3,
+      "name": "button_down + dress_pants + loafers",
+      "overall_score": 0.6111,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.752,
+        "total_style": 0.48,
+        "creativity": 0.15,
+        "overall": 0.6111
+      }
+    },
+    {
+      "rank": 4,
+      "name": "button_down + jeans + loafers",
+      "overall_score": 0.6089,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.737,
+        "total_style": 0.48,
+        "creativity": 0.15,
+        "overall": 0.6089
+      }
+    },
+    {
+      "rank": 5,
+      "name": "button_down + chinos + sneakers",
+      "overall_score": 0.6079,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 1.0,
+        "design_principles": 0.747,
+        "total_style": 0.48,
+        "creativity": 0.15,
+        "overall": 0.6079
+      }
+    },
+    {
+      "rank": 6,
+      "name": "t-shirt + dress_pants + sneakers",
+      "overall_score": 0.6056,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.715,
+        "total_style": 0.45,
+        "creativity": 0.35,
+        "overall": 0.6056
+      }
+    },
+    {
+      "rank": 7,
+      "name": "button_down + chinos + loafers",
+      "overall_score": 0.6036,
+      "grade": "C+",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.752,
+        "total_style": 0.48,
+        "creativity": 0.15,
+        "overall": 0.6036
+      }
+    },
+    {
+      "rank": 8,
+      "name": "button_down + dress_pants + sneakers",
+      "overall_score": 0.5988,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.67,
+        "total_style": 0.45,
+        "creativity": 0.35,
+        "overall": 0.5988
+      }
+    },
+    {
+      "rank": 9,
+      "name": "button_down + jeans + oxford",
+      "overall_score": 0.5953,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.702,
+        "total_style": 0.48,
+        "creativity": 0.067,
+        "overall": 0.5953
+      }
+    },
+    {
+      "rank": 10,
+      "name": "button_down + chinos + oxford",
+      "overall_score": 0.5914,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.737,
+        "total_style": 0.48,
+        "creativity": 0.05,
+        "overall": 0.5914
+      }
+    },
+    {
+      "rank": 11,
+      "name": "button_down + dress_pants + oxford",
+      "overall_score": 0.5914,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.687,
+        "total_style": 0.48,
+        "creativity": 0.05,
+        "overall": 0.5914
+      }
+    },
+    {
+      "rank": 12,
+      "name": "t-shirt + jeans + sneakers",
+      "overall_score": 0.5878,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.73,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5878
+      }
+    },
+    {
+      "rank": 13,
+      "name": "button_down + jeans + sneakers",
+      "overall_score": 0.5878,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.73,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5878
+      }
+    },
+    {
+      "rank": 14,
+      "name": "button_down + chinos + sneakers",
+      "overall_score": 0.5863,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5863
+      }
+    },
+    {
+      "rank": 15,
+      "name": "t-shirt + jeans + loafers",
+      "overall_score": 0.5841,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.705,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5841
+      }
+    },
+    {
+      "rank": 16,
+      "name": "t-shirt + chinos + loafers",
+      "overall_score": 0.5788,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5788
+      }
+    },
+    {
+      "rank": 17,
+      "name": "t-shirt + chinos + sneakers",
+      "overall_score": 0.5781,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.715,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5781
+      }
+    },
+    {
+      "rank": 18,
+      "name": "button_down + jeans + loafers",
+      "overall_score": 0.5781,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.665,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5781
+      }
+    },
+    {
+      "rank": 19,
+      "name": "t-shirt + jeans + oxford",
+      "overall_score": 0.578,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.45,
+        "creativity": 0.067,
+        "overall": 0.578
+      }
+    },
+    {
+      "rank": 20,
+      "name": "button_down + chinos + loafers",
+      "overall_score": 0.5766,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.655,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5766
+      }
+    },
+    {
+      "rank": 21,
+      "name": "button_down + dress_pants + loafers",
+      "overall_score": 0.5766,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.655,
+        "total_style": 0.45,
+        "creativity": 0.15,
+        "overall": 0.5766
+      }
+    },
+    {
+      "rank": 22,
+      "name": "button_down + chinos + oxford",
+      "overall_score": 0.5763,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.45,
+        "creativity": 0.05,
+        "overall": 0.5763
+      }
+    },
+    {
+      "rank": 23,
+      "name": "button_down + jeans + oxford",
+      "overall_score": 0.572,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.68,
+        "total_style": 0.45,
+        "creativity": 0.067,
+        "overall": 0.572
+      }
+    },
+    {
+      "rank": 24,
+      "name": "t-shirt + dress_pants + loafers",
+      "overall_score": 0.5688,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.67,
+        "total_style": 0.45,
+        "creativity": 0.05,
+        "overall": 0.5688
+      }
+    },
+    {
+      "rank": 25,
+      "name": "button_down + dress_pants + oxford",
+      "overall_score": 0.5688,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.67,
+        "total_style": 0.45,
+        "creativity": 0.05,
+        "overall": 0.5688
+      }
+    },
+    {
+      "rank": 26,
+      "name": "t-shirt + dress_pants + oxford",
+      "overall_score": 0.5683,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.655,
+        "total_style": 0.45,
+        "creativity": 0.067,
+        "overall": 0.5683
+      }
+    },
+    {
+      "rank": 27,
+      "name": "t-shirt + chinos + oxford",
+      "overall_score": 0.5608,
+      "grade": "C",
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.85,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.655,
+        "total_style": 0.45,
+        "creativity": 0.067,
+        "overall": 0.5608
+      }
+    }
+  ]
+}

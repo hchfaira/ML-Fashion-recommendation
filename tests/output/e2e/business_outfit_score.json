@@ -1,0 +1,280 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T12:07:42.864060",
+    "num_items": 3,
+    "profile": "default",
+    "profile_name": "Balanced Scoring"
+  },
+  "garments": [
+    {
+      "id": "dress_shirt",
+      "image_url": null,
+      "image_path": null,
+      "category": "top",
+      "subcategory": "dress_shirt",
+      "color": {
+        "primary": "light_blue",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#ADD8E6"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": "none",
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "business",
+      "season_suitable": [
+        "spring",
+        "fall",
+        "winter"
+      ],
+      "silhouette": null,
+      "fit": null,
+      "style_tags": [
+        "professional",
+        "classic"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "blue_jeans",
+      "image_url": null,
+      "image_path": null,
+      "category": "bottom",
+      "subcategory": "jeans",
+      "color": {
+        "primary": "blue",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#1E3A5F"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": "none",
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall"
+      ],
+      "silhouette": null,
+      "fit": null,
+      "style_tags": [
+        "casual",
+        "denim"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "navy_blazer",
+      "image_url": null,
+      "image_path": null,
+      "category": "outerwear",
+      "subcategory": "blazer",
+      "color": {
+        "primary": "navy",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#000080"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": "none",
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "smart_casual",
+      "season_suitable": [
+        "fall",
+        "winter",
+        "spring"
+      ],
+      "silhouette": null,
+      "fit": null,
+      "style_tags": [
+        "smart_casual",
+        "professional"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.4,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.4,
+    "volume_balance": 0.3333,
+    "pattern_mixing": 0.9,
+    "design_principles": 0.659,
+    "total_style": 0.48,
+    "overall": 0.5822
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 4,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "dress_shirt",
+          "category": "top",
+          "subcategory": "dress_shirt",
+          "color": "light_blue",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "blue_jeans",
+          "category": "bottom",
+          "subcategory": "jeans",
+          "color": "blue",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "navy_blazer",
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "navy",
+          "points": 2,
+          "point_type": "statement",
+          "reasons": [
+            "statement blazer"
+          ]
+        }
+      ]
+    },
+    "color_harmony": {
+      "score": 0.9
+    },
+    "three_color": {
+      "color_count": 1,
+      "passes": true,
+      "colors": [
+        "navy",
+        "light_blue",
+        "blue"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "medium (1/2)",
+      "bottom_portion": "mid-rise (neutral)"
+    },
+    "pattern_mixing": {
+      "pattern_count": 0,
+      "solid_count": 3,
+      "has_scale_contrast": true,
+      "grade": "A"
+    },
+    "design_principles": {
+      "grade": "C",
+      "proportion": 0.7,
+      "balance": 0.9,
+      "harmony": 0.6666666666666666,
+      "emphasis": 0.5,
+      "style": "classic"
+    },
+    "total_style": {
+      "grade": "D",
+      "seven_point": 0.4,
+      "color": 0.7,
+      "proportion": 0.4,
+      "volume": 0.333
+    },
+    "creativity": {
+      "level": "safe",
+      "rules_broken": 1,
+      "is_successful": false,
+      "fashion_forward": 0.024
+    }
+  },
+  "summary": {
+    "overall_score": 0.58,
+    "overall_percentage": "58%",
+    "grade": "C",
+    "categories": [
+      "top",
+      "bottom",
+      "outerwear"
+    ],
+    "primary_colors": [
+      "light_blue",
+      "blue",
+      "navy"
+    ]
+  },
+  "criteria_config": {
+    "seven_point": {
+      "display_name": "7-Point Rule",
+      "weight": 0.15,
+      "enabled": true
+    },
+    "color_harmony": {
+      "display_name": "Color Harmony",
+      "weight": 0.15,
+      "enabled": true
+    },
+    "three_color": {
+      "display_name": "3-Color Rule",
+      "weight": 0.1,
+      "enabled": true
+    },
+    "proportion": {
+      "display_name": "Proportions",
+      "weight": 0.15,
+      "enabled": true
+    },
+    "volume_balance": {
+      "display_name": "Volume Balance",
+      "weight": 0.1,
+      "enabled": true
+    },
+    "pattern_mixing": {
+      "display_name": "Pattern Mixing",
+      "weight": 0.1,
+      "enabled": true
+    },
+    "design_principles": {
+      "display_name": "Design Principles",
+      "weight": 0.15,
+      "enabled": true
+    },
+    "creativity": {
+      "display_name": "Creativity",
+      "weight": 0.1,
+      "enabled": true
+    }
+  }
+}

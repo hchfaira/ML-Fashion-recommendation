@@ -1,0 +1,48 @@
+{
+    "criteria": {
+        "occasion": {
+            "enabled": true,
+            "weight": 0.30,
+            "description": "Matches outfit formality to the occasion"
+        },
+        "weather": {
+            "enabled": true,
+            "weight": 0.20,
+            "description": "Considers temperature and weather conditions"
+        },
+        "morphology": {
+            "enabled": false,
+            "weight": 0.15,
+            "description": "Considers body type for flattering fits"
+        },
+        "preference": {
+            "enabled": false,
+            "weight": 0.15,
+            "description": "Uses user history and preferences"
+        },
+        "activity": {
+            "enabled": false,
+            "weight": 0.12,
+            "description": "Considers activity level and transport mode"
+        },
+        "freshness": {
+            "enabled": false,
+            "weight": 0.08,
+            "description": "Promotes wardrobe rotation"
+        }
+    },
+    "comprehensive_analysis": {
+        "include_schedule": true,
+        "include_activity": true,
+        "include_season": true,
+        "include_wardrobe_stats": true,
+        "include_featured_item": true
+    },
+    "scoring": {
+        "style_context_blend": {
+            "style_weight": 0.6,
+            "context_weight": 0.4
+        },
+        "normalize_weights": true
+    }
+}

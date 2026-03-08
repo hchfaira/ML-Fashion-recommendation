@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T08:12:37.249323",
+    "num_items": 3
+  },
+  "garments": [
+    {
+      "id": "5246aa1d-5238-42c8-8e9b-f0d97338b5f3",
+      "image_url": null,
+      "image_path": null,
+      "category": "top",
+      "subcategory": "button_down",
+      "color": {
+        "primary": "blue",
+        "secondary": "white",
+        "accent": null,
+        "hex_codes": [
+          "#3B82F6",
+          "#FFFFFF"
+        ]
+      },
+      "pattern": {
+        "type": "stripes",
+        "scale": "medium",
+        "density": "moderate",
+        "pattern_colors": [
+          "blue",
+          "white"
+        ]
+      },
+      "material": null,
+      "formality_level": "smart_casual",
+      "season_suitable": [
+        "spring",
+        "summer"
+      ],
+      "silhouette": "fitted",
+      "fit": "regular",
+      "style_tags": [
+        "classic",
+        "preppy"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "2a4b6d6c-3e59-4f6a-88ed-db4485498609",
+      "image_url": null,
+      "image_path": null,
+      "category": "bottom",
+      "subcategory": "trousers",
+      "color": {
+        "primary": "gray",
+        "secondary": "navy",
+        "accent": null,
+        "hex_codes": [
+          "#6B7280",
+          "#1E3A5F"
+        ]
+      },
+      "pattern": {
+        "type": "plaid",
+        "scale": "small",
+        "density": "moderate",
+        "pattern_colors": [
+          "gray",
+          "navy",
+          "white"
+        ]
+      },
+      "material": null,
+      "formality_level": "smart_casual",
+      "season_suitable": [
+        "fall",
+        "winter"
+      ],
+      "silhouette": "straight",
+      "fit": "tailored",
+      "style_tags": [
+        "classic",
+        "tailored"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "eefdbb8f-28a4-4576-aaef-598646822a90",
+      "image_url": null,
+      "image_path": null,
+      "category": "shoes",
+      "subcategory": "loafers",
+      "color": {
+        "primary": "brown",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#8B4513"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "smart_casual",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall"
+      ],
+      "silhouette": "classic",
+      "fit": "regular",
+      "style_tags": [
+        "classic"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.5,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.4,
+    "volume_balance": 0.3333,
+    "pattern_mixing": 0.66,
+    "design_principles": 0.749,
+    "total_style": 0.51,
+    "creativity": 0.367,
+    "overall": 0.6184
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 5,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "5246aa1d-5238-42c8-8e9b-f0d97338b5f3",
+          "category": "top",
+          "subcategory": "button_down",
+          "color": "blue",
+          "points": 2,
+          "point_type": "statement",
+          "reasons": [
+            "has stripes pattern"
+          ]
+        },
+        {
+          "garment_id": "2a4b6d6c-3e59-4f6a-88ed-db4485498609",
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "gray",
+          "points": 2,
+          "point_type": "statement",
+          "reasons": [
+            "has plaid pattern"
+          ]
+        },
+        {
+          "garment_id": "eefdbb8f-28a4-4576-aaef-598646822a90",
+          "category": "shoes",
+          "subcategory": "loafers",
+          "color": "brown",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        }
+      ]
+    },
+    "three_color": {
+      "color_count": 2,
+      "passes": true,
+      "colors": [
+        "navy",
+        "brown",
+        "blue"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "medium (1/2)",
+      "bottom_portion": "mid-rise (neutral)"
+    },
+    "volume_balance": {
+      "top_volume": "regular",
+      "bottom_volume": "regular",
+      "balance_type": "all_regular"
+    },
+    "pattern_mixing": {
+      "pattern_count": 2,
+      "solid_count": 1,
+      "has_scale_contrast": false,
+      "grade": "C"
+    },
+    "design_principles": {
+      "grade": "B",
+      "proportion": 0.7,
+      "balance": 0.9,
+      "harmony": 1.0,
+      "emphasis": 0.5,
+      "style": "classic"
+    },
+    "total_style": {
+      "grade": "D",
+      "seven_point": 0.5,
+      "color": 0.7,
+      "proportion": 0.4,
+      "volume": 0.333
+    },
+    "creativity": {
+      "level": "moderate",
+      "rules_broken": 1,
+      "is_successful": false,
+      "fashion_forward": 0.187
+    }
+  },
+  "summary": {
+    "overall_score": 0.62,
+    "overall_percentage": "62%",
+    "grade": "C+",
+    "categories": [
+      "top",
+      "bottom",
+      "shoes"
+    ],
+    "primary_colors": [
+      "blue",
+      "gray",
+      "brown"
+    ]
+  }
+}

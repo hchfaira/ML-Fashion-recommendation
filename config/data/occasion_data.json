@@ -1,0 +1,54 @@
+{
+    "occasion_formality": {
+        "casual": "casual",
+        "business": "business",
+        "formal": "formal",
+        "sport": "very_casual",
+        "evening": "smart_casual",
+        "date": "smart_casual",
+        "beach": "very_casual"
+    },
+    "occasion_styles": {
+        "casual": ["relaxed", "comfortable", "everyday", "casual"],
+        "business": ["professional", "polished", "clean", "tailored"],
+        "formal": ["elegant", "sophisticated", "luxurious", "refined"],
+        "sport": ["athletic", "sporty", "functional", "activewear"],
+        "evening": ["glamorous", "chic", "trendy", "statement"],
+        "date": ["romantic", "stylish", "flattering", "confident"],
+        "beach": ["relaxed", "casual", "comfortable", "light"]
+    },
+    "occasion_avoid": {
+        "business": ["athletic", "beachwear", "very_casual"],
+        "formal": ["athletic", "casual", "streetwear"],
+        "sport": ["formal", "delicate", "restrictive"],
+        "beach": ["formal", "heavy", "restrictive"]
+    },
+    "formality_numeric_mapping": {
+        "very_casual": 1,
+        "casual": 2,
+        "smart_casual": 3,
+        "business_casual": 4,
+        "business": 5,
+        "formal": 6,
+        "black_tie": 7
+    },
+    "formality_ranges": {
+        "casual": ["very_casual", "casual"],
+        "daily_wear": ["casual", "smart_casual"],
+        "weekend": ["very_casual", "casual"],
+        "work": ["smart_casual", "business_casual"],
+        "business": ["business_casual", "business"],
+        "interview": ["business_casual", "business"],
+        "date": ["smart_casual", "business_casual"],
+        "evening": ["smart_casual", "formal"],
+        "formal": ["business", "black_tie"],
+        "wedding": ["business_casual", "formal"],
+        "cocktail": ["smart_casual", "formal"],
+        "sport": ["very_casual", "casual"],
+        "gym": ["very_casual", "very_casual"],
+        "beach": ["very_casual", "very_casual"],
+        "outdoor": ["very_casual", "casual"],
+        "travel": ["casual", "smart_casual"],
+        "event": ["smart_casual", "formal"]
+    }
+}

@@ -1,0 +1,229 @@
+{
+  "profile": "default",
+  "total_combinations": 6,
+  "evaluated_at": "2026-03-08T11:20:01.197025",
+  "combinations": [
+    {
+      "rank": 1,
+      "name": "tank_top + flared leggings + blazer",
+      "overall_score": 0.7046,
+      "grade": "B",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "flared leggings",
+          "color": "gray",
+          "image": "image copy.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.775,
+        "total_style": 0.63,
+        "overall": 0.7046
+      }
+    },
+    {
+      "rank": 2,
+      "name": "tank_top + pants + blazer",
+      "overall_score": 0.6872,
+      "grade": "B-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "pants",
+          "color": "tan",
+          "image": "image2.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.719,
+        "total_style": 0.63,
+        "overall": 0.6872
+      }
+    },
+    {
+      "rank": 3,
+      "name": "blouse + flared leggings + blazer",
+      "overall_score": 0.604,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "blouse",
+          "color": "lightblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "flared leggings",
+          "color": "gray",
+          "image": "image copy.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.738,
+        "total_style": 0.48,
+        "overall": 0.604
+      }
+    },
+    {
+      "rank": 4,
+      "name": "tank_top + trousers + blazer",
+      "overall_score": 0.6023,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.693,
+        "total_style": 0.48,
+        "overall": 0.6023
+      }
+    },
+    {
+      "rank": 5,
+      "name": "blouse + trousers + blazer",
+      "overall_score": 0.6013,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "blouse",
+          "color": "lightblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.48,
+        "overall": 0.6013
+      }
+    },
+    {
+      "rank": 6,
+      "name": "blouse + pants + blazer",
+      "overall_score": 0.595,
+      "grade": "C",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "blouse",
+          "color": "lightblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "pants",
+          "color": "tan",
+          "image": "image2.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.738,
+        "total_style": 0.48,
+        "overall": 0.595
+      }
+    }
+  ]
+}

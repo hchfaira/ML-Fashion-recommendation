@@ -1,0 +1,51 @@
+{
+    "category_activity_scores": {
+        "dress": {
+            "intense": 0.2,
+            "active": 0.4,
+            "moderate": 0.7,
+            "light": 1.0,
+            "sedentary": 1.0
+        },
+        "outerwear": {
+            "intense": 0.3,
+            "active": 0.5,
+            "moderate": 0.8,
+            "light": 1.0,
+            "sedentary": 1.0
+        }
+    },
+    "transport_requirements": {
+        "walking": {
+            "comfortable_shoes": true,
+            "weather_ready": true,
+            "mobility": 0.8,
+            "bag_type": "hands_free"
+        },
+        "cycling": {
+            "comfortable_shoes": true,
+            "weather_ready": true,
+            "mobility": 1.0,
+            "avoid_flowy": true,
+            "bag_type": "backpack"
+        },
+        "driving": {
+            "comfortable_shoes": false,
+            "weather_ready": false,
+            "mobility": 0.5,
+            "bag_type": "any"
+        },
+        "public_transit": {
+            "comfortable_shoes": true,
+            "weather_ready": true,
+            "mobility": 0.6,
+            "bag_type": "secure"
+        },
+        "mixed": {
+            "comfortable_shoes": true,
+            "weather_ready": true,
+            "mobility": 0.7,
+            "bag_type": "versatile"
+        }
+    }
+}

@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T08:12:19.645005",
+    "num_items": 2
+  },
+  "garments": [
+    {
+      "id": "1d416030-d4eb-42b1-8b18-2b4428c626e8",
+      "image_url": null,
+      "image_path": "/Users/hchfaira/work/repositories/LLM_project/tests/test_images/outfit_builder/outfit_1/image.png",
+      "category": "top",
+      "subcategory": null,
+      "color": {
+        "primary": "unknown",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": []
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [],
+      "silhouette": null,
+      "fit": null,
+      "style_tags": [],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "86180a2e-ac24-4c0c-9d39-982499fa98e3",
+      "image_url": null,
+      "image_path": "/Users/hchfaira/work/repositories/LLM_project/tests/test_images/outfit_builder/outfit_1/santhosh-kumar-RqYTuWkTdEs-unsplash.jpg",
+      "category": "top",
+      "subcategory": null,
+      "color": {
+        "primary": "unknown",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": []
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [],
+      "silhouette": null,
+      "fit": null,
+      "style_tags": [],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.3,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.7,
+    "volume_balance": 0.7,
+    "pattern_mixing": 0.87,
+    "design_principles": 0.653,
+    "total_style": 0.58,
+    "creativity": 0.15,
+    "overall": 0.655
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 2,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "1d416030-d4eb-42b1-8b18-2b4428c626e8",
+          "category": "top",
+          "subcategory": null,
+          "color": "unknown",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "86180a2e-ac24-4c0c-9d39-982499fa98e3",
+          "category": "top",
+          "subcategory": null,
+          "color": "unknown",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        }
+      ]
+    },
+    "three_color": {
+      "color_count": 1,
+      "passes": true,
+      "colors": [
+        "unknown"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "unknown",
+      "bottom_portion": "unknown"
+    },
+    "volume_balance": {
+      "top_volume": "regular",
+      "bottom_volume": "regular",
+      "balance_type": "incomplete"
+    },
+    "pattern_mixing": {
+      "pattern_count": 0,
+      "solid_count": 2,
+      "has_scale_contrast": true,
+      "grade": "A"
+    },
+    "design_principles": {
+      "grade": "C",
+      "proportion": 0.6,
+      "balance": 0.9,
+      "harmony": 1.0,
+      "emphasis": 0.5,
+      "style": "minimalist"
+    },
+    "total_style": {
+      "grade": "C",
+      "seven_point": 0.3,
+      "color": 0.7,
+      "proportion": 0.7,
+      "volume": 0.7
+    },
+    "creativity": {
+      "level": "safe",
+      "rules_broken": 0,
+      "is_successful": false,
+      "fashion_forward": 0.087
+    }
+  },
+  "summary": {
+    "overall_score": 0.65,
+    "overall_percentage": "65%",
+    "grade": "B-",
+    "categories": [
+      "top",
+      "top"
+    ],
+    "primary_colors": [
+      "unknown",
+      "unknown"
+    ]
+  }
+}

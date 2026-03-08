@@ -1,0 +1,49 @@
+{
+  "id": "877b7b44-ffdf-4e88-a24f-880b4ca5958f",
+  "image_path": "data/sample_wardrobe/image copy.png",
+  "image_name": "image copy.png",
+  "extracted_at": "2026-03-08T11:20:01.019823",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "flared leggings",
+    "product_type": "flared leggings",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "gray",
+      "secondary": null,
+      "color_palette": [
+        "gray"
+      ],
+      "hex_codes": [
+        "#B0B0B0"
+      ],
+      "color_temperature": "neutral",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "very_casual",
+    "style_tags": [
+      "athleisure",
+      "sporty",
+      "modern"
+    ],
+    "seasons": [
+      "spring",
+      "fall",
+      "winter"
+    ]
+  }
+}

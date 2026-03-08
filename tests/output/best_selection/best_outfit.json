@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T08:12:19.746564",
+    "num_items": 3
+  },
+  "garments": [
+    {
+      "id": "56de9c10-8b94-4dc8-a5b8-63e3deef1a7c",
+      "image_url": null,
+      "image_path": "wardrobe/tops/striped_shirt.jpg",
+      "category": "top",
+      "subcategory": "button_down",
+      "color": {
+        "primary": "white",
+        "secondary": "navy",
+        "accent": null,
+        "hex_codes": [
+          "#FFFFFF",
+          "#1E3A5F"
+        ]
+      },
+      "pattern": {
+        "type": "stripes",
+        "scale": "medium",
+        "density": null,
+        "pattern_colors": [
+          "white",
+          "navy"
+        ]
+      },
+      "material": null,
+      "formality_level": "smart_casual",
+      "season_suitable": [
+        "spring",
+        "summer"
+      ],
+      "silhouette": null,
+      "fit": "regular",
+      "style_tags": [],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "b0b75724-293f-47c1-93b3-501ae8b09540",
+      "image_url": null,
+      "image_path": "wardrobe/bottoms/charcoal_trousers.jpg",
+      "category": "bottom",
+      "subcategory": "dress_pants",
+      "color": {
+        "primary": "charcoal",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#36454F"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "business",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall",
+        "winter"
+      ],
+      "silhouette": null,
+      "fit": "tailored",
+      "style_tags": [],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "c3e21ee8-5ec1-46e8-afcd-68888461cfd4",
+      "image_url": null,
+      "image_path": "wardrobe/shoes/white_sneakers.jpg",
+      "category": "shoes",
+      "subcategory": "sneakers",
+      "color": {
+        "primary": "white",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#FFFFFF"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall"
+      ],
+      "silhouette": null,
+      "fit": "regular",
+      "style_tags": [],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.4,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.4,
+    "volume_balance": 0.3333,
+    "pattern_mixing": 1.0,
+    "design_principles": 0.697,
+    "total_style": 0.48,
+    "creativity": 0.35,
+    "overall": 0.6279
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 4,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "56de9c10-8b94-4dc8-a5b8-63e3deef1a7c",
+          "category": "top",
+          "subcategory": "button_down",
+          "color": "white",
+          "points": 2,
+          "point_type": "statement",
+          "reasons": [
+            "has stripes pattern"
+          ]
+        },
+        {
+          "garment_id": "b0b75724-293f-47c1-93b3-501ae8b09540",
+          "category": "bottom",
+          "subcategory": "dress_pants",
+          "color": "charcoal",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "c3e21ee8-5ec1-46e8-afcd-68888461cfd4",
+          "category": "shoes",
+          "subcategory": "sneakers",
+          "color": "white",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        }
+      ]
+    },
+    "three_color": {
+      "color_count": 1,
+      "passes": true,
+      "colors": [
+        "navy"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "medium (1/2)",
+      "bottom_portion": "mid-rise (neutral)"
+    },
+    "volume_balance": {
+      "top_volume": "regular",
+      "bottom_volume": "regular",
+      "balance_type": "all_regular"
+    },
+    "pattern_mixing": {
+      "pattern_count": 1,
+      "solid_count": 2,
+      "has_scale_contrast": true,
+      "grade": "A"
+    },
+    "design_principles": {
+      "grade": "C",
+      "proportion": 0.7,
+      "balance": 0.9,
+      "harmony": 0.6666666666666666,
+      "emphasis": 0.5,
+      "style": "modern"
+    },
+    "total_style": {
+      "grade": "D",
+      "seven_point": 0.4,
+      "color": 0.7,
+      "proportion": 0.4,
+      "volume": 0.333
+    },
+    "creativity": {
+      "level": "moderate",
+      "rules_broken": 1,
+      "is_successful": false,
+      "fashion_forward": 0.168
+    }
+  },
+  "summary": {
+    "overall_score": 0.63,
+    "overall_percentage": "63%",
+    "grade": "C+",
+    "categories": [
+      "top",
+      "bottom",
+      "shoes"
+    ],
+    "primary_colors": [
+      "white",
+      "charcoal",
+      "white"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "32260cd5-2ff1-43d6-a4e4-5bf90b088500",
+  "image_path": "data/sample_wardrobe/image copy.png",
+  "image_name": "image copy.png",
+  "extracted_at": "2026-03-08T11:30:30.538590",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "yoga pants",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "gray",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

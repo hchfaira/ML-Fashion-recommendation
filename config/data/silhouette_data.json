@@ -1,0 +1,50 @@
+{
+    "silhouette_compatibility": {
+        "fitted_fitted": 0.7,
+        "fitted_relaxed": 0.85,
+        "fitted_oversized": 0.6,
+        "fitted_straight": 0.8,
+        "fitted_a-line": 0.9,
+        "fitted_flowing": 0.85,
+        "relaxed_fitted": 0.75,
+        "relaxed_relaxed": 0.7,
+        "relaxed_straight": 0.75,
+        "relaxed_slim": 0.85,
+        "oversized_fitted": 0.9,
+        "oversized_slim": 0.95,
+        "oversized_straight": 0.8,
+        "oversized_relaxed": 0.6,
+        "oversized_oversized": 0.4,
+        "structured_fitted": 0.85,
+        "structured_straight": 0.9,
+        "structured_relaxed": 0.7,
+        "structured_slim": 0.85,
+        "flowing_fitted": 0.8,
+        "flowing_slim": 0.85,
+        "flowing_straight": 0.75
+    },
+    "silhouette_volume": {
+        "fitted": 1,
+        "slim": 1,
+        "straight": 2,
+        "relaxed": 3,
+        "a-line": 3,
+        "flowing": 3,
+        "oversized": 4,
+        "structured": 2
+    },
+    "length_compatibility": {
+        "crop_high_rise": 0.95,
+        "crop_mid_rise": 0.85,
+        "regular_regular": 0.8,
+        "longline_regular": 0.75,
+        "crop_maxi": 0.9,
+        "regular_midi": 0.85
+    },
+    "waist_rise_recommendations": {
+        "crop": ["high_rise", "mid_rise"],
+        "regular": ["mid_rise", "high_rise"],
+        "longline": ["high_rise"]
+    },
+    "default_waist_rises": ["mid_rise", "high_rise"]
+}

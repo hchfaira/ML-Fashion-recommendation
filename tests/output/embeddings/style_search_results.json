@@ -1,0 +1,44 @@
+{
+  "casual everyday summer outfit": [
+    {
+      "item": "white_tshirt",
+      "similarity": 0.8254
+    },
+    {
+      "item": "white_sneakers",
+      "similarity": 0.8026
+    },
+    {
+      "item": "striped_shirt",
+      "similarity": 0.7972
+    }
+  ],
+  "formal business professional attire": [
+    {
+      "item": "black_dress_pants",
+      "similarity": 0.856
+    },
+    {
+      "item": "navy_blazer",
+      "similarity": 0.8328
+    },
+    {
+      "item": "blue_oxford",
+      "similarity": 0.7979
+    }
+  ],
+  "sporty minimalist streetwear": [
+    {
+      "item": "white_sneakers",
+      "similarity": 0.8472
+    },
+    {
+      "item": "white_tshirt",
+      "similarity": 0.826
+    },
+    {
+      "item": "navy_blazer",
+      "similarity": 0.776
+    }
+  ]
+}

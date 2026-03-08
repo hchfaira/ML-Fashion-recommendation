@@ -1,0 +1,29 @@
+{
+  "id": "2791838d-ebd9-4d0a-a857-02262c505a52",
+  "image_path": "data/sample_wardrobe/image copy 3.png",
+  "image_name": "image copy 3.png",
+  "extracted_at": "2026-03-08T11:20:01.019315",
+  "attributes": {
+    "category": "top",
+    "subcategory": "blouse",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "lightblue",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "category": "top",
+      "subcategory": null,
+      "product_type": null,
+      "outfit_role": null,
+      "color": {
+        "primary": "unknown",
+        "secondary": null,
+        "accent": null,
+        "color_palette": [],
+        "hex_codes": [],
+        "color_temperature": null,
+        "color_depth": null,
+        "contrast_level": null
+      },
+      "material": null,
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "description": null,
+        "pattern_colors": []
+      },
+      "silhouette_profile": null,
+      "silhouette": null,
+      "fit": null,
+      "style_identity": null,
+      "style_tags": [],
+      "styling_compatibility": null,
+      "occasion_profile": null,
+      "formality_level": "casual",
+      "seasonality": null,
+      "season_suitable": [],
+      "versatility": null,
+      "neckline": null,
+      "sleeves": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "details": {
+        "has_pockets": false,
+        "distressed": false,
+        "embellishments": [],
+        "transparency": "opaque",
+        "lined": false,
+        "reversible": false
+      },
+      "confidence_score": 0.0
+    }
+  ]
+}

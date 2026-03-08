@@ -1,0 +1,84 @@
+{
+    "llm": {
+        "default_temperature": 0.7,
+        "default_max_tokens": 500,
+        "explanation_max_tokens": 200,
+        "tip_max_tokens": 100,
+        "personalization_max_tokens": 150,
+        "comparison_max_tokens": 200,
+        "rejection_max_tokens": 150,
+        "conversation_max_tokens": 300,
+        "preference_extraction_max_tokens": 300,
+        "clarifying_max_tokens": 50,
+        "greeting_max_tokens": 50,
+        "temperatures": {
+            "creative": 0.8,
+            "balanced": 0.7,
+            "precise": 0.3
+        }
+    },
+    "vision": {
+        "generation_temperature": 0.1,
+        "max_output_tokens": 1500,
+        "http_timeout_seconds": 10
+    },
+    "embedding": {
+        "default_cache_size": 10000,
+        "similarity_threshold": 0.7,
+        "batch_size": 100
+    },
+    "scoring": {
+        "compatibility": {
+            "category_weight": 0.25,
+            "style_weight": 0.25,
+            "embedding_weight": 0.35,
+            "detail_weight": 0.15
+        },
+        "formality": {
+            "perfect_match": 1.0,
+            "one_gap": 0.9,
+            "two_gap": 0.7,
+            "three_gap": 0.4,
+            "severe_gap": 0.2,
+            "max_acceptable_gap": 2
+        },
+        "silhouette": {
+            "compatibility_weight": 0.4,
+            "volume_weight": 0.3,
+            "proportion_weight": 0.3
+        },
+        "color_harmony": {
+            "all_neutrals": 0.85,
+            "neutrals_with_accent": 0.9,
+            "monochromatic": 0.9,
+            "complementary": 0.85,
+            "analogous": 0.85,
+            "triadic": 0.8,
+            "clash": 0.6,
+            "default": 0.7,
+            "neutral_bonus_per_item": 0.05,
+            "max_neutral_bonus": 0.1
+        },
+        "activity": {
+            "weights": {
+                "activity_level": 0.3,
+                "transport": 0.2,
+                "duration": 0.2,
+                "energy": 0.15,
+                "time_of_day": 0.15
+            }
+        },
+        "context": {
+            "style_weight": 0.6,
+            "context_weight": 0.4,
+            "normalize_weights": true
+        }
+    },
+    "thresholds": {
+        "outfit_minimum_score": 0.5,
+        "recommendation_minimum": 0.6,
+        "high_quality_outfit": 0.8,
+        "wardrobe_freshness_days": 14,
+        "max_embellishments": 4
+    }
+}

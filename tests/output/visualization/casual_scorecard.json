@@ -1,0 +1,237 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-08T08:12:36.980649",
+    "num_items": 3
+  },
+  "garments": [
+    {
+      "id": "552d58b5-6910-4d82-a1bc-99467ee1ad1b",
+      "image_url": null,
+      "image_path": null,
+      "category": "top",
+      "subcategory": "t-shirt",
+      "color": {
+        "primary": "white",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#FFFFFF"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [
+        "spring",
+        "summer"
+      ],
+      "silhouette": "relaxed",
+      "fit": "regular",
+      "style_tags": [
+        "casual",
+        "minimalist"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "b3ffae30-c533-40e3-9aa7-3f68975770fd",
+      "image_url": null,
+      "image_path": null,
+      "category": "bottom",
+      "subcategory": "jeans",
+      "color": {
+        "primary": "blue",
+        "secondary": "indigo",
+        "accent": null,
+        "hex_codes": [
+          "#1E40AF"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [
+        "spring",
+        "fall",
+        "winter"
+      ],
+      "silhouette": "straight",
+      "fit": "slim",
+      "style_tags": [
+        "casual",
+        "classic"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    },
+    {
+      "id": "37f8366a-adbb-4312-bb40-10e9be0c7c8f",
+      "image_url": null,
+      "image_path": null,
+      "category": "shoes",
+      "subcategory": "sneakers",
+      "color": {
+        "primary": "white",
+        "secondary": null,
+        "accent": null,
+        "hex_codes": [
+          "#FFFFFF"
+        ]
+      },
+      "pattern": {
+        "type": "solid",
+        "scale": null,
+        "density": null,
+        "pattern_colors": []
+      },
+      "material": null,
+      "formality_level": "casual",
+      "season_suitable": [
+        "spring",
+        "summer",
+        "fall"
+      ],
+      "silhouette": "low-top",
+      "fit": "regular",
+      "style_tags": [
+        "casual",
+        "sporty"
+      ],
+      "neckline": null,
+      "length_type": null,
+      "waist_rise": null,
+      "closure": null,
+      "metadata": {}
+    }
+  ],
+  "scores": {
+    "seven_point": 0.3,
+    "color_harmony": 0.9,
+    "three_color": 1.0,
+    "proportion": 0.4,
+    "volume_balance": 0.3333,
+    "pattern_mixing": 0.9,
+    "design_principles": 0.74,
+    "total_style": 0.45,
+    "creativity": 0.06,
+    "overall": 0.5803
+  },
+  "details": {
+    "seven_point": {
+      "total_points": 3,
+      "is_harmonious": false,
+      "breakdown": [
+        {
+          "garment_id": "552d58b5-6910-4d82-a1bc-99467ee1ad1b",
+          "category": "top",
+          "subcategory": "t-shirt",
+          "color": "white",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "b3ffae30-c533-40e3-9aa7-3f68975770fd",
+          "category": "bottom",
+          "subcategory": "jeans",
+          "color": "blue",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        },
+        {
+          "garment_id": "37f8366a-adbb-4312-bb40-10e9be0c7c8f",
+          "category": "shoes",
+          "subcategory": "sneakers",
+          "color": "white",
+          "points": 1,
+          "point_type": "basic",
+          "reasons": [
+            "basic staple piece"
+          ]
+        }
+      ]
+    },
+    "three_color": {
+      "color_count": 1,
+      "passes": true,
+      "colors": [
+        "blue",
+        "indigo"
+      ]
+    },
+    "proportion": {
+      "ratio": "undefined",
+      "top_portion": "medium (1/2)",
+      "bottom_portion": "mid-rise (neutral)"
+    },
+    "volume_balance": {
+      "top_volume": "regular",
+      "bottom_volume": "slim",
+      "balance_type": "unknown"
+    },
+    "pattern_mixing": {
+      "pattern_count": 0,
+      "solid_count": 3,
+      "has_scale_contrast": true,
+      "grade": "A"
+    },
+    "design_principles": {
+      "grade": "B",
+      "proportion": 0.7,
+      "balance": 0.9,
+      "harmony": 1.0,
+      "emphasis": 0.5,
+      "style": "classic"
+    },
+    "total_style": {
+      "grade": "D",
+      "seven_point": 0.3,
+      "color": 0.7,
+      "proportion": 0.4,
+      "volume": 0.333
+    },
+    "creativity": {
+      "level": "safe",
+      "rules_broken": 1,
+      "is_successful": false,
+      "fashion_forward": 0.027
+    }
+  },
+  "summary": {
+    "overall_score": 0.58,
+    "overall_percentage": "58%",
+    "grade": "C",
+    "categories": [
+      "top",
+      "bottom",
+      "shoes"
+    ],
+    "primary_colors": [
+      "white",
+      "blue",
+      "white"
+    ]
+  }
+}

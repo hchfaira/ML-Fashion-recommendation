@@ -1,0 +1,75 @@
+{
+    "body_type_recommendations": {
+        "rectangle": {
+            "silhouettes": ["a-line", "fitted", "peplum", "structured"],
+            "patterns": ["horizontal_stripes", "color_blocking"],
+            "avoid": ["shapeless", "boxy"],
+            "tips": [
+                "Create curves with structured pieces",
+                "Define waist with belts"
+            ]
+        },
+        "hourglass": {
+            "silhouettes": ["fitted", "wrap", "bodycon", "tailored"],
+            "patterns": ["any"],
+            "avoid": ["shapeless", "oversized", "boxy"],
+            "tips": [
+                "Emphasize your natural waist",
+                "Choose items that follow your curves"
+            ]
+        },
+        "pear": {
+            "silhouettes": ["a-line", "fit_and_flare", "empire_waist"],
+            "patterns": ["on_top", "solid_bottom"],
+            "avoid": ["tight_bottoms", "hip_emphasis"],
+            "tips": [
+                "Draw attention to upper body",
+                "Choose darker colors on bottom"
+            ]
+        },
+        "apple": {
+            "silhouettes": ["empire_waist", "v_neck", "a-line"],
+            "patterns": ["vertical_stripes", "v_patterns"],
+            "avoid": ["tight_waist", "clingy_fabrics"],
+            "tips": [
+                "Elongate torso with V-necks",
+                "Show off legs with shorter hemlines"
+            ]
+        },
+        "inverted_triangle": {
+            "silhouettes": ["a-line", "wide_leg", "flared"],
+            "patterns": ["volume_on_bottom"],
+            "avoid": ["shoulder_pads", "boat_necks"],
+            "tips": [
+                "Balance broad shoulders with volume below",
+                "Choose V-necks to soften shoulders"
+            ]
+        },
+        "athletic": {
+            "silhouettes": ["feminine", "ruffles", "curved"],
+            "patterns": ["florals", "soft_patterns"],
+            "avoid": ["too_sporty", "severe_cuts"],
+            "tips": [
+                "Add softness with feminine details",
+                "Create curves with strategic volume"
+            ]
+        }
+    },
+    "general_recommendations": {
+        "silhouettes": ["balanced", "well-fitted"],
+        "patterns": ["personal_preference"],
+        "avoid": [],
+        "tips": [
+            "Focus on fit and comfort",
+            "Wear what makes you feel confident"
+        ]
+    },
+    "priority_areas": {
+        "rectangle": ["waist_definition", "curves"],
+        "hourglass": ["waist_emphasis", "balance"],
+        "pear": ["upper_body", "shoulders"],
+        "apple": ["legs", "neckline"],
+        "inverted_triangle": ["lower_body", "hips"],
+        "athletic": ["femininity", "curves"]
+    }
+}

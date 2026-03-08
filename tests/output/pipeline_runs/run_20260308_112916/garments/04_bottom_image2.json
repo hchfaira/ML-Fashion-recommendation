@@ -1,0 +1,50 @@
+{
+  "id": "51fa0672-bb62-4e76-a53d-b5053672be78",
+  "image_path": "data/sample_wardrobe/image2.png",
+  "image_name": "image2.png",
+  "extracted_at": "2026-03-08T11:30:30.539393",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "pants",
+    "product_type": "high-waisted bootcut pants",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "tan",
+      "secondary": null,
+      "color_palette": [
+        "tan"
+      ],
+      "hex_codes": [
+        "#B89E73"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "medium"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "semi_structured",
+      "volume": "medium"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "minimalist",
+      "elegant"
+    ],
+    "seasons": [
+      "spring",
+      "fall",
+      "winter"
+    ]
+  }
+}

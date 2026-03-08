@@ -1,0 +1,25 @@
+{
+  "query": "white_tshirt",
+  "results": [
+    {
+      "item": "white_sneakers",
+      "similarity": 0.9045
+    },
+    {
+      "item": "blue_oxford",
+      "similarity": 0.8782
+    },
+    {
+      "item": "striped_shirt",
+      "similarity": 0.8742
+    },
+    {
+      "item": "blue_jeans",
+      "similarity": 0.8481
+    },
+    {
+      "item": "khaki_chinos",
+      "similarity": 0.8408
+    }
+  ]
+}

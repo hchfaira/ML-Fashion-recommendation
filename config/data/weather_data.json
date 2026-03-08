@@ -1,0 +1,56 @@
+{
+    "temperature_recommendations": {
+        "below_5": {
+            "layers": ["heavy_coat", "sweater", "thermal"],
+            "suggested_materials": ["wool", "down", "fleece"],
+            "accessories": ["scarf", "gloves", "beanie"],
+            "avoid": []
+        },
+        "5_to_12": {
+            "layers": ["jacket", "light_sweater"],
+            "suggested_materials": ["wool", "cotton", "denim"],
+            "accessories": ["light_scarf"],
+            "avoid": []
+        },
+        "12_to_18": {
+            "layers": ["light_jacket", "cardigan"],
+            "suggested_materials": ["cotton", "linen blend"],
+            "accessories": [],
+            "avoid": []
+        },
+        "18_to_25": {
+            "layers": ["light_layers"],
+            "suggested_materials": ["cotton", "linen"],
+            "accessories": [],
+            "avoid": ["heavy_fabrics", "dark_colors"]
+        },
+        "above_25": {
+            "layers": ["minimal"],
+            "suggested_materials": ["linen", "light_cotton", "breathable"],
+            "accessories": [],
+            "avoid": ["wool", "heavy_fabrics", "layers"]
+        }
+    },
+    "condition_adjustments": {
+        "rainy": {
+            "accessories_add": ["umbrella"],
+            "materials_add": ["water_resistant"],
+            "avoid_add": ["suede", "silk"]
+        },
+        "sunny_hot": {
+            "accessories_add": ["sunglasses", "hat"],
+            "materials_add": [],
+            "avoid_add": []
+        }
+    },
+    "condition_mapping": {
+        "clear": "sunny",
+        "clouds": "cloudy",
+        "rain": "rainy",
+        "drizzle": "rainy",
+        "thunderstorm": "rainy",
+        "snow": "snowy",
+        "mist": "cloudy",
+        "fog": "cloudy"
+    }
+}

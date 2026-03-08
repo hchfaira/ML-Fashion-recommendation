@@ -1,0 +1,56 @@
+{
+    "transition_recommendations": {
+        "elevate": {
+            "add": [
+                "blazer or structured jacket",
+                "statement jewelry",
+                "dress shoes or heels"
+            ],
+            "swap": [
+                ["sneakers", "loafers or heels"],
+                ["t-shirt", "blouse or button-down"],
+                ["casual bag", "structured handbag"]
+            ],
+            "remove": []
+        },
+        "casualize": {
+            "add": [],
+            "swap": [
+                ["dress shoes", "clean sneakers"],
+                ["button-down", "casual top"],
+                ["structured bag", "crossbody or tote"]
+            ],
+            "remove": [
+                "blazer or jacket",
+                "tie",
+                "formal jewelry"
+            ]
+        }
+    },
+    "formality_gap_strategies": {
+        "0": "single_outfit",
+        "1": "single_outfit",
+        "2": "smart_layers",
+        "3": "accessory_swap",
+        "4_plus": "full_change"
+    },
+    "occasion_formality_mapping": {
+        "casual": 1,
+        "daily_wear": 1,
+        "weekend": 1,
+        "beach": 1,
+        "gym": 1,
+        "sport": 2,
+        "outdoor": 2,
+        "travel": 2,
+        "work": 3,
+        "business": 4,
+        "interview": 4,
+        "date": 3,
+        "evening": 4,
+        "cocktail": 5,
+        "event": 4,
+        "formal": 5,
+        "wedding": 5
+    }
+}

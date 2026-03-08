@@ -1,0 +1,333 @@
+{
+  "run_timestamp": "20260308_111852",
+  "run_directory": "tests/output/pipeline_runs/run_20260308_111852",
+  "summary": {
+    "total_garments_analyzed": 6,
+    "total_combinations": 6,
+    "best_score": 0.7045833333333333,
+    "profile_used": "default"
+  },
+  "best_outfit": {
+    "name": "tank_top + flared leggings + blazer",
+    "overall_score": 0.7045833333333333,
+    "garments": [
+      {
+        "id": "f69c213e-a415-45f9-95d2-854b9fcbebce",
+        "image": "image copy 2.png",
+        "category": "top",
+        "subcategory": "tank_top",
+        "color": "lilac",
+        "color_secondary": "white",
+        "pattern": "graphic"
+      },
+      {
+        "id": "877b7b44-ffdf-4e88-a24f-880b4ca5958f",
+        "image": "image copy.png",
+        "category": "bottom",
+        "subcategory": "flared leggings",
+        "color": "gray",
+        "color_secondary": null,
+        "pattern": "solid"
+      },
+      {
+        "id": "de250c9c-95c8-4027-bc87-ea25a3178fea",
+        "image": "image copy 4.png",
+        "category": "outerwear",
+        "subcategory": "blazer",
+        "color": "lavender",
+        "color_secondary": null,
+        "pattern": "solid"
+      }
+    ],
+    "scores": {
+      "metadata": {
+        "timestamp": "2026-03-08T11:20:01.333556",
+        "num_items": 3,
+        "profile": "default",
+        "profile_name": "Balanced Scoring"
+      },
+      "garments": [
+        {
+          "id": "f69c213e-a415-45f9-95d2-854b9fcbebce",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy 2.png",
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": {
+            "primary": "lilac",
+            "secondary": "white",
+            "accent": null,
+            "hex_codes": [
+              "#D0B8D0",
+              "#FFFFFF"
+            ]
+          },
+          "pattern": {
+            "type": "graphic",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": {
+            "primary": "knit",
+            "secondary": null,
+            "texture": "ribbed"
+          },
+          "formality_level": "casual",
+          "season_suitable": [
+            "spring",
+            "summer"
+          ],
+          "silhouette": "slim",
+          "fit": "slim",
+          "style_tags": [
+            "modern",
+            "sporty",
+            "streetwear"
+          ],
+          "neckline": "crewneck",
+          "length_type": "crop",
+          "waist_rise": null,
+          "closure": "pull_on",
+          "metadata": {}
+        },
+        {
+          "id": "877b7b44-ffdf-4e88-a24f-880b4ca5958f",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy.png",
+          "category": "bottom",
+          "subcategory": "flared leggings",
+          "color": {
+            "primary": "gray",
+            "secondary": null,
+            "accent": null,
+            "hex_codes": [
+              "#B0B0B0"
+            ]
+          },
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": {
+            "primary": "knit",
+            "secondary": null,
+            "texture": "smooth"
+          },
+          "formality_level": "very_casual",
+          "season_suitable": [
+            "spring",
+            "fall",
+            "winter"
+          ],
+          "silhouette": "slim",
+          "fit": "slim",
+          "style_tags": [
+            "athleisure",
+            "sporty",
+            "modern"
+          ],
+          "neckline": null,
+          "length_type": null,
+          "waist_rise": "high_rise",
+          "closure": "pull_on",
+          "metadata": {}
+        },
+        {
+          "id": "de250c9c-95c8-4027-bc87-ea25a3178fea",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy 4.png",
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": {
+            "primary": "lavender",
+            "secondary": null,
+            "accent": null,
+            "hex_codes": []
+          },
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": null,
+          "formality_level": "casual",
+          "season_suitable": [],
+          "silhouette": null,
+          "fit": null,
+          "style_tags": [],
+          "neckline": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "metadata": {}
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.775,
+        "total_style": 0.63,
+        "overall": 0.7046
+      },
+      "details": {
+        "seven_point": {
+          "total_points": 4,
+          "is_harmonious": false,
+          "breakdown": [
+            {
+              "garment_id": "f69c213e-a415-45f9-95d2-854b9fcbebce",
+              "category": "top",
+              "subcategory": "tank_top",
+              "color": "lilac",
+              "points": 1,
+              "point_type": "basic",
+              "reasons": [
+                "basic staple piece"
+              ]
+            },
+            {
+              "garment_id": "877b7b44-ffdf-4e88-a24f-880b4ca5958f",
+              "category": "bottom",
+              "subcategory": "flared leggings",
+              "color": "gray",
+              "points": 1,
+              "point_type": "basic",
+              "reasons": [
+                "basic staple piece"
+              ]
+            },
+            {
+              "garment_id": "de250c9c-95c8-4027-bc87-ea25a3178fea",
+              "category": "outerwear",
+              "subcategory": "blazer",
+              "color": "lavender",
+              "points": 2,
+              "point_type": "statement",
+              "reasons": [
+                "statement blazer"
+              ]
+            }
+          ]
+        },
+        "color_harmony": {
+          "score": 0.9
+        },
+        "three_color": {
+          "color_count": 1,
+          "passes": true,
+          "colors": [
+            "lavender",
+            "lilac"
+          ]
+        },
+        "proportion": {
+          "ratio": "1/3 - 2/3",
+          "top_portion": "short (1/3)",
+          "bottom_portion": "high-waisted (elongates legs)"
+        },
+        "pattern_mixing": {
+          "pattern_count": 1,
+          "solid_count": 2,
+          "has_scale_contrast": true,
+          "grade": "A"
+        },
+        "design_principles": {
+          "grade": "B",
+          "proportion": 0.95,
+          "balance": 0.9,
+          "harmony": 1.0,
+          "emphasis": 0.5,
+          "style": "modern"
+        },
+        "total_style": {
+          "grade": "C",
+          "seven_point": 0.4,
+          "color": 0.7,
+          "proportion": 1,
+          "volume": 0.333
+        },
+        "creativity": {
+          "level": "safe",
+          "rules_broken": 0,
+          "is_successful": false,
+          "fashion_forward": 0.095
+        }
+      },
+      "summary": {
+        "overall_score": 0.7,
+        "overall_percentage": "70%",
+        "grade": "B",
+        "categories": [
+          "top",
+          "bottom",
+          "outerwear"
+        ],
+        "primary_colors": [
+          "lilac",
+          "gray",
+          "lavender"
+        ]
+      },
+      "criteria_config": {
+        "seven_point": {
+          "display_name": "7-Point Rule",
+          "weight": 0.15,
+          "enabled": true
+        },
+        "color_harmony": {
+          "display_name": "Color Harmony",
+          "weight": 0.15,
+          "enabled": true
+        },
+        "three_color": {
+          "display_name": "3-Color Rule",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "proportion": {
+          "display_name": "Proportions",
+          "weight": 0.15,
+          "enabled": true
+        },
+        "volume_balance": {
+          "display_name": "Volume Balance",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "pattern_mixing": {
+          "display_name": "Pattern Mixing",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "design_principles": {
+          "display_name": "Design Principles",
+          "weight": 0.15,
+          "enabled": true
+        },
+        "creativity": {
+          "display_name": "Creativity",
+          "weight": 0.1,
+          "enabled": true
+        }
+      }
+    }
+  },
+  "score_distribution": {
+    "excellent": 0,
+    "good": 5,
+    "needs_work": 1
+  },
+  "files_generated": {
+    "garments": "tests/output/pipeline_runs/run_20260308_111852/garments",
+    "combinations": "tests/output/pipeline_runs/run_20260308_111852/combinations",
+    "graphs": "tests/output/pipeline_runs/run_20260308_111852/graphs"
+  }
+}
