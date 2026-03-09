@@ -74,6 +74,20 @@ from .creativity_scorer import (
 from .outfit_scorecard import OutfitScorecard
 from .outfit_builder import OutfitBuilder, OutfitCandidate
 
+# Outfit Search Algorithms (Optimized search)
+from .outfit_search import (
+    SearchAlgorithm,
+    SearchConfig,
+    SearchResult,
+    PartialScorer,
+    BaseOutfitSearch,
+    BeamSearch,
+    AStarSearch,
+    HybridSearch,
+    create_outfit_search,
+    search_best_outfits,
+)
+
 # Scoring Configuration Service
 from .scoring_config_service import (
     ScoringConfigService,
@@ -189,6 +203,18 @@ __all__ = [
     "OutfitScorecard",
     "OutfitBuilder",
     "OutfitCandidate",
+    
+    # Outfit Search Algorithms
+    "SearchAlgorithm",
+    "SearchConfig",
+    "SearchResult",
+    "PartialScorer",
+    "BaseOutfitSearch",
+    "BeamSearch",
+    "AStarSearch",
+    "HybridSearch",
+    "create_outfit_search",
+    "search_best_outfits",
     
     # Scoring Configuration
     "ScoringConfigService",

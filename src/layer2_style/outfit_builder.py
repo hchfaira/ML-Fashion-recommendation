@@ -6,8 +6,20 @@ This module provides:
 - OutfitBuilder: Main class for building and scoring outfits
 - OutfitCandidate: Data class for scored outfit candidates
 - Combination generation, scoring, and selection logic
+- Optimized search using Beam Search and A* algorithms
+
+Architecture:
+    Wardrobe
+        ↓
+    OutfitSearch (Beam Search / A* / Hybrid)
+        ↓
+    Scorers (lazy evaluation)
+        ↓
+    TotalStyleScorer
+        ↓
+    Top-K Outfits
 """
-from typing import List, Dict, Optional, Any, Union
+from typing import List, Dict, Optional, Any, Union, Tuple
 from pathlib import Path
 from dataclasses import dataclass
 from itertools import product
@@ -18,6 +30,16 @@ from src.core.models import Garment, GarmentAttributes, UserContext, Outfit
 from src.core import get_logger
 from src.layer1_vision.attribute_extractor import AttributeExtractor, ExtractionMode
 from .outfit_scorecard import OutfitScorecard
+from .outfit_search import (
+    SearchAlgorithm,
+    SearchConfig,
+    SearchResult,
+    BeamSearch,
+    AStarSearch,
+    HybridSearch,
+    create_outfit_search,
+    search_best_outfits
+)
 
 logger = get_logger(__name__)
 
@@ -234,18 +256,25 @@ class OutfitBuilder:
         wardrobe: Dict[str, List[Garment]],
         require_categories: List[str] = None,
         optional_categories: List[str] = None,
-        max_combinations: int = 50
+        max_combinations: int = 50,
+        include_full_body: bool = True
     ) -> List[List[Garment]]:
         """
         Generate all valid outfit combinations from wardrobe.
+        
+        Outfit rules:
+        - Minimum outfit = (top + bottom) OR full_body
+        - full_body (dress, jumpsuit, romper) replaces top + bottom
+        - Optional: shoes, outerwear, accessories can be added
         
         Args:
             wardrobe: Dict of category -> garments
             require_categories: Categories that must be present in each outfit.
                               Defaults to ["tops", "bottoms"] - minimum for an outfit.
             optional_categories: Categories to include if available.
-                              Defaults to ["shoes", "accessories", "outerwear"].
+                              Defaults to ["shoes", "outerwear", "accessories"].
             max_combinations: Maximum number of combinations to generate
+            include_full_body: Whether to include full_body items as outfit base
             
         Returns:
             List of outfit combinations (each is a list of garments)
@@ -254,57 +283,162 @@ class OutfitBuilder:
         if require_categories is None:
             require_categories = ["tops", "bottoms"]
         
-        # Default optional: shoes, accessories, outerwear
+        # Default optional: shoes, outerwear, accessories
         if optional_categories is None:
-            optional_categories = ["shoes", "accessories", "outerwear"]
+            optional_categories = ["shoes", "outerwear", "accessories"]
         
-        # Check if we have the required categories
-        missing_required = []
-        for cat in require_categories:
-            if cat not in wardrobe or not wardrobe.get(cat):
-                missing_required.append(cat)
+        all_outfits = []
         
-        if missing_required:
-            logger.warning(f"Missing required categories: {missing_required}")
+        # ========== Strategy 1: Top + Bottom combinations ==========
+        has_tops = "tops" in wardrobe and wardrobe.get("tops")
+        has_bottoms = "bottoms" in wardrobe and wardrobe.get("bottoms")
+        
+        if has_tops and has_bottoms:
+            base_combinations = self._generate_top_bottom_combinations(
+                wardrobe, optional_categories
+            )
+            all_outfits.extend(base_combinations)
+            logger.info(f"Generated {len(base_combinations)} top+bottom combinations")
+        
+        # ========== Strategy 2: Full Body combinations ==========
+        has_full_body = "full_body" in wardrobe and wardrobe.get("full_body")
+        
+        if include_full_body and has_full_body:
+            full_body_combinations = self._generate_full_body_combinations(
+                wardrobe, optional_categories
+            )
+            all_outfits.extend(full_body_combinations)
+            logger.info(f"Generated {len(full_body_combinations)} full_body combinations")
+        
+        # Check if any outfits were generated
+        if not all_outfits:
+            logger.warning("No valid outfit combinations found. "
+                          "Need (tops + bottoms) OR full_body items.")
             return []
         
-        # Build list of category items to combine
-        category_items = []
-        categories_used = []
+        # Limit combinations
+        if len(all_outfits) > max_combinations:
+            logger.warning(f"Limiting to {max_combinations} combinations (of {len(all_outfits)} total)")
+            all_outfits = all_outfits[:max_combinations]
         
-        # Add required categories
-        for cat in require_categories:
-            items = wardrobe.get(cat, [])
-            if items:
-                category_items.append(items)
-                categories_used.append(cat)
+        logger.info(f"Total outfit combinations: {len(all_outfits)}")
+        return all_outfits
+    
+    def _generate_top_bottom_combinations(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        optional_categories: List[str]
+    ) -> List[List[Garment]]:
+        """
+        Generate combinations with top + bottom as base.
         
-        # Add optional categories if they have items
+        Args:
+            wardrobe: Full wardrobe
+            optional_categories: Optional categories to include
+            
+        Returns:
+            List of outfit combinations
+        """
+        tops = wardrobe.get("tops", [])
+        bottoms = wardrobe.get("bottoms", [])
+        
+        if not tops or not bottoms:
+            return []
+        
+        # Build category items list: [tops, bottoms, ...optionals]
+        category_items = [tops, bottoms]
+        categories_used = ["tops", "bottoms"]
+        
+        # Add optional categories
         for cat in optional_categories:
             items = wardrobe.get(cat, [])
             if items:
                 category_items.append(items)
                 categories_used.append(cat)
-                logger.debug(f"Including optional category '{cat}' with {len(items)} items")
-            else:
-                logger.debug(f"Optional category '{cat}' is empty, skipping")
         
-        if not category_items:
-            logger.warning("No categories with items to combine")
-            return []
+        logger.debug(f"Top+Bottom categories: {categories_used}")
         
-        logger.info(f"Building combinations from categories: {categories_used}")
-        
-        # Generate cartesian product of all categories
+        # Generate cartesian product
         all_combinations = list(product(*category_items))
         
-        # Limit combinations
-        if len(all_combinations) > max_combinations:
-            logger.warning(f"Limiting to {max_combinations} combinations (of {len(all_combinations)} total)")
-            all_combinations = all_combinations[:max_combinations]
+        return [list(combo) for combo in all_combinations]
+    
+    def _generate_full_body_combinations(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        optional_categories: List[str]
+    ) -> List[List[Garment]]:
+        """
+        Generate combinations with full_body (dress, jumpsuit) as base.
         
-        # Convert to list of garment lists
-        outfits = [list(combo) for combo in all_combinations]
+        Note: full_body replaces top + bottom, so we don't include them.
+        
+        Args:
+            wardrobe: Full wardrobe
+            optional_categories: Optional categories to include
+            
+        Returns:
+            List of outfit combinations
+        """
+        full_body_items = wardrobe.get("full_body", [])
+        
+        if not full_body_items:
+            return []
+        
+        # Build category items: [full_body, ...optionals]
+        # Note: We exclude "tops" and "bottoms" from optionals
+        category_items = [full_body_items]
+        categories_used = ["full_body"]
+        
+        # Add optional categories (but not tops/bottoms)
+        excluded = {"tops", "bottoms", "full_body"}
+        for cat in optional_categories:
+            if cat in excluded:
+                continue
+            items = wardrobe.get(cat, [])
+            if items:
+                category_items.append(items)
+                categories_used.append(cat)
+        
+        logger.debug(f"Full-body categories: {categories_used}")
+        
+        # Generate cartesian product
+        all_combinations = list(product(*category_items))
+        
+        return [list(combo) for combo in all_combinations]
+    
+    def _get_optional_categories_items(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        optional_categories: List[str],
+        exclude: set = None
+    ) -> Tuple[List[List[Garment]], List[str]]:
+        """
+        Get items from optional categories.
+        
+        Args:
+            wardrobe: Full wardrobe
+            optional_categories: List of optional category names
+            exclude: Set of category names to exclude
+            
+        Returns:
+            Tuple of (category_items, categories_used)
+        """
+        if exclude is None:
+            exclude = set()
+        
+        category_items = []
+        categories_used = []
+        
+        for cat in optional_categories:
+            if cat in exclude:
+                continue
+            items = wardrobe.get(cat, [])
+            if items:
+                category_items.append(items)
+                categories_used.append(cat)
+        
+        return category_items, categories_used
         
         logger.info(f"Generated {len(outfits)} outfit combinations")
         return outfits
@@ -447,6 +581,185 @@ class OutfitBuilder:
                 reverse=True
             )
             return sorted_candidates[:n]
+    
+    # ==================== Optimized Search ====================
+    
+    def search_best_outfits(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        algorithm: SearchAlgorithm = SearchAlgorithm.BEAM,
+        top_k: int = 5,
+        beam_width: int = 10,
+        profile: Optional[str] = None
+    ) -> List[OutfitCandidate]:
+        """
+        Search for best outfits using optimized search algorithms.
+        
+        Uses Beam Search, A*, or Hybrid algorithms for efficient
+        exploration without exhaustive enumeration.
+        
+        Args:
+            wardrobe: Dict of category -> garments
+            algorithm: Search algorithm (BEAM, ASTAR, HYBRID)
+            top_k: Number of top results to return
+            beam_width: Beam width for beam search
+            profile: Scoring profile to use
+            
+        Returns:
+            List of top OutfitCandidate sorted by score
+        """
+        config = SearchConfig(
+            algorithm=algorithm,
+            top_k=top_k,
+            beam_width=beam_width,
+            scoring_profile=profile
+        )
+        
+        searcher = create_outfit_search(algorithm, config)
+        result = searcher.search(wardrobe, self.context)
+        
+        logger.info(f"Search completed: {len(result.outfits)} outfits found "
+                   f"({result.nodes_expanded} nodes, {result.search_time_ms:.1f}ms)")
+        
+        # Convert to OutfitCandidate with full scoring
+        candidates = []
+        for outfit, partial_score in result:
+            name = " + ".join([
+                g.attributes.subcategory or g.attributes.category.value 
+                for g in outfit
+            ])
+            
+            # Full scoring
+            scorecard = self.score_outfit(outfit, profile=profile)
+            
+            candidate = OutfitCandidate(
+                garments=outfit,
+                scorecard=scorecard,
+                overall_score=scorecard.scores.get("overall", 0),
+                name=name
+            )
+            candidates.append(candidate)
+        
+        # Re-sort by full score
+        candidates.sort(reverse=True)
+        
+        return candidates
+    
+    def beam_search_outfits(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        beam_width: int = 10,
+        top_k: int = 5,
+        profile: Optional[str] = None
+    ) -> List[OutfitCandidate]:
+        """
+        Find best outfits using Beam Search.
+        
+        Efficient greedy search that maintains top candidates at each level.
+        
+        Args:
+            wardrobe: Dict of category -> garments
+            beam_width: Number of candidates to keep at each level
+            top_k: Number of final results
+            profile: Scoring profile
+            
+        Returns:
+            List of top OutfitCandidate
+        """
+        return self.search_best_outfits(
+            wardrobe,
+            algorithm=SearchAlgorithm.BEAM,
+            top_k=top_k,
+            beam_width=beam_width,
+            profile=profile
+        )
+    
+    def astar_search_outfits(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        max_expansions: int = 1000,
+        top_k: int = 5,
+        profile: Optional[str] = None
+    ) -> List[OutfitCandidate]:
+        """
+        Find best outfits using A* Search.
+        
+        Heuristic-guided search for optimal solutions.
+        
+        Args:
+            wardrobe: Dict of category -> garments
+            max_expansions: Maximum nodes to expand
+            top_k: Number of final results
+            profile: Scoring profile
+            
+        Returns:
+            List of top OutfitCandidate
+        """
+        config = SearchConfig(
+            algorithm=SearchAlgorithm.ASTAR,
+            max_expansions=max_expansions,
+            top_k=top_k,
+            scoring_profile=profile
+        )
+        
+        searcher = create_outfit_search(SearchAlgorithm.ASTAR, config)
+        result = searcher.search(wardrobe, self.context)
+        
+        logger.info(f"A* Search: {result.nodes_expanded} nodes, "
+                   f"{result.nodes_pruned} pruned, {result.search_time_ms:.1f}ms")
+        
+        # Convert to OutfitCandidate with full scoring
+        candidates = []
+        for outfit, _ in result:
+            name = " + ".join([
+                g.attributes.subcategory or g.attributes.category.value 
+                for g in outfit
+            ])
+            
+            scorecard = self.score_outfit(outfit, profile=profile)
+            
+            candidate = OutfitCandidate(
+                garments=outfit,
+                scorecard=scorecard,
+                overall_score=scorecard.scores.get("overall", 0),
+                name=name
+            )
+            candidates.append(candidate)
+        
+        candidates.sort(reverse=True)
+        return candidates
+    
+    def find_best_outfit_fast(
+        self,
+        wardrobe: Dict[str, List[Garment]],
+        profile: Optional[str] = None
+    ) -> OutfitCandidate:
+        """
+        Quickly find the single best outfit using beam search.
+        
+        Optimized for speed when you only need the top result.
+        
+        Args:
+            wardrobe: Dict of category -> garments
+            profile: Scoring profile
+            
+        Returns:
+            Best OutfitCandidate
+            
+        Raises:
+            ValueError: If no valid outfit found
+        """
+        candidates = self.beam_search_outfits(
+            wardrobe,
+            beam_width=5,
+            top_k=1,
+            profile=profile
+        )
+        
+        if not candidates:
+            raise ValueError("No valid outfit combinations found")
+        
+        return candidates[0]
     
     # ==================== Reporting ====================
     
