@@ -1,8 +1,13 @@
 """
 Context Engine - Main Orchestrator for Layer 3
 Combines all contextual factors to filter and adjust recommendations.
+
+Enhanced with body measurements integration for:
+- Fit prediction based on body metrics
+- Proportion harmony analysis
+- Color harmony based on skin/hair analysis
 """
-from typing import List, Dict, Any, Optional, Set, Union
+from typing import List, Dict, Any, Optional, Set, Union, TYPE_CHECKING
 from datetime import datetime
 from pathlib import Path
 from enum import Enum
@@ -20,6 +25,12 @@ from .user_history import UserHistoryManager
 from .schedule_analyzer import ScheduleAnalyzer, TransitionStrategy
 from .wardrobe_rotation import WardrobeRotationService
 from .activity_analyzer import ActivityAnalyzer
+from .fit_predictor import FitPredictor, FitPrediction, OutfitFitPrediction
+from .proportion_harmonizer import ProportionHarmonizer, ProportionAnalysis, ProportionScore
+from .color_harmony_advisor import ColorHarmonyAdvisor, ColorProfile, ColorHarmonyScore
+
+if TYPE_CHECKING:
+    from .user_profile.models import BodyMetrics, StyleProfile
 
 logger = get_logger(__name__)
 
@@ -32,6 +43,9 @@ class ContextCriteria(str, Enum):
     PREFERENCE = "preference"
     ACTIVITY = "activity"
     FRESHNESS = "freshness"
+    FIT = "fit"  # New: Size/fit compatibility
+    PROPORTION = "proportion"  # New: Body proportion harmony
+    COLOR_HARMONY = "color_harmony"  # New: Color matching based on skin/hair
 
 
 # Default configuration path
@@ -45,12 +59,15 @@ DEFAULT_CRITERIA: List[ContextCriteria] = [
 
 # Default weights for each criterion
 DEFAULT_WEIGHTS: Dict[ContextCriteria, float] = {
-    ContextCriteria.WEATHER: 0.20,
-    ContextCriteria.OCCASION: 0.30,
+    ContextCriteria.WEATHER: 0.15,
+    ContextCriteria.OCCASION: 0.20,
     ContextCriteria.MORPHOLOGY: 0.15,
-    ContextCriteria.PREFERENCE: 0.15,
-    ContextCriteria.ACTIVITY: 0.12,
-    ContextCriteria.FRESHNESS: 0.08,
+    ContextCriteria.PREFERENCE: 0.10,
+    ContextCriteria.ACTIVITY: 0.05,
+    ContextCriteria.FRESHNESS: 0.05,
+    ContextCriteria.FIT: 0.10,
+    ContextCriteria.PROPORTION: 0.10,
+    ContextCriteria.COLOR_HARMONY: 0.10,
 }
 
 # Full criteria set for comprehensive analysis
@@ -173,6 +190,14 @@ class ContextEngine:
         self.schedule_analyzer = ScheduleAnalyzer()
         self.wardrobe_rotation = WardrobeRotationService(history_file)
         self.activity_analyzer = ActivityAnalyzer()
+        
+        # Body measurement integration services
+        self.fit_predictor = FitPredictor()
+        self.proportion_harmonizer = ProportionHarmonizer()
+        self.color_harmony_advisor = ColorHarmonyAdvisor()
+        
+        # Style profile cache (set via set_style_profile)
+        self._style_profile: Optional["StyleProfile"] = None
     
     def _parse_criteria_from_config(self) -> Set[ContextCriteria]:
         """Parse enabled criteria from config."""
@@ -389,7 +414,10 @@ class ContextEngine:
             "morphology_score": 1.0,
             "preference_score": 1.0,
             "activity_score": 1.0,
-            "freshness_score": 1.0
+            "freshness_score": 1.0,
+            "fit_score": 1.0,
+            "proportion_score": 1.0,
+            "color_harmony_score": 1.0
         }
         
         garments = [item.garment for item in outfit.items]
@@ -401,7 +429,10 @@ class ContextEngine:
             ContextCriteria.MORPHOLOGY: "morphology_score",
             ContextCriteria.PREFERENCE: "preference_score",
             ContextCriteria.ACTIVITY: "activity_score",
-            ContextCriteria.FRESHNESS: "freshness_score"
+            ContextCriteria.FRESHNESS: "freshness_score",
+            ContextCriteria.FIT: "fit_score",
+            ContextCriteria.PROPORTION: "proportion_score",
+            ContextCriteria.COLOR_HARMONY: "color_harmony_score"
         }
         
         # Weather appropriateness
@@ -416,11 +447,17 @@ class ContextEngine:
                 garments, context.occasion
             )
         
-        # Morphology suitability
+        # Morphology suitability (enhanced with body metrics)
         if self.is_criterion_active(ContextCriteria.MORPHOLOGY) and context.body_type:
-            scores["morphology_score"] = self.morphology_advisor.score_for_body_type(
-                garments, context.body_type
-            )
+            if self._style_profile and hasattr(self._style_profile, 'body_metrics'):
+                enhanced_score = self.morphology_advisor.score_with_measurements(
+                    garments, context.body_type, self._style_profile.body_metrics
+                )
+                scores["morphology_score"] = enhanced_score.final_score
+            else:
+                scores["morphology_score"] = self.morphology_advisor.score_for_body_type(
+                    garments, context.body_type
+                )
         
         # User preference alignment
         if self.is_criterion_active(ContextCriteria.PREFERENCE) and context.user_id:
@@ -440,6 +477,21 @@ class ContextEngine:
             scores["freshness_score"] = self.wardrobe_rotation.score_outfit_freshness(
                 garments, context
             )
+        
+        # NEW: Fit prediction based on body metrics
+        if self.is_criterion_active(ContextCriteria.FIT) and self._style_profile:
+            fit_prediction = self._score_fit(garments)
+            scores["fit_score"] = fit_prediction.overall_score
+        
+        # NEW: Proportion harmony
+        if self.is_criterion_active(ContextCriteria.PROPORTION) and self._style_profile:
+            proportion_score = self._score_proportion_harmony(garments)
+            scores["proportion_score"] = proportion_score.score
+        
+        # NEW: Color harmony
+        if self.is_criterion_active(ContextCriteria.COLOR_HARMONY) and self._style_profile:
+            color_score = self._score_color_harmony(garments)
+            scores["color_harmony_score"] = color_score.score
         
         # Calculate weighted total based on active criteria only
         active_weights = {}
@@ -739,6 +791,236 @@ class ContextEngine:
                     "name": getattr(featured, 'name', featured.id),
                     "category": featured.attributes.category.value
                 }
+        
+        return analysis
+    
+    # ============================================
+    # Body Measurement Integration Methods
+    # ============================================
+    
+    def set_style_profile(self, style_profile: "StyleProfile") -> None:
+        """
+        Set the user's style profile for body measurement-based scoring.
+        
+        Args:
+            style_profile: StyleProfile from user_profile module
+        """
+        self._style_profile = style_profile
+        logger.info("Style profile set for body measurement scoring")
+        
+        # Enable body measurement criteria if profile is set
+        if style_profile.body_metrics:
+            self.add_criterion(ContextCriteria.FIT)
+            self.add_criterion(ContextCriteria.PROPORTION)
+        
+        if style_profile.skin_analysis or style_profile.hair_analysis:
+            self.add_criterion(ContextCriteria.COLOR_HARMONY)
+    
+    def clear_style_profile(self) -> None:
+        """Clear the style profile and disable body measurement criteria."""
+        self._style_profile = None
+        self.remove_criterion(ContextCriteria.FIT)
+        self.remove_criterion(ContextCriteria.PROPORTION)
+        self.remove_criterion(ContextCriteria.COLOR_HARMONY)
+        logger.info("Style profile cleared")
+    
+    def _score_fit(self, garments: List[Garment]) -> OutfitFitPrediction:
+        """Score outfit fit based on body metrics."""
+        if not self._style_profile or not self._style_profile.body_metrics:
+            return OutfitFitPrediction(
+                overall_score=0.7,
+                garment_scores={},
+                average_fit_type="unknown",
+                fit_notes=["No body metrics available"]
+            )
+        
+        metrics = self._style_profile.body_metrics
+        
+        return self.fit_predictor.predict_outfit_fit(
+            garments=garments,
+            user_top_size=getattr(metrics, 'estimated_top_size', None),
+            user_bottom_size=getattr(metrics, 'estimated_bottom_size', None),
+            user_bmi_category=getattr(metrics, 'bmi_category', None)
+        )
+    
+    def _score_proportion_harmony(self, garments: List[Garment]) -> ProportionScore:
+        """Score outfit based on body proportion harmony."""
+        if not self._style_profile or not self._style_profile.body_metrics:
+            return ProportionScore(
+                score=0.7,
+                harmony_level="unknown",
+                positive_factors=[],
+                negative_factors=[],
+                styling_tips=[]
+            )
+        
+        metrics = self._style_profile.body_metrics
+        
+        # Get proportion analysis
+        analysis = self.proportion_harmonizer.analyze_proportions(
+            torso_ratio=getattr(metrics, 'torso_leg_ratio', None),
+            leg_ratio=getattr(metrics, 'leg_proportion', None) if hasattr(metrics, 'leg_proportion') else None,
+            frame_size=getattr(metrics, 'frame_size', None),
+            shoulder_hip_ratio=getattr(metrics, 'shoulder_hip_ratio', None)
+        )
+        
+        return self.proportion_harmonizer.score_outfit_harmony(garments, analysis)
+    
+    def _score_color_harmony(self, garments: List[Garment]) -> ColorHarmonyScore:
+        """Score outfit based on color harmony with user's coloring."""
+        if not self._style_profile:
+            return ColorHarmonyScore(
+                score=0.7,
+                harmony_level="unknown",
+                matching_colors=[],
+                clashing_colors=[],
+                notes=[]
+            )
+        
+        # Build color profile from style profile
+        skin = self._style_profile.skin_analysis
+        hair = self._style_profile.hair_analysis
+        
+        if not skin and not hair:
+            return ColorHarmonyScore(
+                score=0.7,
+                harmony_level="unknown",
+                matching_colors=[],
+                clashing_colors=[],
+                notes=["No skin/hair analysis available"]
+            )
+        
+        # Extract values with defaults
+        skin_tone = str(getattr(skin, 'skin_tone', 'MEDIUM')) if skin else 'MEDIUM'
+        undertone = str(getattr(skin, 'undertone', 'NEUTRAL')) if skin else 'NEUTRAL'
+        hair_color = str(getattr(hair, 'hair_color', 'BROWN')) if hair else 'BROWN'
+        contrast_level = str(getattr(skin, 'contrast_level', 'MEDIUM')) if skin else 'MEDIUM'
+        
+        color_profile = self.color_harmony_advisor.create_color_profile(
+            skin_tone=skin_tone,
+            undertone=undertone,
+            hair_color=hair_color,
+            contrast_level=contrast_level
+        )
+        
+        return self.color_harmony_advisor.score_outfit_colors(garments, color_profile)
+    
+    def get_body_measurement_recommendations(
+        self,
+        garments: List[Garment]
+    ) -> Dict[str, Any]:
+        """
+        Get comprehensive recommendations based on body measurements.
+        
+        Returns recommendations for:
+        - Fit adjustments
+        - Proportion styling
+        - Color harmony
+        
+        Args:
+            garments: List of garments to evaluate
+            
+        Returns:
+            Dict with recommendations from all body measurement modules
+        """
+        recommendations = {}
+        
+        if not self._style_profile:
+            return {"error": "No style profile set. Use set_style_profile() first."}
+        
+        # Fit recommendations
+        if self._style_profile.body_metrics:
+            fit_result = self._score_fit(garments)
+            recommendations["fit"] = {
+                "score": fit_result.overall_score,
+                "fit_type": fit_result.average_fit_type,
+                "notes": fit_result.fit_notes
+            }
+            
+            # Proportion recommendations
+            prop_result = self._score_proportion_harmony(garments)
+            recommendations["proportions"] = {
+                "score": prop_result.score,
+                "harmony_level": prop_result.harmony_level,
+                "positive": prop_result.positive_factors,
+                "negative": prop_result.negative_factors,
+                "tips": prop_result.styling_tips
+            }
+        
+        # Color recommendations
+        if self._style_profile.skin_analysis or self._style_profile.hair_analysis:
+            color_result = self._score_color_harmony(garments)
+            recommendations["color_harmony"] = {
+                "score": color_result.score,
+                "harmony_level": color_result.harmony_level,
+                "matching": color_result.matching_colors,
+                "clashing": color_result.clashing_colors,
+                "notes": color_result.notes
+            }
+            
+            # Add color recommendations
+            if self._style_profile.skin_analysis:
+                skin = self._style_profile.skin_analysis
+                color_profile = self.color_harmony_advisor.create_color_profile(
+                    skin_tone=str(getattr(skin, 'skin_tone', 'MEDIUM')),
+                    undertone=str(getattr(skin, 'undertone', 'NEUTRAL')),
+                    hair_color='BROWN',  # Default if no hair analysis
+                    contrast_level=str(getattr(skin, 'contrast_level', 'MEDIUM'))
+                )
+                color_recs = self.color_harmony_advisor.get_color_recommendations(color_profile)
+                recommendations["recommended_colors"] = {
+                    "best": color_recs.best_colors,
+                    "neutrals": color_recs.neutral_colors,
+                    "avoid": color_recs.colors_to_avoid,
+                    "tips": color_recs.tips
+                }
+        
+        return recommendations
+    
+    def get_enhanced_outfit_analysis(
+        self,
+        outfit: Outfit,
+        context: UserContext
+    ) -> Dict[str, Any]:
+        """
+        Get enhanced outfit analysis including body measurements.
+        
+        Combines:
+        - Context scoring (weather, occasion, activity, etc.)
+        - Body measurement scoring (fit, proportions, colors)
+        - Morphology recommendations
+        
+        Args:
+            outfit: Outfit to analyze
+            context: User context
+            
+        Returns:
+            Comprehensive analysis dict
+        """
+        garments = [item.garment for item in outfit.items]
+        
+        analysis = {
+            "outfit_id": getattr(outfit, 'id', None),
+            "overall_score": outfit.overall_score,
+        }
+        
+        # Standard context analysis
+        analysis["context"] = {
+            "active_criteria": [c.value for c in self._criteria],
+            "weights": {c.value: w for c, w in self._weights.items() if c in self._criteria}
+        }
+        
+        # Body measurement analysis if profile is set
+        if self._style_profile:
+            analysis["body_measurements"] = self.get_body_measurement_recommendations(garments)
+            
+            # Enhanced morphology if body metrics available
+            if self._style_profile.body_metrics and context.body_type:
+                enhanced_morph = self.morphology_advisor.get_enhanced_recommendations(
+                    context.body_type,
+                    self._style_profile.body_metrics
+                )
+                analysis["morphology"] = enhanced_morph
         
         return analysis
 

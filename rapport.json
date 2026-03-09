@@ -1,19 +1,19 @@
 {
   "best_outfit": {
     "name": "tank_top + trousers + pumps + blazer",
-    "overall_score": 0.7521666666666667,
+    "overall_score": 0.7433666666666666,
     "garments": [
       {
-        "id": "b7fc0cbe-1450-451c-860c-13c7cad6e4b0",
+        "id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
         "image": "image copy 2.png",
         "category": "top",
         "subcategory": "tank_top",
-        "color": "lilac",
+        "color": "lavender",
         "color_secondary": "white",
         "pattern": "graphic"
       },
       {
-        "id": "ae1d97c7-f091-4af6-a2a4-4ae0cbff4180",
+        "id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
         "image": "image.png",
         "category": "bottom",
         "subcategory": "trousers",
@@ -22,16 +22,16 @@
         "pattern": "solid"
       },
       {
-        "id": "1205c3e0-73d5-43e7-a50a-0aba7b1ceb6b",
+        "id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
         "image": "image copy 6.png",
         "category": "shoes",
         "subcategory": "pumps",
         "color": "black",
-        "color_secondary": "tan",
+        "color_secondary": null,
         "pattern": "solid"
       },
       {
-        "id": "772f44b9-b6e6-40a2-a8cc-2751595341bf",
+        "id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
         "image": "image copy 4.png",
         "category": "outerwear",
         "subcategory": "blazer",
@@ -42,24 +42,24 @@
     ],
     "scores": {
       "metadata": {
-        "timestamp": "2026-03-09T06:39:41.162459",
+        "timestamp": "2026-03-09T08:19:20.298700",
         "num_items": 4,
         "profile": "default",
         "profile_name": "Balanced Scoring"
       },
       "garments": [
         {
-          "id": "b7fc0cbe-1450-451c-860c-13c7cad6e4b0",
+          "id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
           "image_url": null,
           "image_path": "data/sample_wardrobe/image copy 2.png",
           "category": "top",
           "subcategory": "tank_top",
           "color": {
-            "primary": "lilac",
+            "primary": "lavender",
             "secondary": "white",
             "accent": null,
             "hex_codes": [
-              "#D8C2E0",
+              "#D8BFD8",
               "#FFFFFF"
             ]
           },
@@ -82,8 +82,9 @@
           "silhouette": "slim",
           "fit": "slim",
           "style_tags": [
-            "sporty",
+            "casual",
             "modern",
+            "sporty",
             "streetwear"
           ],
           "neckline": "crewneck",
@@ -93,7 +94,7 @@
           "metadata": {}
         },
         {
-          "id": "ae1d97c7-f091-4af6-a2a4-4ae0cbff4180",
+          "id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
           "image_url": null,
           "image_path": "data/sample_wardrobe/image.png",
           "category": "bottom",
@@ -103,7 +104,7 @@
             "secondary": null,
             "accent": null,
             "hex_codes": [
-              "#E0D7C6"
+              "#E0D7C7"
             ]
           },
           "pattern": {
@@ -128,8 +129,9 @@
           "style_tags": [
             "classic",
             "modern",
+            "minimalist",
             "elegant",
-            "minimalist"
+            "business_casual"
           ],
           "neckline": null,
           "length_type": null,
@@ -138,19 +140,16 @@
           "metadata": {}
         },
         {
-          "id": "1205c3e0-73d5-43e7-a50a-0aba7b1ceb6b",
+          "id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
           "image_url": null,
           "image_path": "data/sample_wardrobe/image copy 6.png",
           "category": "shoes",
           "subcategory": "pumps",
           "color": {
             "primary": "black",
-            "secondary": "tan",
+            "secondary": null,
             "accent": null,
-            "hex_codes": [
-              "#000000",
-              "#E0D0C0"
-            ]
+            "hex_codes": []
           },
           "pattern": {
             "type": "solid",
@@ -158,35 +157,20 @@
             "density": null,
             "pattern_colors": []
           },
-          "material": {
-            "primary": "leather",
-            "secondary": null,
-            "texture": "glossy"
-          },
-          "formality_level": "smart_casual",
-          "season_suitable": [
-            "spring",
-            "summer",
-            "fall",
-            "winter"
-          ],
-          "silhouette": "slim",
-          "fit": "slim",
-          "style_tags": [
-            "classic",
-            "elegant",
-            "modern",
-            "business",
-            "sophisticated"
-          ],
+          "material": null,
+          "formality_level": "casual",
+          "season_suitable": [],
+          "silhouette": null,
+          "fit": null,
+          "style_tags": [],
           "neckline": null,
           "length_type": null,
           "waist_rise": null,
-          "closure": "pull_on",
+          "closure": null,
           "metadata": {}
         },
         {
-          "id": "772f44b9-b6e6-40a2-a8cc-2751595341bf",
+          "id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
           "image_url": null,
           "image_path": "data/sample_wardrobe/image copy 4.png",
           "category": "outerwear",
@@ -195,9 +179,7 @@
             "primary": "lavender",
             "secondary": null,
             "accent": null,
-            "hex_codes": [
-              "#B5A7D8"
-            ]
+            "hex_codes": []
           },
           "pattern": {
             "type": "solid",
@@ -205,53 +187,40 @@
             "density": null,
             "pattern_colors": []
           },
-          "material": {
-            "primary": "polyester",
-            "secondary": null,
-            "texture": "smooth"
-          },
-          "formality_level": "smart_casual",
-          "season_suitable": [
-            "spring",
-            "summer",
-            "fall"
-          ],
-          "silhouette": "regular",
-          "fit": "regular",
-          "style_tags": [
-            "classic",
-            "modern",
-            "elegant",
-            "minimalist"
-          ],
-          "neckline": "collared",
-          "length_type": "regular",
+          "material": null,
+          "formality_level": "casual",
+          "season_suitable": [],
+          "silhouette": null,
+          "fit": null,
+          "style_tags": [],
+          "neckline": null,
+          "length_type": null,
           "waist_rise": null,
-          "closure": "buttons",
+          "closure": null,
           "metadata": {}
         }
       ],
       "scores": {
-        "seven_point": 0.6,
+        "seven_point": 0.5,
         "color_harmony": 0.9,
         "three_color": 1.0,
         "proportion": 1,
         "volume_balance": 0.6667,
-        "pattern_mixing": 0.95,
-        "design_principles": 0.73,
-        "total_style": 0.74,
-        "overall": 0.7522
+        "pattern_mixing": 1.0,
+        "design_principles": 0.738,
+        "total_style": 0.71,
+        "overall": 0.7434
       },
       "details": {
         "seven_point": {
-          "total_points": 6,
+          "total_points": 5,
           "is_harmonious": false,
           "breakdown": [
             {
-              "garment_id": "b7fc0cbe-1450-451c-860c-13c7cad6e4b0",
+              "garment_id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
               "category": "top",
               "subcategory": "tank_top",
-              "color": "lilac",
+              "color": "lavender",
               "points": 1,
               "point_type": "basic",
               "reasons": [
@@ -259,7 +228,7 @@
               ]
             },
             {
-              "garment_id": "ae1d97c7-f091-4af6-a2a4-4ae0cbff4180",
+              "garment_id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
               "category": "bottom",
               "subcategory": "trousers",
               "color": "beige",
@@ -270,18 +239,18 @@
               ]
             },
             {
-              "garment_id": "1205c3e0-73d5-43e7-a50a-0aba7b1ceb6b",
+              "garment_id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
               "category": "shoes",
               "subcategory": "pumps",
               "color": "black",
-              "points": 2,
-              "point_type": "statement",
+              "points": 1,
+              "point_type": "basic",
               "reasons": [
-                "made of leather"
+                "basic staple piece"
               ]
             },
             {
-              "garment_id": "772f44b9-b6e6-40a2-a8cc-2751595341bf",
+              "garment_id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
               "category": "outerwear",
               "subcategory": "blazer",
               "color": "lavender",
@@ -297,11 +266,9 @@
           "score": 0.9
         },
         "three_color": {
-          "color_count": 2,
+          "color_count": 1,
           "passes": true,
           "colors": [
-            "tan",
-            "lilac",
             "lavender"
           ]
         },
@@ -326,7 +293,7 @@
         },
         "total_style": {
           "grade": "B",
-          "seven_point": 0.6,
+          "seven_point": 0.5,
           "color": 0.7,
           "proportion": 1,
           "volume": 0.667
@@ -335,13 +302,13 @@
           "level": "safe",
           "rules_broken": 1,
           "is_successful": false,
-          "fashion_forward": 0.044
+          "fashion_forward": 0.043
         }
       },
       "summary": {
-        "overall_score": 0.75,
-        "overall_percentage": "75%",
-        "grade": "B+",
+        "overall_score": 0.74,
+        "overall_percentage": "74%",
+        "grade": "B",
         "categories": [
           "top",
           "bottom",
@@ -349,7 +316,7 @@
           "outerwear"
         ],
         "primary_colors": [
-          "lilac",
+          "lavender",
           "beige",
           "black",
           "lavender"
@@ -397,16 +364,17 @@
           "enabled": true
         }
       }
-    }
+    },
+    "context_adjusted_score": 0.7873533333333333
   },
   "all_combinations": [
     {
       "rank": 1,
-      "score": 0.7521666666666667,
+      "score": 0.7433666666666666,
       "garments": [
         {
           "category": "top",
-          "description": "lilac/white tank_top (graphic)",
+          "description": "lavender/white tank_top (graphic)",
           "image": "image copy 2.png"
         },
         {
@@ -416,7 +384,7 @@
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -428,11 +396,11 @@
     },
     {
       "rank": 2,
-      "score": 0.7186833333333333,
+      "score": 0.7161833333333333,
       "garments": [
         {
           "category": "top",
-          "description": "lilac/white tank_top (graphic)",
+          "description": "lavender/white tank_top (graphic)",
           "image": "image copy 2.png"
         },
         {
@@ -442,7 +410,7 @@
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -454,21 +422,21 @@
     },
     {
       "rank": 3,
-      "score": 0.7167333333333333,
+      "score": 0.70745,
       "garments": [
         {
           "category": "top",
-          "description": "lilac/white tank_top (graphic)",
-          "image": "image copy 2.png"
+          "description": "skyblue blouse",
+          "image": "image copy 3.png"
         },
         {
           "category": "bottom",
-          "description": "gray flare_leggings",
-          "image": "image copy.png"
+          "description": "tan pants",
+          "image": "image2.png"
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -480,21 +448,21 @@
     },
     {
       "rank": 4,
-      "score": 0.6622666666666667,
+      "score": 0.6406666666666667,
       "garments": [
         {
           "category": "top",
-          "description": "skyblue one-shoulder top",
+          "description": "skyblue blouse",
           "image": "image copy 3.png"
         },
         {
           "category": "bottom",
-          "description": "beige trousers",
-          "image": "image.png"
+          "description": "gray leggings",
+          "image": "image copy.png"
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -506,21 +474,21 @@
     },
     {
       "rank": 5,
-      "score": 0.6272833333333333,
+      "score": 0.6237833333333334,
       "garments": [
         {
           "category": "top",
-          "description": "skyblue one-shoulder top",
-          "image": "image copy 3.png"
+          "description": "lavender/white tank_top (graphic)",
+          "image": "image copy 2.png"
         },
         {
           "category": "bottom",
-          "description": "tan pants",
-          "image": "image2.png"
+          "description": "gray leggings",
+          "image": "image copy.png"
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -532,21 +500,21 @@
     },
     {
       "rank": 6,
-      "score": 0.6188833333333333,
+      "score": 0.6124,
       "garments": [
         {
           "category": "top",
-          "description": "skyblue one-shoulder top",
+          "description": "skyblue blouse",
           "image": "image copy 3.png"
         },
         {
           "category": "bottom",
-          "description": "gray flare_leggings",
-          "image": "image copy.png"
+          "description": "beige trousers",
+          "image": "image.png"
         },
         {
           "category": "shoes",
-          "description": "black/tan pumps",
+          "description": "black pumps",
           "image": "image copy 6.png"
         },
         {
@@ -558,5 +526,33 @@
     }
   ],
   "total_combinations": 6,
-  "profile_used": "default"
+  "profile_used": "default",
+  "context_analysis": {
+    "fit": {
+      "score": 1.0,
+      "fit_type": "perfect",
+      "notes": [
+        "Size matches well"
+      ]
+    },
+    "proportions": {
+      "score": 0.7,
+      "harmony_level": "good",
+      "positive_factors": [],
+      "negative_factors": [],
+      "tips": []
+    },
+    "color_harmony": {
+      "score": 0.86,
+      "harmony_level": "excellent",
+      "matching_colors": [
+        "black",
+        "black"
+      ],
+      "clashing_colors": [],
+      "notes": []
+    },
+    "overall_context_score": 0.8533333333333334,
+    "blended_score": 0.7873533333333333
+  }
 }

@@ -1,15 +1,33 @@
 """
 Morphology Advisor
 Provides body-type aware style recommendations.
+
+Enhanced with body measurement integration for more precise
+recommendations based on actual measurements.
 """
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any, TYPE_CHECKING
 from enum import Enum
+from dataclasses import dataclass, field
 
 from config import get_config
 from src.core.models import Garment, GarmentCategory
 from src.core import get_logger
 
+if TYPE_CHECKING:
+    from src.layer3_context.user_profile.models import BodyMetrics
+
 logger = get_logger(__name__)
+
+
+@dataclass
+class EnhancedMorphologyScore:
+    """Enhanced scoring with body measurements."""
+    base_score: float
+    measurement_adjustments: float
+    final_score: float
+    body_type: str
+    notes: List[str] = field(default_factory=list)
+    measurement_based_tips: List[str] = field(default_factory=list)
 
 
 class BodyType(str, Enum):
@@ -309,3 +327,237 @@ class MorphologyAdvisor:
             ],
             "priority_areas": {"emphasize": [], "minimize": []}
         }
+
+    # ========== ENHANCED METHODS WITH BODY MEASUREMENTS ==========
+    
+    def score_with_measurements(
+        self,
+        garments: List[Garment],
+        body_type: str,
+        body_metrics: Optional["BodyMetrics"] = None
+    ) -> EnhancedMorphologyScore:
+        """
+        Score outfit with body measurements for enhanced precision.
+        
+        Args:
+            garments: List of garments
+            body_type: Body type string
+            body_metrics: Optional body metrics with measurements
+            
+        Returns:
+            EnhancedMorphologyScore with detailed analysis
+        """
+        # Get base body type score
+        base_score = self.score_for_body_type(garments, body_type)
+        
+        measurement_adjustments = 0.0
+        notes = []
+        measurement_tips = []
+        
+        if body_metrics:
+            # Adjust based on torso proportion
+            torso_prop = getattr(body_metrics, 'torso_proportion', None)
+            if torso_prop:
+                adj, tip = self._adjust_for_torso(garments, torso_prop)
+                measurement_adjustments += adj
+                if tip:
+                    measurement_tips.append(tip)
+            
+            # Adjust based on leg proportion
+            leg_prop = getattr(body_metrics, 'leg_proportion', None)
+            if leg_prop:
+                adj, tip = self._adjust_for_legs(garments, leg_prop)
+                measurement_adjustments += adj
+                if tip:
+                    measurement_tips.append(tip)
+            
+            # Adjust based on frame size
+            frame_size = getattr(body_metrics, 'frame_size', None)
+            if frame_size:
+                adj, tip = self._adjust_for_frame(garments, frame_size)
+                measurement_adjustments += adj
+                if tip:
+                    measurement_tips.append(tip)
+            
+            # Adjust based on shoulder-hip ratio
+            shoulder_ratio = getattr(body_metrics, 'shoulder_hip_ratio', None)
+            if shoulder_ratio:
+                adj, note = self._adjust_for_shoulder_hip(garments, shoulder_ratio, body_type)
+                measurement_adjustments += adj
+                if note:
+                    notes.append(note)
+        
+        final_score = max(0.0, min(1.0, base_score + measurement_adjustments))
+        
+        return EnhancedMorphologyScore(
+            base_score=base_score,
+            measurement_adjustments=measurement_adjustments,
+            final_score=final_score,
+            body_type=body_type,
+            notes=notes,
+            measurement_based_tips=measurement_tips
+        )
+    
+    def get_enhanced_recommendations(
+        self,
+        body_type: str,
+        body_metrics: Optional["BodyMetrics"] = None
+    ) -> Dict[str, Any]:
+        """
+        Get recommendations enhanced with body measurements.
+        
+        Args:
+            body_type: Body type string
+            body_metrics: Optional body metrics
+            
+        Returns:
+            Enhanced recommendations dictionary
+        """
+        base_recs = self.get_recommendations_for_body_type(body_type)
+        
+        if body_metrics:
+            # Add measurement-specific tips
+            measurement_tips = []
+            
+            # Torso-based tips
+            torso_prop = getattr(body_metrics, 'torso_proportion', None)
+            if torso_prop == 'short':
+                measurement_tips.append("High-waisted bottoms will elongate your torso")
+                measurement_tips.append("V-necks create vertical lines that lengthen")
+            elif torso_prop == 'long':
+                measurement_tips.append("Mid-rise bottoms balance your proportions")
+                measurement_tips.append("Layered tops add interest to your torso")
+            
+            # Leg-based tips
+            leg_prop = getattr(body_metrics, 'leg_proportion', None)
+            if leg_prop == 'short':
+                measurement_tips.append("High-waisted pants create an illusion of longer legs")
+                measurement_tips.append("Pointed toe shoes elongate your silhouette")
+            elif leg_prop == 'long':
+                measurement_tips.append("You can wear any pant length beautifully")
+                measurement_tips.append("Cropped pants showcase your leg length")
+            
+            # Frame size tips
+            frame_size = getattr(body_metrics, 'frame_size', None)
+            if frame_size == 'small':
+                measurement_tips.append("Delicate accessories complement your frame")
+                measurement_tips.append("Avoid oversized, bulky pieces")
+            elif frame_size == 'large':
+                measurement_tips.append("Substantial accessories suit your frame")
+                measurement_tips.append("Bold patterns work well for you")
+            
+            # Proportion tips from BodyMetrics
+            if hasattr(body_metrics, 'proportion_tips') and body_metrics.proportion_tips:
+                measurement_tips.extend(body_metrics.proportion_tips)
+            
+            base_recs["measurement_based_tips"] = measurement_tips
+            
+            # Add size recommendations
+            top_size = getattr(body_metrics, 'estimated_top_size', None)
+            bottom_size = getattr(body_metrics, 'estimated_bottom_size', None)
+            
+            if top_size or bottom_size:
+                base_recs["size_recommendations"] = {
+                    "estimated_top_size": top_size,
+                    "estimated_bottom_size": bottom_size
+                }
+        
+        return base_recs
+    
+    def _adjust_for_torso(
+        self,
+        garments: List[Garment],
+        torso_proportion: str
+    ) -> tuple[float, Optional[str]]:
+        """Adjust score based on torso proportion."""
+        if torso_proportion == 'short':
+            # Check for high-waisted items (bonus) or low-rise (penalty)
+            for garment in garments:
+                waist = self._get_garment_attribute(garment, 'waist', '')
+                if 'high' in waist.lower():
+                    return 0.1, None
+                elif 'low' in waist.lower():
+                    return -0.1, "Low-rise may not flatter short torso"
+        elif torso_proportion == 'long':
+            for garment in garments:
+                waist = self._get_garment_attribute(garment, 'waist', '')
+                if 'low' in waist.lower() or 'mid' in waist.lower():
+                    return 0.05, None
+        
+        return 0.0, None
+    
+    def _adjust_for_legs(
+        self,
+        garments: List[Garment],
+        leg_proportion: str
+    ) -> tuple[float, Optional[str]]:
+        """Adjust score based on leg proportion."""
+        if leg_proportion == 'short':
+            for garment in garments:
+                # Check for vertical lines or elongating features
+                pattern = self._get_garment_attribute(garment, 'pattern', '')
+                if 'vertical' in pattern.lower():
+                    return 0.1, None
+                
+                # Check for cropped pants (penalty)
+                category = str(getattr(garment, 'category', '')).lower()
+                if 'crop' in category:
+                    return -0.1, "Cropped pants may shorten leg appearance"
+        
+        return 0.0, None
+    
+    def _adjust_for_frame(
+        self,
+        garments: List[Garment],
+        frame_size: str
+    ) -> tuple[float, Optional[str]]:
+        """Adjust score based on frame size."""
+        for garment in garments:
+            weight = self._get_garment_attribute(garment, 'weight', '')
+            
+            if frame_size == 'small':
+                if 'heavy' in weight.lower() or 'bulky' in weight.lower():
+                    return -0.1, "Heavy fabrics may overwhelm small frame"
+            elif frame_size == 'large':
+                if 'delicate' in weight.lower() or 'sheer' in weight.lower():
+                    return -0.05, "Very delicate fabrics may not suit large frame"
+        
+        return 0.0, None
+    
+    def _adjust_for_shoulder_hip(
+        self,
+        garments: List[Garment],
+        shoulder_hip_ratio: float,
+        body_type: str
+    ) -> tuple[float, Optional[str]]:
+        """Adjust score based on shoulder to hip ratio."""
+        # Significant difference between shoulders and hips
+        if shoulder_hip_ratio > 1.1:  # Broader shoulders
+            for garment in garments:
+                # Check for shoulder-emphasizing features
+                neckline = self._get_garment_attribute(garment, 'neckline', '')
+                if 'boat' in neckline.lower() or 'off_shoulder' in neckline.lower():
+                    return -0.1, "This neckline may over-emphasize shoulders"
+        elif shoulder_hip_ratio < 0.9:  # Broader hips
+            for garment in garments:
+                # Check for hip-emphasizing features
+                silhouette = self._get_garment_attribute(garment, 'silhouette', '')
+                if 'tight' in silhouette.lower() or 'bodycon' in silhouette.lower():
+                    return -0.05, None
+        
+        return 0.0, None
+    
+    def _get_garment_attribute(
+        self,
+        garment: Garment,
+        attr_name: str,
+        default: str = ''
+    ) -> str:
+        """Safely get garment attribute."""
+        if hasattr(garment, 'attributes') and garment.attributes:
+            attrs = garment.attributes
+            if isinstance(attrs, dict):
+                return str(attrs.get(attr_name, default))
+            elif hasattr(attrs, attr_name):
+                return str(getattr(attrs, attr_name, default))
+        return default

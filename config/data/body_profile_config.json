@@ -1,0 +1,398 @@
+{
+    "context_scoring_weights": {
+        "description": "Weights for each scoring component in the context engine",
+        "weights": {
+            "weather": 0.12,
+            "occasion": 0.18,
+            "schedule": 0.08,
+            "wardrobe_rotation": 0.05,
+            "morphology": 0.15,
+            "fit_prediction": 0.12,
+            "proportion_harmony": 0.15,
+            "color_harmony": 0.10,
+            "activity": 0.05
+        },
+        "normalize": true
+    },
+    
+    "fit_predictor": {
+        "description": "Rules for predicting garment fit based on user measurements",
+        "size_match_scores": {
+            "exact": 1.0,
+            "one_off": 0.7,
+            "two_off": 0.4,
+            "three_plus_off": 0.1
+        },
+        "size_order": ["XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"],
+        "fit_type_adjustments": {
+            "description": "Adjustments based on BMI category and garment fit type",
+            "underweight": {
+                "oversized": 0.1,
+                "regular": 0.0,
+                "slim": -0.1
+            },
+            "normal": {
+                "oversized": 0.0,
+                "regular": 0.0,
+                "slim": 0.0
+            },
+            "overweight": {
+                "oversized": 0.1,
+                "regular": 0.0,
+                "slim": -0.2
+            },
+            "obese": {
+                "oversized": 0.15,
+                "regular": 0.0,
+                "slim": -0.3
+            }
+        }
+    },
+    
+    "proportion_harmonizer": {
+        "description": "Rules for matching outfits to body proportions",
+        "torso_rules": {
+            "short": {
+                "favorable": {
+                    "high_waist": 0.15,
+                    "tucked_in": 0.10,
+                    "vertical_stripes": 0.10,
+                    "v_neck": 0.08,
+                    "monochrome_top_bottom": 0.05
+                },
+                "unfavorable": {
+                    "cropped_top": -0.20,
+                    "low_rise": -0.15,
+                    "horizontal_stripes": -0.10,
+                    "wide_belt": -0.08,
+                    "color_blocking_horizontal": -0.10
+                },
+                "tips": [
+                    "High-waisted bottoms elongate the torso",
+                    "Tuck in tops to create longer lines",
+                    "Avoid cropped styles that shorten torso"
+                ]
+            },
+            "average": {
+                "favorable": {},
+                "unfavorable": {},
+                "tips": ["Most styles work well with balanced proportions"]
+            },
+            "long": {
+                "favorable": {
+                    "cropped_top": 0.10,
+                    "wide_belt": 0.10,
+                    "color_blocking": 0.08,
+                    "tucked_out": 0.05
+                },
+                "unfavorable": {
+                    "very_high_waist": -0.10,
+                    "long_untucked": -0.05
+                },
+                "tips": [
+                    "Crop tops and color blocking balance proportions",
+                    "Belts at natural waist work well"
+                ]
+            }
+        },
+        "leg_rules": {
+            "short": {
+                "favorable": {
+                    "high_waist": 0.15,
+                    "same_color_shoes": 0.10,
+                    "pointed_toe": 0.05,
+                    "heels": 0.10,
+                    "vertical_lines": 0.08,
+                    "nude_shoes": 0.08,
+                    "slim_fit_pants": 0.05
+                },
+                "unfavorable": {
+                    "cropped_pants": -0.15,
+                    "ankle_straps": -0.10,
+                    "cuffed_pants": -0.08,
+                    "horizontal_details_legs": -0.10,
+                    "contrasting_shoes": -0.05
+                },
+                "tips": [
+                    "High-waisted styles lengthen leg line",
+                    "Shoes matching pants color elongate legs",
+                    "Avoid ankle straps that break the leg line"
+                ]
+            },
+            "average": {
+                "favorable": {},
+                "unfavorable": {},
+                "tips": ["Most lengths and styles work well"]
+            },
+            "long": {
+                "favorable": {
+                    "cropped_pants": 0.10,
+                    "low_rise": 0.08,
+                    "ankle_details": 0.05,
+                    "color_blocking_legs": 0.08
+                },
+                "unfavorable": {
+                    "very_high_waist": -0.05
+                },
+                "tips": [
+                    "Can wear cropped styles confidently",
+                    "Low-rise options work well"
+                ]
+            }
+        },
+        "frame_size_rules": {
+            "small": {
+                "print_scale": "small_to_medium",
+                "jewelry_scale": "delicate",
+                "details": "fine",
+                "favorable_prints": ["small_florals", "fine_stripes", "micro_patterns"],
+                "unfavorable_prints": ["large_bold_prints", "oversized_graphics"],
+                "score_modifiers": {
+                    "small_print": 0.10,
+                    "delicate_jewelry": 0.08,
+                    "fine_details": 0.05,
+                    "large_print": -0.15,
+                    "chunky_jewelry": -0.10
+                }
+            },
+            "medium": {
+                "print_scale": "medium",
+                "jewelry_scale": "moderate",
+                "details": "standard",
+                "favorable_prints": ["medium_scale", "balanced_patterns"],
+                "unfavorable_prints": [],
+                "score_modifiers": {}
+            },
+            "large": {
+                "print_scale": "medium_to_large",
+                "jewelry_scale": "statement",
+                "details": "bold",
+                "favorable_prints": ["large_florals", "bold_graphics", "wide_stripes"],
+                "unfavorable_prints": ["tiny_prints", "very_fine_details"],
+                "score_modifiers": {
+                    "bold_print": 0.10,
+                    "statement_jewelry": 0.08,
+                    "bold_details": 0.05,
+                    "tiny_print": -0.10,
+                    "delicate_jewelry": -0.05
+                }
+            }
+        }
+    },
+    
+    "color_harmony_advisor": {
+        "description": "Rules for matching outfit colors to user's coloring",
+        "undertone_colors": {
+            "cool": {
+                "best_colors": [
+                    "navy", "royal_blue", "sapphire", "cobalt",
+                    "purple", "lavender", "plum", "violet",
+                    "emerald", "teal", "pine",
+                    "pink", "rose", "magenta", "fuchsia",
+                    "silver", "white", "gray",
+                    "burgundy", "wine", "cherry"
+                ],
+                "avoid_colors": [
+                    "orange", "peach", "coral",
+                    "warm_yellow", "mustard", "gold_yellow",
+                    "olive", "warm_brown", "camel",
+                    "rust", "terracotta"
+                ],
+                "best_metals": ["silver", "platinum", "white_gold", "rose_gold"],
+                "neutral_options": ["charcoal", "navy", "black", "pure_white", "cool_gray"]
+            },
+            "warm": {
+                "best_colors": [
+                    "coral", "peach", "salmon",
+                    "orange", "tangerine", "rust",
+                    "gold", "mustard", "amber",
+                    "olive", "moss", "warm_green",
+                    "camel", "tan", "cognac", "chocolate",
+                    "cream", "ivory", "warm_white"
+                ],
+                "avoid_colors": [
+                    "fuchsia", "hot_pink", "magenta",
+                    "icy_blue", "royal_blue",
+                    "pure_white", "silver_gray",
+                    "black"
+                ],
+                "best_metals": ["gold", "brass", "copper", "bronze"],
+                "neutral_options": ["camel", "tan", "cream", "chocolate", "olive"]
+            },
+            "neutral": {
+                "best_colors": [
+                    "most_colors_work",
+                    "soft_versions_of_any_color",
+                    "dusty_tones"
+                ],
+                "avoid_colors": [
+                    "extremely_saturated",
+                    "neon_colors"
+                ],
+                "best_metals": ["any"],
+                "neutral_options": ["gray", "taupe", "greige", "soft_black", "off_white"]
+            }
+        },
+        "contrast_matching": {
+            "very_high": {
+                "description": "Dark hair, light skin or vice versa",
+                "best_outfit_contrast": "high",
+                "recommended_combinations": [
+                    "black_and_white", "navy_and_cream", "dark_and_light"
+                ],
+                "score_modifiers": {
+                    "high_contrast_outfit": 0.15,
+                    "medium_contrast_outfit": 0.05,
+                    "low_contrast_outfit": -0.10
+                }
+            },
+            "high": {
+                "best_outfit_contrast": "medium_to_high",
+                "recommended_combinations": [
+                    "dark_neutrals_with_bright_accents",
+                    "tonal_with_contrast_accent"
+                ],
+                "score_modifiers": {
+                    "high_contrast_outfit": 0.10,
+                    "medium_contrast_outfit": 0.10,
+                    "low_contrast_outfit": -0.05
+                }
+            },
+            "medium": {
+                "best_outfit_contrast": "medium",
+                "recommended_combinations": [
+                    "tonal_dressing",
+                    "analogous_colors"
+                ],
+                "score_modifiers": {
+                    "high_contrast_outfit": 0.0,
+                    "medium_contrast_outfit": 0.10,
+                    "low_contrast_outfit": 0.05
+                }
+            },
+            "low": {
+                "best_outfit_contrast": "low_to_medium",
+                "recommended_combinations": [
+                    "monochromatic",
+                    "tone_on_tone",
+                    "soft_neutrals"
+                ],
+                "score_modifiers": {
+                    "high_contrast_outfit": -0.10,
+                    "medium_contrast_outfit": 0.05,
+                    "low_contrast_outfit": 0.15
+                }
+            },
+            "very_low": {
+                "best_outfit_contrast": "low",
+                "recommended_combinations": [
+                    "monochromatic",
+                    "subtle_tonal_variations"
+                ],
+                "score_modifiers": {
+                    "high_contrast_outfit": -0.15,
+                    "medium_contrast_outfit": 0.0,
+                    "low_contrast_outfit": 0.15
+                }
+            }
+        },
+        "skin_tone_colors": {
+            "very_light": {
+                "best_intensity": "soft_to_medium",
+                "caution": ["very_pale_colors_may_wash_out"],
+                "score_modifiers": {
+                    "medium_intensity": 0.10,
+                    "very_pale": -0.10
+                }
+            },
+            "light": {
+                "best_intensity": "soft_to_medium",
+                "caution": [],
+                "score_modifiers": {}
+            },
+            "medium": {
+                "best_intensity": "medium_to_rich",
+                "caution": [],
+                "score_modifiers": {
+                    "rich_colors": 0.05
+                }
+            },
+            "dark": {
+                "best_intensity": "rich_to_bright",
+                "caution": [],
+                "score_modifiers": {
+                    "bright_colors": 0.10,
+                    "rich_jewel_tones": 0.10
+                }
+            },
+            "very_dark": {
+                "best_intensity": "bright_and_bold",
+                "caution": [],
+                "score_modifiers": {
+                    "bright_bold_colors": 0.15,
+                    "white": 0.10
+                }
+            }
+        }
+    },
+    
+    "size_estimation": {
+        "description": "Mappings for estimating clothing sizes from measurements",
+        "top_sizes": {
+            "shoulder_cm_ranges": {
+                "XXS": [0, 36],
+                "XS": [36, 38],
+                "S": [38, 41],
+                "M": [41, 44],
+                "L": [44, 47],
+                "XL": [47, 50],
+                "XXL": [50, 53],
+                "3XL": [53, 100]
+            }
+        },
+        "bottom_sizes": {
+            "hip_cm_ranges": {
+                "XXS": [0, 85],
+                "XS": [85, 88],
+                "S": [88, 93],
+                "M": [93, 98],
+                "L": [98, 103],
+                "XL": [103, 108],
+                "XXL": [108, 113],
+                "3XL": [113, 200]
+            }
+        },
+        "eu_dress_sizes": {
+            "hip_circumference_ranges": {
+                "EU 32": [0, 84],
+                "EU 34": [84, 88],
+                "EU 36": [88, 92],
+                "EU 38": [92, 96],
+                "EU 40": [96, 100],
+                "EU 42": [100, 104],
+                "EU 44": [104, 108],
+                "EU 46": [108, 112],
+                "EU 48": [112, 116],
+                "EU 50+": [116, 500]
+            }
+        }
+    },
+
+    "proportion_thresholds": {
+        "torso_percentage": {
+            "short": [0, 28],
+            "average": [28, 35],
+            "long": [35, 100]
+        },
+        "leg_percentage": {
+            "short": [0, 43],
+            "average": [43, 52],
+            "long": [52, 100]
+        },
+        "shoulder_to_height_ratio": {
+            "small_frame": [0, 0.22],
+            "medium_frame": [0.22, 0.26],
+            "large_frame": [0.26, 1.0]
+        }
+    }
+}
