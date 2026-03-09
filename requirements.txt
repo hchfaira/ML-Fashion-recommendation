@@ -20,6 +20,13 @@ Pillow>=10.1.0
 opencv-python>=4.8.0
 webcolors>=25.0.0  # Color name extraction and conversion
 
+# Virtual Try-On (Layer 6) - Optional
+diffusers>=0.27.0  # For CatVTON/IDM-VTON local inference
+accelerate>=0.25.0  # Model acceleration
+huggingface_hub>=0.20.0  # Model downloading
+rembg>=2.0.0  # Background removal for mask generation
+replicate>=0.22.0  # Replicate API (cloud try-on)
+
 # Database
 sqlalchemy>=2.0.0
 asyncpg>=0.29.0
