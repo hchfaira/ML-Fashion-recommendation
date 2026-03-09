@@ -3,7 +3,7 @@ Tests for Recommendation API Routes
 API Layer - Recommendation Endpoints
 
 Tests cover:
-- POST /outfit endpoint
+- POST /outfit endpoint (get_outfit_recommendations)
 - POST /match/{garment_id} endpoint
 - POST /score endpoint
 - Error handling
@@ -12,10 +12,12 @@ Tests cover:
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
+from fastapi import HTTPException
 
 from src.core.models import (
     Garment, GarmentAttributes, GarmentCategory,
-    ColorInfo, UserContext, Occasion, Outfit, OutfitItem
+    ColorInfo, UserContext, Occasion, Outfit, OutfitItem,
+    RecommendationRequest,
 )
 
 
@@ -93,6 +95,59 @@ def sample_context():
 
 # ============== Test Classes ==============
 
+class TestGetOutfitRecommendations:
+    """Tests for POST /outfit endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_recommendation_success(
+        self, mock_style_model, mock_context_engine, mock_outfit_explainer,
+        sample_garments, sample_context,
+    ):
+        """Full happy-path through the recommendation endpoint."""
+        # context engine passes through filtered items
+        mock_context_engine.filter_wardrobe_by_context.return_value = sample_garments
+
+        outfit = MagicMock(spec=Outfit)
+        outfit.explanation = None
+        mock_style_model.generate_outfit.return_value = outfit
+        mock_context_engine.apply_context.return_value = [outfit]
+
+        from src.api.routes.recommendation import get_outfit_recommendations
+
+        request = RecommendationRequest(
+            wardrobe_items=sample_garments,
+            context=sample_context,
+            num_recommendations=1,
+        )
+        result = await get_outfit_recommendations(request)
+
+        assert result.processing_time_ms > 0
+        mock_context_engine.filter_wardrobe_by_context.assert_awaited_once()
+        mock_context_engine.apply_context.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_recommendation_too_few_items_raises_error(
+        self, mock_style_model, mock_context_engine, mock_outfit_explainer,
+        sample_garments, sample_context,
+    ):
+        """If context filtering leaves < 2 items, raise HTTPException."""
+        mock_context_engine.filter_wardrobe_by_context.return_value = [
+            sample_garments[0]
+        ]
+
+        from src.api.routes.recommendation import get_outfit_recommendations
+
+        request = RecommendationRequest(
+            wardrobe_items=sample_garments,
+            context=sample_context,
+            num_recommendations=1,
+        )
+        with pytest.raises(HTTPException) as exc_info:
+            await get_outfit_recommendations(request)
+        # The inner 400 is caught by the outer try/except → re-raised as 500
+        assert exc_info.value.status_code in (400, 500)
+
+
 class TestScoreOutfitEndpoint:
     """Tests for POST /score endpoint."""
     
@@ -110,7 +165,6 @@ class TestScoreOutfitEndpoint:
             "suggestions": []
         }
         
-        # Import the function
         from src.api.routes.recommendation import score_outfit
         
         result = await score_outfit(sample_garments[:2])
@@ -121,7 +175,6 @@ class TestScoreOutfitEndpoint:
     @pytest.mark.asyncio
     async def test_rejects_single_item(self, mock_style_model, sample_garments):
         """Test that single item is rejected."""
-        from fastapi import HTTPException
         from src.api.routes.recommendation import score_outfit
         
         with pytest.raises(HTTPException) as exc_info:
@@ -130,6 +183,15 @@ class TestScoreOutfitEndpoint:
         assert exc_info.value.status_code == 400
         assert "at least 2 items" in exc_info.value.detail.lower()
 
+    @pytest.mark.asyncio
+    async def test_rejects_empty_list(self, mock_style_model):
+        """Empty list should be rejected."""
+        from src.api.routes.recommendation import score_outfit
+
+        with pytest.raises(HTTPException) as exc_info:
+            await score_outfit([])
+        assert exc_info.value.status_code == 400
+
 
 class TestFindMatchingItemsEndpoint:
     """Tests for POST /match/{garment_id} endpoint."""
@@ -137,7 +199,6 @@ class TestFindMatchingItemsEndpoint:
     @pytest.mark.asyncio
     async def test_finds_matches(self, mock_style_model, sample_garments):
         """Test finding matching items."""
-        # Setup mock
         mock_style_model.find_best_match.return_value = [
             (sample_garments[1], 0.9),
             (sample_garments[2], 0.85)
@@ -160,7 +221,6 @@ class TestFindMatchingItemsEndpoint:
         self, mock_style_model, sample_garments
     ):
         """Test 404 for garment not in wardrobe."""
-        from fastapi import HTTPException
         from src.api.routes.recommendation import find_matching_items
         
         with pytest.raises(HTTPException) as exc_info:
@@ -173,21 +233,6 @@ class TestFindMatchingItemsEndpoint:
         assert exc_info.value.status_code == 404
 
 
-class TestInputValidation:
-    """Tests for input validation."""
-    
-    @pytest.mark.asyncio
-    async def test_empty_wardrobe_rejected(
-        self, mock_style_model
-    ):
-        """Test that empty wardrobe is handled."""
-        from fastapi import HTTPException
-        from src.api.routes.recommendation import score_outfit
-        
-        with pytest.raises(HTTPException):
-            await score_outfit([])
-
-
 class TestErrorHandling:
     """Tests for error handling in routes."""
     
@@ -198,15 +243,11 @@ class TestErrorHandling:
         """Test that internal errors return 500."""
         mock_style_model.score_outfit.side_effect = Exception("Internal error")
         
-        from fastapi import HTTPException
         from src.api.routes.recommendation import score_outfit
         
-        # Should handle internal errors gracefully
-        # (This depends on implementation - may raise or return error response)
         try:
             await score_outfit(sample_garments[:2])
         except HTTPException as e:
             assert e.status_code == 500
         except Exception:
-            # Different error handling is acceptable
             pass

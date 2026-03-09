@@ -211,7 +211,7 @@ async def filter_by_weather(wardrobe: List[Garment], weather: WeatherContext):
         return {
             "suitable_items": [g.id for g in suitable_items],
             "filtered_count": len(wardrobe) - len(suitable_items),
-            "weather_summary": f"{weather.temperature_celsius}°C, {weather.conditions}"
+            "weather_summary": f"{weather.temperature_celsius}°C, {weather.condition}"
         }
         
     except Exception as e:
