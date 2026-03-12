@@ -1,0 +1,50 @@
+{
+  "id": "c16fe929-04eb-44f6-81e0-38e106163b05",
+  "image_path": "data/sample_wardrobe/image.png",
+  "image_name": "image.png",
+  "extracted_at": "2026-03-12T23:14:26.315435",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "trousers",
+    "product_type": "wide_leg_trousers",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "beige",
+      "secondary": null,
+      "color_palette": [
+        "beige"
+      ],
+      "hex_codes": [
+        "#DDCDB4"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "polyester",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "relaxed",
+      "structure": "semi_structured",
+      "volume": "high"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "elegant",
+      "minimalist"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

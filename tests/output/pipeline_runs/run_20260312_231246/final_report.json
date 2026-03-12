@@ -1,0 +1,389 @@
+{
+  "run_timestamp": "20260312_231246",
+  "run_directory": "tests/output/pipeline_runs/run_20260312_231246",
+  "summary": {
+    "total_garments_analyzed": 6,
+    "total_combinations": 6,
+    "best_score": 0.6133666666666667,
+    "profile_used": "creative"
+  },
+  "best_outfit": {
+    "name": "tank_top + trousers + heels + blazer",
+    "overall_score": 0.6133666666666667,
+    "garments": [
+      {
+        "id": "fc36db0a-ac85-492f-9e6d-19f933c1182a",
+        "image": "image copy 2.png",
+        "category": "top",
+        "subcategory": "tank_top",
+        "color": "lilac",
+        "color_secondary": "white",
+        "pattern": "graphic"
+      },
+      {
+        "id": "c16fe929-04eb-44f6-81e0-38e106163b05",
+        "image": "image.png",
+        "category": "bottom",
+        "subcategory": "trousers",
+        "color": "beige",
+        "color_secondary": null,
+        "pattern": "solid"
+      },
+      {
+        "id": "c5f49012-01c5-441b-846f-6d17e3251f92",
+        "image": "image copy 6.png",
+        "category": "shoes",
+        "subcategory": "heels",
+        "color": "black",
+        "color_secondary": null,
+        "pattern": "solid"
+      },
+      {
+        "id": "ac650309-667b-4872-9639-29754026e1a9",
+        "image": "image copy 4.png",
+        "category": "outerwear",
+        "subcategory": "blazer",
+        "color": "lavender",
+        "color_secondary": null,
+        "pattern": "solid"
+      }
+    ],
+    "scores": {
+      "metadata": {
+        "timestamp": "2026-03-12T23:14:29.584436",
+        "num_items": 4,
+        "profile": "creative",
+        "profile_name": "Creative & Bold"
+      },
+      "garments": [
+        {
+          "id": "fc36db0a-ac85-492f-9e6d-19f933c1182a",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy 2.png",
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": {
+            "primary": "lilac",
+            "secondary": "white",
+            "accent": null,
+            "hex_codes": [
+              "#D8C2E0",
+              "#FFFFFF"
+            ]
+          },
+          "pattern": {
+            "type": "graphic",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": {
+            "primary": "knit",
+            "secondary": null,
+            "texture": "ribbed"
+          },
+          "formality_level": "very_casual",
+          "season_suitable": [
+            "spring",
+            "summer"
+          ],
+          "silhouette": "slim",
+          "fit": "slim",
+          "style_tags": [
+            "sporty",
+            "streetwear",
+            "modern"
+          ],
+          "neckline": "crewneck",
+          "length_type": "crop",
+          "waist_rise": null,
+          "closure": "pull_on",
+          "metadata": {}
+        },
+        {
+          "id": "c16fe929-04eb-44f6-81e0-38e106163b05",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image.png",
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": {
+            "primary": "beige",
+            "secondary": null,
+            "accent": null,
+            "hex_codes": [
+              "#DDCDB4"
+            ]
+          },
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": {
+            "primary": "polyester",
+            "secondary": null,
+            "texture": "smooth"
+          },
+          "formality_level": "smart_casual",
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall"
+          ],
+          "silhouette": "relaxed",
+          "fit": "relaxed",
+          "style_tags": [
+            "classic",
+            "modern",
+            "elegant",
+            "minimalist"
+          ],
+          "neckline": null,
+          "length_type": null,
+          "waist_rise": "high_rise",
+          "closure": "zipper",
+          "metadata": {}
+        },
+        {
+          "id": "c5f49012-01c5-441b-846f-6d17e3251f92",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy 6.png",
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": {
+            "primary": "black",
+            "secondary": null,
+            "accent": null,
+            "hex_codes": []
+          },
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": null,
+          "formality_level": "casual",
+          "season_suitable": [],
+          "silhouette": null,
+          "fit": null,
+          "style_tags": [],
+          "neckline": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "metadata": {}
+        },
+        {
+          "id": "ac650309-667b-4872-9639-29754026e1a9",
+          "image_url": null,
+          "image_path": "data/sample_wardrobe/image copy 4.png",
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": {
+            "primary": "lavender",
+            "secondary": null,
+            "accent": null,
+            "hex_codes": [
+              "#C8B8F5"
+            ]
+          },
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "pattern_colors": []
+          },
+          "material": {
+            "primary": "polyester",
+            "secondary": null,
+            "texture": "smooth"
+          },
+          "formality_level": "smart_casual",
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall"
+          ],
+          "silhouette": "regular",
+          "fit": "regular",
+          "style_tags": [
+            "minimalist",
+            "classic",
+            "modern",
+            "elegant",
+            "preppy"
+          ],
+          "neckline": "collared",
+          "length_type": "longline",
+          "waist_rise": null,
+          "closure": "buttons",
+          "metadata": {}
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 1,
+        "volume_balance": 0.6667,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.678,
+        "total_style": 0.71,
+        "creativity": 0.06,
+        "overall": 0.6134
+      },
+      "details": {
+        "seven_point": {
+          "total_points": 5,
+          "is_harmonious": false,
+          "breakdown": [
+            {
+              "garment_id": "fc36db0a-ac85-492f-9e6d-19f933c1182a",
+              "category": "top",
+              "subcategory": "tank_top",
+              "color": "lilac",
+              "points": 1,
+              "point_type": "basic",
+              "reasons": [
+                "basic staple piece"
+              ]
+            },
+            {
+              "garment_id": "c16fe929-04eb-44f6-81e0-38e106163b05",
+              "category": "bottom",
+              "subcategory": "trousers",
+              "color": "beige",
+              "points": 1,
+              "point_type": "basic",
+              "reasons": [
+                "basic staple piece"
+              ]
+            },
+            {
+              "garment_id": "c5f49012-01c5-441b-846f-6d17e3251f92",
+              "category": "shoes",
+              "subcategory": "heels",
+              "color": "black",
+              "points": 1,
+              "point_type": "basic",
+              "reasons": [
+                "basic staple piece"
+              ]
+            },
+            {
+              "garment_id": "ac650309-667b-4872-9639-29754026e1a9",
+              "category": "outerwear",
+              "subcategory": "blazer",
+              "color": "lavender",
+              "points": 2,
+              "point_type": "statement",
+              "reasons": [
+                "statement blazer"
+              ]
+            }
+          ]
+        },
+        "color_harmony": {
+          "score": 0.9
+        },
+        "proportion": {
+          "ratio": "1/3 - 2/3",
+          "top_portion": "short (1/3)",
+          "bottom_portion": "high-waisted (elongates legs)"
+        },
+        "pattern_mixing": {
+          "pattern_count": 1,
+          "solid_count": 3,
+          "has_scale_contrast": true,
+          "grade": "A"
+        },
+        "design_principles": {
+          "grade": "C",
+          "proportion": 0.95,
+          "balance": 0.9,
+          "harmony": 0.3333333333333333,
+          "emphasis": 0.5,
+          "style": "classic"
+        },
+        "total_style": {
+          "grade": "B",
+          "seven_point": 0.5,
+          "color": 0.7,
+          "proportion": 1,
+          "volume": 0.667
+        },
+        "creativity": {
+          "level": "safe",
+          "rules_broken": 1,
+          "is_successful": false,
+          "fashion_forward": 0.043
+        }
+      },
+      "summary": {
+        "overall_score": 0.61,
+        "overall_percentage": "61%",
+        "grade": "C+",
+        "categories": [
+          "top",
+          "bottom",
+          "shoes",
+          "outerwear"
+        ],
+        "primary_colors": [
+          "lilac",
+          "beige",
+          "black",
+          "lavender"
+        ]
+      },
+      "criteria_config": {
+        "seven_point": {
+          "display_name": "7-Point Rule",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "color_harmony": {
+          "display_name": "Color Harmony",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "proportion": {
+          "display_name": "Proportions",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "volume_balance": {
+          "display_name": "Volume Balance",
+          "weight": 0.1,
+          "enabled": true
+        },
+        "pattern_mixing": {
+          "display_name": "Pattern Mixing",
+          "weight": 0.2,
+          "enabled": true
+        },
+        "design_principles": {
+          "display_name": "Design Principles",
+          "weight": 0.15,
+          "enabled": true
+        },
+        "creativity": {
+          "display_name": "Creativity",
+          "weight": 0.25,
+          "enabled": true
+        }
+      }
+    }
+  },
+  "score_distribution": {
+    "excellent": 0,
+    "good": 1,
+    "needs_work": 5
+  },
+  "files_generated": {
+    "garments": "tests/output/pipeline_runs/run_20260312_231246/garments",
+    "combinations": "tests/output/pipeline_runs/run_20260312_231246/combinations",
+    "graphs": "tests/output/pipeline_runs/run_20260312_231246/graphs"
+  }
+}

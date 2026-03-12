@@ -1,0 +1,29 @@
+{
+  "id": "accfc73a-ffbc-449c-994c-b93d9a972245",
+  "image_path": "data/sample_wardrobe/image copy 5.png",
+  "image_name": "image copy 5.png",
+  "extracted_at": "2026-03-12T23:14:26.316637",
+  "attributes": {
+    "category": "dress",
+    "subcategory": "a_line_dress",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "burgundy",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

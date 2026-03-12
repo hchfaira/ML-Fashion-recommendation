@@ -97,6 +97,14 @@ from .scoring_config_service import (
     reload_scoring_config
 )
 
+# Wardrobe Analyzer & Outfit Improver
+from .wardrobe_analyzer import WardrobeAnalyzer
+from .outfit_improver import OutfitImprover
+from .smart_removal_analyzer import SmartRemovalAnalyzer
+
+# Hybrid Recommender (Layer 2 + Layer 3)
+from .hybrid_recommender import HybridOutfitRecommender, HybridScore, RankedOutfit
+
 __all__ = [
     # Core scorers
     "CompatibilityScorer",
@@ -222,4 +230,14 @@ __all__ = [
     "CriterionConfig",
     "get_scoring_config_service",
     "reload_scoring_config",
+    
+    # Wardrobe Analyzer & Outfit Improver
+    "WardrobeAnalyzer",
+    "OutfitImprover",
+    "SmartRemovalAnalyzer",
+
+    # Hybrid Recommender (Layer 2 + Layer 3)
+    "HybridOutfitRecommender",
+    "HybridScore",
+    "RankedOutfit",
 ]

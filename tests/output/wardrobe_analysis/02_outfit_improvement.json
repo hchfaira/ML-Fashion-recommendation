@@ -1,0 +1,86 @@
+{
+  "diagnosis": {
+    "overall_score": 0.663,
+    "grade": "B-",
+    "weak_dimensions": [
+      {
+        "dimension": "creativity",
+        "display_name": "Creativity",
+        "score": 0.26,
+        "grade": "F"
+      },
+      {
+        "dimension": "seven_point",
+        "display_name": "Seven-Point Rule",
+        "score": 0.3,
+        "grade": "F"
+      }
+    ],
+    "strong_dimensions": [
+      {
+        "dimension": "three_color",
+        "display_name": "Three-Color Rule",
+        "score": 1.0,
+        "grade": "A+"
+      },
+      {
+        "dimension": "pattern_mixing",
+        "display_name": "Pattern Mixing",
+        "score": 0.9,
+        "grade": "A+"
+      },
+      {
+        "dimension": "color_harmony",
+        "display_name": "Color Harmony",
+        "score": 0.85,
+        "grade": "A"
+      },
+      {
+        "dimension": "proportion",
+        "display_name": "Proportions",
+        "score": 0.7,
+        "grade": "B"
+      },
+      {
+        "dimension": "volume_balance",
+        "display_name": "Volume Balance",
+        "score": 0.7,
+        "grade": "B"
+      }
+    ],
+    "improvement_potential": 0.337
+  },
+  "additions": [
+    {
+      "garment_id": "jacket_1",
+      "garment_description": "black blazer",
+      "expected_score_change": 0.031,
+      "reason": "This outerwear slightly improves outfit harmony (+3.1%)"
+    },
+    {
+      "garment_id": "shoes_1",
+      "garment_description": "white sneakers",
+      "expected_score_change": 0.031,
+      "reason": "This shoes slightly improves outfit harmony (+3.1%)"
+    },
+    {
+      "garment_id": "acc_1",
+      "garment_description": "silver watch",
+      "expected_score_change": 0.015,
+      "reason": "This accessory slightly improves outfit harmony (+1.5%)"
+    }
+  ],
+  "replacements": [],
+  "purchase_suggestions": [
+    {
+      "category": "accessory",
+      "description": "An accessory to adjust the outfit's seven-point count",
+      "reason": "Seven-point score is low (30%). Accessories can fine-tune the complexity level.",
+      "expected_score_change": 0.2,
+      "suggested_attributes": {
+        "type": "belt, watch, or simple jewelry"
+      }
+    }
+  ],
+  "summary": "Outfit score: 66% (Grade: B-). Weak areas: Creativity, Seven-Point Rule. Strengths: Three-Color Rule, Pattern Mixing. Best addition: black blazer (+3.1%). 1 purchase suggestion(s) to address weak dimensions."
+}

@@ -1,0 +1,46 @@
+================================================================================
+WARDROBE ANALYSIS SUMMARY REPORT
+Generated: 2026-03-12 07:48:35
+================================================================================
+
+1. WARDROBE ANALYSIS
+--------------------------------------------------------------------------------
+Wardrobe contains 12 items. Top categories: top (4), bottom (3), shoes (3). No significant gaps detected. Low coverage for: formal. Overall: Excellent wardrobe!
+
+Total items: 12
+Category breakdown:
+  • top: 4 items (33.3%)
+  • bottom: 3 items (25.0%)
+  • shoes: 3 items (25.0%)
+  • outerwear: 1 items (8.3%)
+  • accessory: 1 items (8.3%)
+
+
+Top purchase suggestions (2):
+  1. dress - Add dress for formal occasions
+  2. accessory - Add accessory for formal occasions
+
+2. OUTFIT IMPROVEMENT
+--------------------------------------------------------------------------------
+Outfit score: 66% (Grade: B-). Weak areas: Creativity, Seven-Point Rule. Strengths: Three-Color Rule, Pattern Mixing. Best addition: black blazer (+3.1%). 1 purchase suggestion(s) to address weak dimensions.
+
+Current outfit score: 66% (Grade: B-)
+
+3. ADDITION SIMULATION
+--------------------------------------------------------------------------------
+Simulated garment: red cocktail_dress silk
+Versatility score: 100%
+New outfit combinations: 11
+Gaps resolved: 0
+Recommendation: Good addition
+
+4. REMOVAL IMPACT ANALYSIS
+--------------------------------------------------------------------------------
+🟡 REPLACEABLE ITEMS (5): Can be removed if replacement exists
+   • white top
+   • navy top
+   • black top
+   • grey top
+   • blue bottom
+
+================================================================================

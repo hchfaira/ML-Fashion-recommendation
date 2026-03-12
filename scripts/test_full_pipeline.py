@@ -30,6 +30,10 @@ Usage:
     
     # Save results for analysis
     python scripts/test_full_pipeline.py --wardrobe ./wardrobe --save-results
+    
+    # Side-by-side Style vs Context vs Combined comparison (requires --demo or --wardrobe)
+    python scripts/test_full_pipeline.py --demo --hybrid-compare
+    python scripts/test_full_pipeline.py --wardrobe ./wardrobe --user-photo selfie.jpg --hybrid-compare
 
 Requirements:
     - GOOGLE_API_KEY environment variable set (for Gemini Vision)
@@ -40,7 +44,7 @@ import argparse
 import sys
 import json
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -73,8 +77,14 @@ from src.layer3_context import (
     ColorHarmonyAdvisor,
 )
 
+# Hybrid recommender (Layer 2 + Layer 3 combined)
+from src.layer2_style.hybrid_recommender import HybridOutfitRecommender, RankedOutfit
+from src.layer2_style.season_color_harmony import ColorSeason
+from src.layer2_style.volume_balance_scorer import BodyShape as VolumeBodyShape
+
 # Import for demo
 from src.layer2_style import OutfitScorecard
+from src.core.models import Garment, UserContext, Occasion, FormalityLevel
 from scripts.pipeline.report_generator import ReportGenerator
 
 logger = get_logger(__name__)
@@ -444,6 +454,141 @@ async def apply_context_scoring(
     return result
 
 
+async def run_hybrid_comparison(
+    style_profile: Optional[StyleProfile],
+    wardrobe_garments: Optional[List[Garment]] = None,
+    top_k: int = 5,
+):
+    """
+    Run HybridOutfitRecommender and print a side-by-side
+    Style vs Context vs Combined comparison table.
+
+    If ``wardrobe_garments`` is None, falls back to the mock demo wardrobe.
+    If ``style_profile`` is provided, personalises the recommender.
+    """
+    print("\n" + "=" * 70)
+    print("  🤖 Hybrid Comparison — StyleIntelligenceModel × ContextEngine")
+    print("=" * 70)
+
+    # ── Resolve garments ─────────────────────────────────────────────────
+    if not wardrobe_garments:
+        print("\n⚠️  No wardrobe garments available — using mock wardrobe")
+        from src.core.models import GarmentAttributes, GarmentCategory, ColorInfo, PatternInfo
+        from uuid import uuid4
+
+        def _mk(cat, sub, col):
+            return Garment(
+                id=str(uuid4()),
+                attributes=GarmentAttributes(
+                    category=GarmentCategory(cat),
+                    subcategory=sub,
+                    color=ColorInfo(primary=col, hex_codes=[]),
+                    pattern=PatternInfo(type="solid"),
+                    formality_level="casual",
+                    season_suitable=["spring", "summer", "fall", "winter"],
+                    fit="regular",
+                ),
+            )
+
+        wardrobe_garments = [
+            _mk("top", "white t-shirt", "white"),
+            _mk("top", "navy shirt", "navy"),
+            _mk("top", "gray sweater", "gray"),
+            _mk("bottom", "blue jeans", "blue"),
+            _mk("bottom", "black pants", "black"),
+            _mk("bottom", "beige chinos", "beige"),
+            _mk("shoes", "white sneakers", "white"),
+            _mk("shoes", "brown boots", "brown"),
+            _mk("outerwear", "black jacket", "black"),
+        ]
+
+    # ── Personalise from style profile ───────────────────────────────────
+    color_season: Optional[ColorSeason] = None
+    body_shape_vol: Optional[VolumeBodyShape] = None
+
+    if style_profile:
+        if style_profile.skin_analysis and style_profile.skin_analysis.undertone:
+            undertone = style_profile.skin_analysis.undertone.value.lower()
+            season_map = {
+                "warm": ColorSeason.AUTUMN,
+                "cool": ColorSeason.WINTER,
+                "neutral": ColorSeason.SPRING,
+            }
+            color_season = season_map.get(undertone, ColorSeason.SPRING)
+
+        if style_profile.body_metrics and style_profile.body_metrics.body_shape:
+            shape_val = style_profile.body_metrics.body_shape.value.upper().replace(" ", "_")
+            try:
+                body_shape_vol = VolumeBodyShape[shape_val]
+            except KeyError:
+                pass
+
+        print(f"\n🎨 Colour season: {color_season.value if color_season else 'not set'}")
+        print(f"👤 Body shape:    {body_shape_vol.value if body_shape_vol else 'not set'}")
+    else:
+        print("\n💡 No user profile — running with default (unpersonalised) weights")
+
+    # ── Recommender ──────────────────────────────────────────────────────
+    recommender = HybridOutfitRecommender(style_weight=0.40, context_weight=0.60)
+    if color_season or body_shape_vol:
+        recommender.set_user_profile(color_season=color_season, body_shape=body_shape_vol)
+
+    user_context = UserContext(
+        occasion=Occasion.CASUAL,
+        formality_preference=FormalityLevel.CASUAL,
+    )
+
+    print(f"\n⏳ Scoring combinations (top {top_k}) …")
+    import time
+    start = time.time()
+    ranked: List[RankedOutfit] = await recommender.recommend(
+        wardrobe_garments, user_context, top_k=top_k
+    )
+    elapsed = (time.time() - start) * 1000
+    print(f"   Done in {elapsed:.0f} ms — {len(ranked)} outfits ranked\n")
+
+    # ── Comparison table ─────────────────────────────────────────────────
+    print(f"{'Rank':<5} {'Outfit':<35} {'Style':>7} {'Context':>9} {'Combined':>10} {'Grade':>6}")
+    print("─" * 78)
+    for i, ro in enumerate(ranked, 1):
+        items = " + ".join(
+            (g.attributes.subcategory or g.attributes.category.value)[:12]
+            for g in ro.garments[:3]
+        )
+        if len(ro.garments) > 3:
+            items += f" (+{len(ro.garments)-3})"
+        marker = " ✅" if i == 1 else ""
+        print(
+            f"{i:<5} {items:<35} {ro.score.style_score:>6.0%}  "
+            f"{ro.score.context_score:>8.0%}  {ro.score.combined_score:>9.0%}  "
+            f"{ro.score.grade:>5}{marker}"
+        )
+
+    # ── Top-1 detail ─────────────────────────────────────────────────────
+    if ranked:
+        top = ranked[0]
+        s = top.score
+        print("\n🥇 Best outfit detail:")
+        items_full = " + ".join(
+            g.attributes.subcategory or g.attributes.category.value
+            for g in top.garments
+        )
+        print(f"   {items_full}")
+        print(f"   Combined : {s.combined_score:.1%}  [{s.grade}]")
+        print(f"   Style    : {s.style_score:.1%}   (weight {s.style_weight:.0%})")
+        print(f"   Context  : {s.context_score:.1%}   (weight {s.context_weight:.0%})")
+        if s.style_breakdown:
+            print("   Style breakdown:")
+            for k, v in s.style_breakdown.items():
+                if isinstance(v, (int, float)):
+                    print(f"      • {k}: {v:.0%}")
+        if s.strengths:
+            print(f"   ✅ {', '.join(s.strengths[:2])}")
+        if s.improvements:
+            print(f"   💡 {', '.join(s.improvements[:2])}")
+    print()
+
+
 async def main():
     parser = argparse.ArgumentParser(
         description="Test the full outfit recommendation pipeline",
@@ -525,6 +670,18 @@ Examples:
         choices=["rectangle", "hourglass", "pear", "apple", "inverted_triangle", "athletic"],
         help="Body type (if known, instead of auto-detection)"
     )
+    user_profile_group.add_argument(
+        "--user-season",
+        type=str,
+        choices=["spring", "summer", "autumn", "winter"],
+        help="Color season for personalised Layer 4 improvement suggestions (spring/summer/autumn/winter)"
+    )
+    user_profile_group.add_argument(
+        "--body-shape",
+        type=str,
+        choices=["rectangle", "triangle", "inverted_triangle", "hourglass", "oval", "athletic"],
+        help="Body shape for personalised Layer 4 improvement suggestions"
+    )
     
     # Configuration options
     parser.add_argument(
@@ -556,6 +713,14 @@ Examples:
         "--visualize",
         type=Path,
         help="Generate and save outfit visualization image to specified path (e.g., best_outfit.png)"
+    )
+    parser.add_argument(
+        "--hybrid-compare",
+        action="store_true",
+        help=(
+            "After the normal pipeline run, show a side-by-side "
+            "Style vs Context vs Combined comparison table using HybridOutfitRecommender"
+        ),
     )
     
     args = parser.parse_args()
@@ -615,7 +780,28 @@ Examples:
             if style_profile and demo_result:
                 await apply_context_scoring(demo_result, style_profile, args.body_type)
         else:
-            tester = FullPipelineTester(profile=args.profile, results_storage=storage)
+            # Resolve optional Layer 4 profile args to enums (lazy imports to avoid hard deps)
+            _user_season_enum = None
+            _body_shape_enum = None
+            if args.user_season:
+                try:
+                    from src.layer2_style.season_color_harmony import ColorSeason
+                    _user_season_enum = ColorSeason(args.user_season)
+                except Exception:
+                    pass
+            if args.body_shape:
+                try:
+                    from src.layer3_context.user_profile.models import BodyShape
+                    _body_shape_enum = BodyShape(args.body_shape)
+                except Exception:
+                    pass
+
+            tester = FullPipelineTester(
+                profile=args.profile,
+                results_storage=storage,
+                user_season=_user_season_enum,
+                body_shape=_body_shape_enum,
+            )
             
             # Pass style profile to tester for context-aware scoring
             if style_profile:
@@ -718,6 +904,46 @@ Examples:
                 json.dump(result, f, indent=2, default=str)
             print(f"\n💾 Report saved to: {args.output}")
         
+        # ── Hybrid comparison (optional) ─────────────────────────────────
+        if args.hybrid_compare:
+            # Collect garments from result if available
+            wardrobe_garments: Optional[List[Garment]] = None
+            if result and "best_outfit" in result:
+                from src.core.models import GarmentAttributes, GarmentCategory, ColorInfo, PatternInfo
+                from unittest.mock import MagicMock
+                from uuid import uuid4
+
+                try:
+                    garments_data = result["best_outfit"].get("garments", [])
+                    if garments_data:
+                        wardrobe_garments = []
+                        for gd in garments_data:
+                            g = Garment(
+                                id=gd.get("id", str(uuid4())),
+                                attributes=GarmentAttributes(
+                                    category=GarmentCategory(gd.get("category", "top")),
+                                    subcategory=gd.get("subcategory"),
+                                    color=ColorInfo(
+                                        primary=gd.get("color", "unknown"),
+                                        hex_codes=[],
+                                    ),
+                                    pattern=PatternInfo(type=gd.get("pattern", "solid")),
+                                    formality_level=gd.get("formality_level", "casual"),
+                                    season_suitable=["spring", "summer", "fall", "winter"],
+                                    fit=gd.get("fit", "regular"),
+                                ),
+                            )
+                            wardrobe_garments.append(g)
+                except Exception as _e:
+                    logger.debug(f"Could not reconstruct garments for hybrid compare: {_e}")
+                    wardrobe_garments = None
+
+            await run_hybrid_comparison(
+                style_profile=style_profile,
+                wardrobe_garments=wardrobe_garments,
+                top_k=5,
+            )
+
         print("\n✅ Pipeline test complete!")
         
         if storage:

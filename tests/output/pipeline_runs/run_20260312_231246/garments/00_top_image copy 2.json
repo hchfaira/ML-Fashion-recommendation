@@ -1,0 +1,50 @@
+{
+  "id": "fc36db0a-ac85-492f-9e6d-19f933c1182a",
+  "image_path": "data/sample_wardrobe/image copy 2.png",
+  "image_name": "image copy 2.png",
+  "extracted_at": "2026-03-12T23:14:26.314096",
+  "attributes": {
+    "category": "top",
+    "subcategory": "tank_top",
+    "product_type": "ribbed graphic crop tank top",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "lilac",
+      "secondary": "white",
+      "color_palette": [
+        "lilac",
+        "white"
+      ],
+      "hex_codes": [
+        "#D8C2E0",
+        "#FFFFFF"
+      ],
+      "color_temperature": "cool",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "graphic",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "ribbed",
+      "fabric_weight": "light"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "very_casual",
+    "style_tags": [
+      "sporty",
+      "streetwear",
+      "modern"
+    ],
+    "seasons": [
+      "spring",
+      "summer"
+    ]
+  }
+}

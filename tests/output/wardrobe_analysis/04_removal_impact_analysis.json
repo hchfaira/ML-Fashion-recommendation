@@ -1,0 +1,376 @@
+{
+  "total_items_analyzed": 5,
+  "analysis_timestamp": "2026-03-12T07:48:35.624415",
+  "removal_impacts": [
+    {
+      "garment_id": "top_1",
+      "garment_description": "white top",
+      "removal_impact": {
+        "garment_id": "top_1",
+        "garment_description": "white t-shirt",
+        "garment_attributes": {
+          "category": "top",
+          "subcategory": "t-shirt",
+          "product_type": null,
+          "outfit_role": null,
+          "color": {
+            "primary": "white",
+            "secondary": null,
+            "accent": null,
+            "color_palette": [],
+            "hex_codes": [],
+            "color_temperature": null,
+            "color_depth": null,
+            "contrast_level": null
+          },
+          "material": null,
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "description": null,
+            "pattern_colors": []
+          },
+          "silhouette_profile": null,
+          "silhouette": null,
+          "fit": null,
+          "style_identity": null,
+          "style_tags": [],
+          "styling_compatibility": null,
+          "occasion_profile": null,
+          "formality_level": "casual",
+          "seasonality": null,
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall",
+            "winter"
+          ],
+          "versatility": null,
+          "neckline": null,
+          "sleeves": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "details": {
+            "has_pockets": false,
+            "distressed": false,
+            "embellishments": [],
+            "transparency": "opaque",
+            "lined": false,
+            "reversible": false
+          },
+          "confidence_score": 0.0
+        },
+        "outfits_affected": 9,
+        "versatility_score": 0.75,
+        "replacement_available": true,
+        "replacement_suggestions": [
+          "navy t-shirt",
+          "black dress_shirt",
+          "grey dress_shirt"
+        ],
+        "impact_level": "medium",
+        "is_critical": false,
+        "has_replacement": true,
+        "summary": "Removing 'white t-shirt' would affect ~9 outfit(s). 3 replacement(s) available in the same category. Impact level: medium."
+      }
+    },
+    {
+      "garment_id": "top_2",
+      "garment_description": "navy top",
+      "removal_impact": {
+        "garment_id": "top_2",
+        "garment_description": "navy t-shirt",
+        "garment_attributes": {
+          "category": "top",
+          "subcategory": "t-shirt",
+          "product_type": null,
+          "outfit_role": null,
+          "color": {
+            "primary": "navy",
+            "secondary": null,
+            "accent": null,
+            "color_palette": [],
+            "hex_codes": [],
+            "color_temperature": null,
+            "color_depth": null,
+            "contrast_level": null
+          },
+          "material": null,
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "description": null,
+            "pattern_colors": []
+          },
+          "silhouette_profile": null,
+          "silhouette": null,
+          "fit": null,
+          "style_identity": null,
+          "style_tags": [],
+          "styling_compatibility": null,
+          "occasion_profile": null,
+          "formality_level": "casual",
+          "seasonality": null,
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall",
+            "winter"
+          ],
+          "versatility": null,
+          "neckline": null,
+          "sleeves": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "details": {
+            "has_pockets": false,
+            "distressed": false,
+            "embellishments": [],
+            "transparency": "opaque",
+            "lined": false,
+            "reversible": false
+          },
+          "confidence_score": 0.0
+        },
+        "outfits_affected": 9,
+        "versatility_score": 0.75,
+        "replacement_available": true,
+        "replacement_suggestions": [
+          "white t-shirt",
+          "black dress_shirt",
+          "grey dress_shirt"
+        ],
+        "impact_level": "medium",
+        "is_critical": false,
+        "has_replacement": true,
+        "summary": "Removing 'navy t-shirt' would affect ~9 outfit(s). 3 replacement(s) available in the same category. Impact level: medium."
+      }
+    },
+    {
+      "garment_id": "top_3",
+      "garment_description": "black top",
+      "removal_impact": {
+        "garment_id": "top_3",
+        "garment_description": "black dress_shirt",
+        "garment_attributes": {
+          "category": "top",
+          "subcategory": "dress_shirt",
+          "product_type": null,
+          "outfit_role": null,
+          "color": {
+            "primary": "black",
+            "secondary": null,
+            "accent": null,
+            "color_palette": [],
+            "hex_codes": [],
+            "color_temperature": null,
+            "color_depth": null,
+            "contrast_level": null
+          },
+          "material": null,
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "description": null,
+            "pattern_colors": []
+          },
+          "silhouette_profile": null,
+          "silhouette": null,
+          "fit": null,
+          "style_identity": null,
+          "style_tags": [],
+          "styling_compatibility": null,
+          "occasion_profile": null,
+          "formality_level": "business",
+          "seasonality": null,
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall",
+            "winter"
+          ],
+          "versatility": null,
+          "neckline": null,
+          "sleeves": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "details": {
+            "has_pockets": false,
+            "distressed": false,
+            "embellishments": [],
+            "transparency": "opaque",
+            "lined": false,
+            "reversible": false
+          },
+          "confidence_score": 0.0
+        },
+        "outfits_affected": 9,
+        "versatility_score": 0.85,
+        "replacement_available": true,
+        "replacement_suggestions": [
+          "white t-shirt",
+          "navy t-shirt",
+          "grey dress_shirt"
+        ],
+        "impact_level": "medium",
+        "is_critical": false,
+        "has_replacement": true,
+        "summary": "Removing 'black dress_shirt' would affect ~9 outfit(s). 3 replacement(s) available in the same category. Impact level: medium."
+      }
+    },
+    {
+      "garment_id": "top_4",
+      "garment_description": "grey top",
+      "removal_impact": {
+        "garment_id": "top_4",
+        "garment_description": "grey dress_shirt",
+        "garment_attributes": {
+          "category": "top",
+          "subcategory": "dress_shirt",
+          "product_type": null,
+          "outfit_role": null,
+          "color": {
+            "primary": "grey",
+            "secondary": null,
+            "accent": null,
+            "color_palette": [],
+            "hex_codes": [],
+            "color_temperature": null,
+            "color_depth": null,
+            "contrast_level": null
+          },
+          "material": null,
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "description": null,
+            "pattern_colors": []
+          },
+          "silhouette_profile": null,
+          "silhouette": null,
+          "fit": null,
+          "style_identity": null,
+          "style_tags": [],
+          "styling_compatibility": null,
+          "occasion_profile": null,
+          "formality_level": "business",
+          "seasonality": null,
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall",
+            "winter"
+          ],
+          "versatility": null,
+          "neckline": null,
+          "sleeves": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "details": {
+            "has_pockets": false,
+            "distressed": false,
+            "embellishments": [],
+            "transparency": "opaque",
+            "lined": false,
+            "reversible": false
+          },
+          "confidence_score": 0.0
+        },
+        "outfits_affected": 9,
+        "versatility_score": 0.85,
+        "replacement_available": true,
+        "replacement_suggestions": [
+          "white t-shirt",
+          "navy t-shirt",
+          "black dress_shirt"
+        ],
+        "impact_level": "medium",
+        "is_critical": false,
+        "has_replacement": true,
+        "summary": "Removing 'grey dress_shirt' would affect ~9 outfit(s). 3 replacement(s) available in the same category. Impact level: medium."
+      }
+    },
+    {
+      "garment_id": "bottom_1",
+      "garment_description": "blue bottom",
+      "removal_impact": {
+        "garment_id": "bottom_1",
+        "garment_description": "blue jeans",
+        "garment_attributes": {
+          "category": "bottom",
+          "subcategory": "jeans",
+          "product_type": null,
+          "outfit_role": null,
+          "color": {
+            "primary": "blue",
+            "secondary": null,
+            "accent": null,
+            "color_palette": [],
+            "hex_codes": [],
+            "color_temperature": null,
+            "color_depth": null,
+            "contrast_level": null
+          },
+          "material": null,
+          "pattern": {
+            "type": "solid",
+            "scale": null,
+            "density": null,
+            "description": null,
+            "pattern_colors": []
+          },
+          "silhouette_profile": null,
+          "silhouette": null,
+          "fit": null,
+          "style_identity": null,
+          "style_tags": [],
+          "styling_compatibility": null,
+          "occasion_profile": null,
+          "formality_level": "casual",
+          "seasonality": null,
+          "season_suitable": [
+            "spring",
+            "summer",
+            "fall",
+            "winter"
+          ],
+          "versatility": null,
+          "neckline": null,
+          "sleeves": null,
+          "length_type": null,
+          "waist_rise": null,
+          "closure": null,
+          "details": {
+            "has_pockets": false,
+            "distressed": false,
+            "embellishments": [],
+            "transparency": "opaque",
+            "lined": false,
+            "reversible": false
+          },
+          "confidence_score": 0.0
+        },
+        "outfits_affected": 12,
+        "versatility_score": 0.6,
+        "replacement_available": true,
+        "replacement_suggestions": [
+          "grey trousers",
+          "black trousers"
+        ],
+        "impact_level": "low",
+        "is_critical": false,
+        "has_replacement": true,
+        "summary": "Removing 'blue jeans' would affect ~12 outfit(s). 2 replacement(s) available in the same category. Impact level: low."
+      }
+    }
+  ],
+  "summary": "\ud83d\udfe1 REPLACEABLE ITEMS (5): Can be removed if replacement exists\n   \u2022 white top\n   \u2022 navy top\n   \u2022 black top\n   \u2022 grey top\n   \u2022 blue bottom"
+}

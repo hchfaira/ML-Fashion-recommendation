@@ -1,0 +1,265 @@
+{
+  "profile": "creative",
+  "total_combinations": 6,
+  "evaluated_at": "2026-03-12T23:14:28.469689",
+  "combinations": [
+    {
+      "rank": 1,
+      "name": "tank_top + trousers + heels + blazer",
+      "overall_score": 0.6134,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 1,
+        "volume_balance": 0.6667,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.678,
+        "total_style": 0.71,
+        "creativity": 0.06,
+        "overall": 0.6134
+      }
+    },
+    {
+      "rank": 2,
+      "name": "tank_top + trousers + heels + blazer",
+      "overall_score": 0.5558,
+      "grade": "C",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "skyblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 0.4,
+        "volume_balance": 0.6667,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.761,
+        "total_style": 0.56,
+        "creativity": 0.06,
+        "overall": 0.5558
+      }
+    },
+    {
+      "rank": 3,
+      "name": "tank_top + leggings + heels + blazer",
+      "overall_score": 0.5163,
+      "grade": "C-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "skyblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "leggings",
+          "color": "gray",
+          "image": "image copy.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.51,
+        "creativity": 0.06,
+        "overall": 0.5163
+      }
+    },
+    {
+      "rank": 4,
+      "name": "tank_top + pants + heels + blazer",
+      "overall_score": 0.5163,
+      "grade": "C-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "skyblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "pants",
+          "color": "tan",
+          "image": "image2.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.72,
+        "total_style": 0.51,
+        "creativity": 0.06,
+        "overall": 0.5163
+      }
+    },
+    {
+      "rank": 5,
+      "name": "tank_top + leggings + heels + blazer",
+      "overall_score": 0.5109,
+      "grade": "C-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "leggings",
+          "color": "gray",
+          "image": "image copy.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.617,
+        "total_style": 0.51,
+        "creativity": 0.06,
+        "overall": 0.5109
+      }
+    },
+    {
+      "rank": 6,
+      "name": "tank_top + pants + heels + blazer",
+      "overall_score": 0.5109,
+      "grade": "C-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "pants",
+          "color": "tan",
+          "image": "image2.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        },
+        {
+          "category": "outerwear",
+          "subcategory": "blazer",
+          "color": "lavender",
+          "image": "image copy 4.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.5,
+        "color_harmony": 0.9,
+        "proportion": 0.4,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.617,
+        "total_style": 0.51,
+        "creativity": 0.06,
+        "overall": 0.5109
+      }
+    }
+  ]
+}

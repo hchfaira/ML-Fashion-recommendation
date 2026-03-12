@@ -1,0 +1,29 @@
+{
+  "id": "69d7d953-4df4-4ddf-b1fb-d3d6e0496f78",
+  "image_path": "data/sample_wardrobe/image copy 3.png",
+  "image_name": "image copy 3.png",
+  "extracted_at": "2026-03-12T23:14:26.314902",
+  "attributes": {
+    "category": "top",
+    "subcategory": "tank_top",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "skyblue",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

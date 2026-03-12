@@ -1,0 +1,29 @@
+{
+  "id": "c5f49012-01c5-441b-846f-6d17e3251f92",
+  "image_path": "data/sample_wardrobe/image copy 6.png",
+  "image_name": "image copy 6.png",
+  "extracted_at": "2026-03-12T23:14:26.316123",
+  "attributes": {
+    "category": "shoes",
+    "subcategory": "heels",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "black",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

@@ -1,0 +1,541 @@
+{
+  "_description": "Smart Removal Analyzer Configuration - All customizable parameters",
+  "_last_updated": "2026-03-12",
+  
+  "profiles": {
+    "default": {
+      "name": "Default (Balanced)",
+      "description": "Balanced approach for general users. Maximizes outfit diversity while respecting frequent wears.",
+      "recency_half_life_days": 60,
+      "formality_flexibility": 1,
+      "replacement_coverage_threshold": 0.6,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.15,
+        "safe_to_remove_threshold": 0.30,
+        "consider_threshold": 0.60
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.15,
+        "minimum_confidence_for_action": 0.4
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.10,
+          "frequency": 0.10,
+          "versatility": 0.25,
+          "outfit_impact": 0.25,
+          "replacement": 0.15,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "MINIMALIST": {
+          "recency": 0.20,
+          "frequency": 0.10,
+          "versatility": 0.15,
+          "outfit_impact": 0.15,
+          "replacement": 0.25,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.15,
+          "frequency": 0.15,
+          "versatility": 0.10,
+          "outfit_impact": 0.10,
+          "replacement": 0.15,
+          "rating": 0.25,
+          "newness": 0.10
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 30,
+        "half_life_days": 60
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 10,
+        "half_life_days": 60
+      },
+      "versatility": {
+        "season_weight": 0.40,
+        "occasion_weight": 0.35,
+        "category_weight": 0.25
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.40,
+        "formality_compatibility": 0.30,
+        "color_role_match": 0.15,
+        "occasion_coverage": 0.15
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "gray", "navy", "beige",
+        "cream", "khaki", "brown", "tan", "charcoal", "ivory"
+      ],
+      "occasion_importance": {
+        "formal": 1.0,
+        "wedding": 1.0,
+        "interview": 0.95,
+        "business": 0.85,
+        "work": 0.8,
+        "cocktail": 0.75,
+        "evening": 0.7,
+        "event": 0.7,
+        "date": 0.6,
+        "travel": 0.5,
+        "daily_wear": 0.4,
+        "casual": 0.35,
+        "weekend": 0.3,
+        "outdoor": 0.3,
+        "beach": 0.2,
+        "gym": 0.2,
+        "sport": 0.2
+      }
+    },
+
+    "minimalist_eco": {
+      "name": "Minimalist Eco",
+      "description": "For eco-conscious, minimalist users. Prioritizes versatility and replacement coverage. Forgets items quickly.",
+      "recency_half_life_days": 45,
+      "formality_flexibility": 2,
+      "replacement_coverage_threshold": 0.85,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.10,
+        "safe_to_remove_threshold": 0.25,
+        "consider_threshold": 0.55
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.20,
+        "minimum_confidence_for_action": 0.5
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.05,
+          "frequency": 0.05,
+          "versatility": 0.35,
+          "outfit_impact": 0.20,
+          "replacement": 0.20,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "MINIMALIST": {
+          "recency": 0.10,
+          "frequency": 0.05,
+          "versatility": 0.25,
+          "outfit_impact": 0.10,
+          "replacement": 0.35,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.10,
+          "frequency": 0.10,
+          "versatility": 0.15,
+          "outfit_impact": 0.05,
+          "replacement": 0.25,
+          "rating": 0.25,
+          "newness": 0.10
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 20,
+        "half_life_days": 45
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 8,
+        "half_life_days": 45
+      },
+      "versatility": {
+        "season_weight": 0.45,
+        "occasion_weight": 0.30,
+        "category_weight": 0.25
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.50,
+        "formality_compatibility": 0.25,
+        "color_role_match": 0.10,
+        "occasion_coverage": 0.15
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "gray", "navy", "beige",
+        "cream", "khaki", "brown", "tan", "charcoal", "ivory",
+        "sage", "mushroom", "taupe"
+      ],
+      "occasion_importance": {
+        "formal": 0.3,
+        "wedding": 0.5,
+        "interview": 0.5,
+        "business": 0.3,
+        "work": 0.4,
+        "cocktail": 0.3,
+        "evening": 0.3,
+        "event": 0.4,
+        "date": 0.4,
+        "travel": 0.8,
+        "daily_wear": 1.0,
+        "casual": 1.0,
+        "weekend": 0.8,
+        "outdoor": 0.7,
+        "beach": 0.3,
+        "gym": 0.5,
+        "sport": 0.5
+      }
+    },
+
+    "fashion_addict": {
+      "name": "Fashion Addict",
+      "description": "For trend-conscious users who love fashion. Prioritizes ratings and recency. Forgets old items fast.",
+      "recency_half_life_days": 21,
+      "formality_flexibility": 3,
+      "replacement_coverage_threshold": 0.4,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.25,
+        "safe_to_remove_threshold": 0.40,
+        "consider_threshold": 0.70
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.10,
+        "minimum_confidence_for_action": 0.2
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.20,
+          "frequency": 0.05,
+          "versatility": 0.15,
+          "outfit_impact": 0.15,
+          "replacement": 0.10,
+          "rating": 0.25,
+          "newness": 0.10
+        },
+        "MINIMALIST": {
+          "recency": 0.25,
+          "frequency": 0.05,
+          "versatility": 0.10,
+          "outfit_impact": 0.10,
+          "replacement": 0.15,
+          "rating": 0.25,
+          "newness": 0.10
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.20,
+          "frequency": 0.10,
+          "versatility": 0.05,
+          "outfit_impact": 0.05,
+          "replacement": 0.10,
+          "rating": 0.40,
+          "newness": 0.10
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 7,
+        "half_life_days": 21
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 5,
+        "half_life_days": 21
+      },
+      "versatility": {
+        "season_weight": 0.30,
+        "occasion_weight": 0.40,
+        "category_weight": 0.30
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.25,
+        "formality_compatibility": 0.20,
+        "color_role_match": 0.25,
+        "occasion_coverage": 0.30
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "navy", "beige", "cream"
+      ],
+      "occasion_importance": {
+        "formal": 0.8,
+        "wedding": 1.0,
+        "interview": 0.6,
+        "business": 0.6,
+        "work": 0.5,
+        "cocktail": 1.0,
+        "evening": 1.0,
+        "event": 0.9,
+        "date": 0.9,
+        "travel": 0.6,
+        "daily_wear": 0.3,
+        "casual": 0.3,
+        "weekend": 0.5,
+        "outdoor": 0.4,
+        "beach": 0.7,
+        "gym": 0.2,
+        "sport": 0.2
+      }
+    },
+
+    "budget_conscious": {
+      "name": "Budget Conscious",
+      "description": "For budget-aware users. Very conservative on removal. Keeps items long. Requires strong replacement availability.",
+      "recency_half_life_days": 90,
+      "formality_flexibility": 1,
+      "replacement_coverage_threshold": 0.95,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.05,
+        "safe_to_remove_threshold": 0.15,
+        "consider_threshold": 0.50
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.25,
+        "minimum_confidence_for_action": 0.6
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.05,
+          "frequency": 0.10,
+          "versatility": 0.15,
+          "outfit_impact": 0.20,
+          "replacement": 0.40,
+          "rating": 0.05,
+          "newness": 0.05
+        },
+        "MINIMALIST": {
+          "recency": 0.10,
+          "frequency": 0.10,
+          "versatility": 0.10,
+          "outfit_impact": 0.10,
+          "replacement": 0.50,
+          "rating": 0.05,
+          "newness": 0.05
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.10,
+          "frequency": 0.20,
+          "versatility": 0.10,
+          "outfit_impact": 0.10,
+          "replacement": 0.30,
+          "rating": 0.15,
+          "newness": 0.05
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 60,
+        "half_life_days": 120
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 15,
+        "half_life_days": 90
+      },
+      "versatility": {
+        "season_weight": 0.40,
+        "occasion_weight": 0.35,
+        "category_weight": 0.25
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.50,
+        "formality_compatibility": 0.25,
+        "color_role_match": 0.10,
+        "occasion_coverage": 0.15
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "gray", "navy", "beige",
+        "cream", "khaki", "brown", "tan", "charcoal", "ivory"
+      ],
+      "occasion_importance": {
+        "formal": 0.6,
+        "wedding": 0.5,
+        "interview": 0.7,
+        "business": 0.5,
+        "work": 0.7,
+        "cocktail": 0.3,
+        "evening": 0.3,
+        "event": 0.4,
+        "date": 0.5,
+        "travel": 0.6,
+        "daily_wear": 1.0,
+        "casual": 1.0,
+        "weekend": 0.8,
+        "outdoor": 0.6,
+        "beach": 0.2,
+        "gym": 0.3,
+        "sport": 0.3
+      }
+    },
+
+    "work_professional": {
+      "name": "Work Professional",
+      "description": "For corporate/professional environments. Prioritizes work occasions. Strict formality hierarchy.",
+      "recency_half_life_days": 50,
+      "formality_flexibility": 1,
+      "replacement_coverage_threshold": 0.75,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.20,
+        "safe_to_remove_threshold": 0.40,
+        "consider_threshold": 0.65
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.12,
+        "minimum_confidence_for_action": 0.35
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.10,
+          "frequency": 0.15,
+          "versatility": 0.15,
+          "outfit_impact": 0.30,
+          "replacement": 0.15,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "MINIMALIST": {
+          "recency": 0.15,
+          "frequency": 0.10,
+          "versatility": 0.10,
+          "outfit_impact": 0.20,
+          "replacement": 0.30,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.12,
+          "frequency": 0.15,
+          "versatility": 0.10,
+          "outfit_impact": 0.15,
+          "replacement": 0.15,
+          "rating": 0.25,
+          "newness": 0.08
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 45,
+        "half_life_days": 80
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 12,
+        "half_life_days": 50
+      },
+      "versatility": {
+        "season_weight": 0.35,
+        "occasion_weight": 0.40,
+        "category_weight": 0.25
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.35,
+        "formality_compatibility": 0.40,
+        "color_role_match": 0.15,
+        "occasion_coverage": 0.10
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "gray", "navy", "charcoal", "ivory", "cream"
+      ],
+      "occasion_importance": {
+        "formal": 0.9,
+        "wedding": 0.5,
+        "interview": 1.0,
+        "business": 1.0,
+        "work": 0.95,
+        "cocktail": 0.4,
+        "evening": 0.3,
+        "event": 0.6,
+        "date": 0.2,
+        "travel": 0.5,
+        "daily_wear": 0.1,
+        "casual": 0.1,
+        "weekend": 0.3,
+        "outdoor": 0.2,
+        "beach": 0.0,
+        "gym": 0.1,
+        "sport": 0.1
+      }
+    },
+
+    "data_driven": {
+      "name": "Data Driven",
+      "description": "For users who trust data. Very high data strictness. Requires comprehensive wear history and ratings.",
+      "recency_half_life_days": 75,
+      "formality_flexibility": 1,
+      "replacement_coverage_threshold": 0.7,
+      "removal_aggressiveness": {
+        "donate_threshold": 0.12,
+        "safe_to_remove_threshold": 0.28,
+        "consider_threshold": 0.58
+      },
+      "confidence_strictness": {
+        "penalty_per_data_gap": 0.30,
+        "minimum_confidence_for_action": 0.7
+      },
+      "goal_weights": {
+        "MAXIMIZE_OPTIONS": {
+          "recency": 0.10,
+          "frequency": 0.15,
+          "versatility": 0.25,
+          "outfit_impact": 0.25,
+          "replacement": 0.12,
+          "rating": 0.10,
+          "newness": 0.03
+        },
+        "MINIMALIST": {
+          "recency": 0.15,
+          "frequency": 0.12,
+          "versatility": 0.15,
+          "outfit_impact": 0.15,
+          "replacement": 0.28,
+          "rating": 0.10,
+          "newness": 0.05
+        },
+        "STYLE_UPGRADE": {
+          "recency": 0.12,
+          "frequency": 0.12,
+          "versatility": 0.12,
+          "outfit_impact": 0.10,
+          "replacement": 0.14,
+          "rating": 0.30,
+          "newness": 0.10
+        }
+      },
+      "newness_guard": {
+        "grace_period_days": 35,
+        "half_life_days": 70
+      },
+      "frequency_soft_cap": {
+        "max_recent_equivalent_wears": 12,
+        "half_life_days": 75
+      },
+      "versatility": {
+        "season_weight": 0.40,
+        "occasion_weight": 0.35,
+        "category_weight": 0.25
+      },
+      "replacement_quality_weights": {
+        "season_coverage": 0.40,
+        "formality_compatibility": 0.30,
+        "color_role_match": 0.15,
+        "occasion_coverage": 0.15
+      },
+      "neutral_colors": [
+        "black", "white", "grey", "gray", "navy", "beige",
+        "cream", "khaki", "brown", "tan", "charcoal", "ivory"
+      ],
+      "occasion_importance": {
+        "formal": 1.0,
+        "wedding": 1.0,
+        "interview": 0.95,
+        "business": 0.85,
+        "work": 0.8,
+        "cocktail": 0.75,
+        "evening": 0.7,
+        "event": 0.7,
+        "date": 0.6,
+        "travel": 0.5,
+        "daily_wear": 0.4,
+        "casual": 0.35,
+        "weekend": 0.3,
+        "outdoor": 0.3,
+        "beach": 0.2,
+        "gym": 0.2,
+        "sport": 0.2
+      }
+    }
+  },
+
+  "_metadata": {
+    "version": "1.0",
+    "format_notes": "JSON structure allows easy customization per user profile",
+    "weight_validation": "All weights per goal should sum to ~1.0 (tolerance: ±0.05)",
+    "theme_notes": "Customize occasion_importance dict for regional/cultural variations",
+    "color_notes": "Add more neutral colors for regional palettes (e.g., 'sage', 'mushroom' for EU trend 2024-2026)"
+  }
+}

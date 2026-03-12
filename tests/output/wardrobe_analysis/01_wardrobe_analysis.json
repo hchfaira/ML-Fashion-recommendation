@@ -1,0 +1,317 @@
+{
+  "distribution": {
+    "by_category": [
+      {
+        "category": "top",
+        "count": 4,
+        "percentage": 33.3
+      },
+      {
+        "category": "bottom",
+        "count": 3,
+        "percentage": 25.0
+      },
+      {
+        "category": "shoes",
+        "count": 3,
+        "percentage": 25.0
+      },
+      {
+        "category": "outerwear",
+        "count": 1,
+        "percentage": 8.3
+      },
+      {
+        "category": "accessory",
+        "count": 1,
+        "percentage": 8.3
+      }
+    ],
+    "by_color": [
+      {
+        "category": "black",
+        "count": 4,
+        "percentage": 33.3
+      },
+      {
+        "category": "white",
+        "count": 2,
+        "percentage": 16.7
+      },
+      {
+        "category": "grey",
+        "count": 2,
+        "percentage": 16.7
+      },
+      {
+        "category": "navy",
+        "count": 1,
+        "percentage": 8.3
+      },
+      {
+        "category": "blue",
+        "count": 1,
+        "percentage": 8.3
+      },
+      {
+        "category": "brown",
+        "count": 1,
+        "percentage": 8.3
+      },
+      {
+        "category": "silver",
+        "count": 1,
+        "percentage": 8.3
+      }
+    ],
+    "by_formality": [
+      {
+        "category": "casual",
+        "count": 4,
+        "percentage": 33.3
+      },
+      {
+        "category": "business",
+        "count": 4,
+        "percentage": 33.3
+      },
+      {
+        "category": "smart_casual",
+        "count": 3,
+        "percentage": 25.0
+      },
+      {
+        "category": "formal",
+        "count": 1,
+        "percentage": 8.3
+      }
+    ],
+    "by_season": [
+      {
+        "category": "fall",
+        "count": 12,
+        "percentage": 100.0
+      },
+      {
+        "category": "winter",
+        "count": 12,
+        "percentage": 100.0
+      },
+      {
+        "category": "spring",
+        "count": 11,
+        "percentage": 91.7
+      },
+      {
+        "category": "summer",
+        "count": 11,
+        "percentage": 91.7
+      }
+    ],
+    "by_material": [
+      {
+        "category": "unknown",
+        "count": 12,
+        "percentage": 100.0
+      }
+    ],
+    "by_pattern": [
+      {
+        "category": "solid",
+        "count": 12,
+        "percentage": 100.0
+      }
+    ],
+    "total_items": 12
+  },
+  "gaps": [],
+  "occasion_coverage": [
+    {
+      "occasion": "daily_wear",
+      "coverage_score": 1.0,
+      "suitable_items_count": 7,
+      "missing_categories": [],
+      "suggestion": null
+    },
+    {
+      "occasion": "work",
+      "coverage_score": 1.0,
+      "suitable_items_count": 7,
+      "missing_categories": [],
+      "suggestion": null
+    },
+    {
+      "occasion": "date",
+      "coverage_score": 1.0,
+      "suitable_items_count": 7,
+      "missing_categories": [],
+      "suggestion": null
+    },
+    {
+      "occasion": "cocktail",
+      "coverage_score": 1.0,
+      "suitable_items_count": 7,
+      "missing_categories": [],
+      "suggestion": null
+    },
+    {
+      "occasion": "formal",
+      "coverage_score": 0.35,
+      "suitable_items_count": 5,
+      "missing_categories": [
+        "DRESS",
+        "ACCESSORY"
+      ],
+      "suggestion": "Add dress, accessory items suitable for formal occasions"
+    }
+  ],
+  "top_versatile_items": [
+    {
+      "garment_id": "bottom_2",
+      "garment_description": "grey trousers",
+      "versatility_score": 1.0,
+      "compatible_outfit_count": 8,
+      "compatible_categories": [
+        "accessory",
+        "outerwear",
+        "shoes",
+        "top"
+      ],
+      "compatible_occasions": [
+        "daily_wear",
+        "work",
+        "date",
+        "cocktail",
+        "outdoor",
+        "travel",
+        "casual",
+        "evening",
+        "weekend"
+      ]
+    },
+    {
+      "garment_id": "shoes_2",
+      "garment_description": "brown loafers",
+      "versatility_score": 1.0,
+      "compatible_outfit_count": 9,
+      "compatible_categories": [
+        "accessory",
+        "bottom",
+        "outerwear",
+        "top"
+      ],
+      "compatible_occasions": [
+        "daily_wear",
+        "work",
+        "date",
+        "cocktail",
+        "outdoor",
+        "travel",
+        "casual",
+        "evening",
+        "weekend"
+      ]
+    },
+    {
+      "garment_id": "acc_1",
+      "garment_description": "silver watch",
+      "versatility_score": 1.0,
+      "compatible_outfit_count": 10,
+      "compatible_categories": [
+        "bottom",
+        "outerwear",
+        "shoes",
+        "top"
+      ],
+      "compatible_occasions": [
+        "daily_wear",
+        "work",
+        "date",
+        "cocktail",
+        "outdoor",
+        "travel",
+        "casual",
+        "evening",
+        "weekend"
+      ]
+    },
+    {
+      "garment_id": "jacket_1",
+      "garment_description": "black blazer",
+      "versatility_score": 0.94,
+      "compatible_outfit_count": 7,
+      "compatible_categories": [
+        "accessory",
+        "bottom",
+        "shoes",
+        "top"
+      ],
+      "compatible_occasions": [
+        "work",
+        "business",
+        "interview",
+        "wedding",
+        "formal",
+        "event"
+      ]
+    },
+    {
+      "garment_id": "top_3",
+      "garment_description": "black dress_shirt",
+      "versatility_score": 0.85,
+      "compatible_outfit_count": 6,
+      "compatible_categories": [
+        "accessory",
+        "bottom",
+        "outerwear",
+        "shoes"
+      ],
+      "compatible_occasions": [
+        "work",
+        "business",
+        "interview",
+        "wedding",
+        "formal",
+        "event"
+      ]
+    }
+  ],
+  "purchase_suggestions": [
+    {
+      "priority": 1,
+      "category": "dress",
+      "description": "Add dress for formal occasions",
+      "reason": "Coverage for formal is only 35%",
+      "estimated_outfit_increase": 3,
+      "suggested_colors": [
+        "beige",
+        "any color works with neutrals",
+        "mint",
+        "gray"
+      ],
+      "suggested_styles": [],
+      "target_occasions": [
+        "formal"
+      ]
+    },
+    {
+      "priority": 2,
+      "category": "accessory",
+      "description": "Add accessory for formal occasions",
+      "reason": "Coverage for formal is only 35%",
+      "estimated_outfit_increase": 12,
+      "suggested_colors": [
+        "beige",
+        "any color works with neutrals",
+        "mint",
+        "gray"
+      ],
+      "suggested_styles": [],
+      "target_occasions": [
+        "formal"
+      ]
+    }
+  ],
+  "overall_score": 0.95,
+  "summary": "Wardrobe contains 12 items. Top categories: top (4), bottom (3), shoes (3). No significant gaps detected. Low coverage for: formal. Overall: Excellent wardrobe!"
+}

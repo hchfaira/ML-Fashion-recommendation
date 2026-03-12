@@ -23,6 +23,13 @@ from src.layer1_vision import AttributeExtractor, VisionService, EmbeddingGenera
 from src.layer2_style import OutfitBuilder, OutfitScorecard, get_scoring_config_service
 from src.core import get_logger
 
+# Import Layer 4 (LLM improvement explainer) - optional, requires OpenAI key
+try:
+    from src.layer4_llm.outfit_improvement_explainer import OutfitImprovementExplainer
+    IMPROVEMENT_EXPLAINER_AVAILABLE = True
+except ImportError:
+    IMPROVEMENT_EXPLAINER_AVAILABLE = False
+
 # Import Layer 0 (segmentation) - optional, may require SAM
 try:
     from src.layer0_segmentation import get_segmenter, SegmentedGarment
@@ -64,7 +71,9 @@ class FullPipelineTester:
         profile: str = "default", 
         results_storage: Optional[ResultsStorage] = None,
         use_segmentation: bool = True,
-        use_visualization: bool = True
+        use_visualization: bool = True,
+        user_season=None,
+        body_shape=None,
     ):
         """
         Initialize the tester.
@@ -74,12 +83,16 @@ class FullPipelineTester:
             results_storage: Optional storage for saving results
             use_segmentation: Whether to use Layer 0 (SAM segmentation)
             use_visualization: Whether to use Layer 5 (outfit visualization)
+            user_season: Optional ColorSeason for personalised Layer 4 explanations
+            body_shape: Optional BodyShape for personalised Layer 4 explanations
         """
         self.profile = profile
         self.builder = OutfitBuilder()
         self.extractor = AttributeExtractor()
         self.embedding_gen = EmbeddingGenerator()
         self.storage = results_storage
+        self.user_season = user_season
+        self.body_shape = body_shape
         
         # Layer 0: Segmentation
         self.segmenter = None
@@ -102,7 +115,19 @@ class FullPipelineTester:
             except Exception as e:
                 logger.warning(f"Could not initialize visualizer: {e}")
                 self.use_visualization = False
-        
+
+        # Layer 4: Improvement Explainer (requires OpenAI key)
+        self.improvement_explainer = None
+        if IMPROVEMENT_EXPLAINER_AVAILABLE:
+            try:
+                self.improvement_explainer = OutfitImprovementExplainer(max_suggestions=5)
+                season_label = user_season.value if user_season and hasattr(user_season, "value") else str(user_season) if user_season else "none"
+                shape_label  = body_shape.value  if body_shape  and hasattr(body_shape,  "value") else str(body_shape)  if body_shape  else "none"
+                print(f"💬 Layer 4 (Improvement Explainer): Enabled "
+                      f"(season={season_label}, shape={shape_label})")
+            except Exception as e:
+                logger.warning(f"Could not initialize OutfitImprovementExplainer: {e}")
+
         # Segmented images cache (garment.id -> PIL Image)
         self.segmented_images: Dict[str, Image.Image] = {}
         
@@ -134,7 +159,7 @@ class FullPipelineTester:
         print(f"   Generated {len(combinations)} possible combinations")
         
         if not combinations:
-            return self._handle_no_combinations(wardrobe)
+            return await self._handle_no_combinations(wardrobe)
         
         # Get all garments list
         all_garments = self._flatten_wardrobe(wardrobe)
@@ -177,7 +202,7 @@ class FullPipelineTester:
         self._last_best_outfit = best
         self._last_candidates = candidates
         
-        report = self._generate_report(candidates, best)
+        report = await self._generate_report(candidates, best)
         
         # Generate outfit visualization (Layer 5)
         if self.use_visualization and self.visualizer and best:
@@ -396,7 +421,7 @@ class FullPipelineTester:
                     desc = self._get_garment_description(item, include_path=True)
                     print(f"      • {desc}")
     
-    def _handle_no_combinations(self, wardrobe: Dict[str, List[Garment]]) -> dict:
+    async def _handle_no_combinations(self, wardrobe: Dict[str, List[Garment]]) -> dict:
         """Handle case when no valid combinations can be generated."""
         print("\n⚠️  No valid combinations found (need at least tops + bottoms)")
         print("   Scoring all garments as single outfit instead...")
@@ -404,7 +429,7 @@ class FullPipelineTester:
         all_garments = self._flatten_wardrobe(wardrobe)
         scorecard = OutfitScorecard(garments=all_garments, profile=self.profile)
         result = scorecard.calculate_all_scores()
-        return self._generate_single_outfit_report(result)
+        return await self._generate_single_outfit_report(result)
     
     async def test_outfit_image(self, image_path: Path) -> dict:
         """
@@ -429,7 +454,7 @@ class FullPipelineTester:
         scorecard = OutfitScorecard(garments=garments, profile=self.profile)
         result = scorecard.calculate_all_scores()
         
-        return self._generate_single_outfit_report(result)
+        return await self._generate_single_outfit_report(result)
     
     async def test_individual_images(self, image_paths: List[Path]) -> dict:
         """Test with a list of individual garment images (one outfit)."""
@@ -451,7 +476,7 @@ class FullPipelineTester:
         scorecard = OutfitScorecard(garments=garments, profile=self.profile)
         result = scorecard.calculate_all_scores()
         
-        return self._generate_single_outfit_report(result)
+        return await self._generate_single_outfit_report(result)
     
     def _get_garment_description(self, garment: Garment, include_path: bool = False) -> str:
         """Generate a clear description of a garment."""
@@ -484,7 +509,7 @@ class FullPipelineTester:
         
         return desc
 
-    def _generate_report(self, candidates: list, best) -> dict:
+    async def _generate_report(self, candidates: list, best) -> dict:
         """Generate report for best outfit selection."""
         print("\n" + "=" * 60)
         print("🏆 BEST OUTFIT FOUND!")
@@ -518,9 +543,89 @@ class FullPipelineTester:
             for g in candidate.garments:
                 desc = self._get_garment_description(g, include_path=True)
                 print(f"      • {g.attributes.category.value:12} → {desc}")
-        
+
+        # ── Layer 4 : Personalised improvement explanations ──────────
+        improvement_data = await self._run_improvement_explainer(best, candidates)
+
         # Build JSON report
-        return self._build_json_report(candidates, best, sorted_candidates)
+        report = self._build_json_report(candidates, best, sorted_candidates)
+        if improvement_data:
+            report["improvement_explanation"] = improvement_data
+        return report
+
+    async def _run_improvement_explainer(self, best, candidates: list) -> Optional[dict]:
+        """
+        Run OutfitImprovementExplainer on the best outfit and print the results.
+        Uses the full wardrobe (all garments from all candidates) as improvement pool.
+        """
+        if not self.improvement_explainer:
+            return None
+
+        # Build wardrobe: all unique garments across candidates
+        seen_ids: set = set()
+        all_garments = []
+        for candidate in candidates:
+            for g in candidate.garments:
+                if g.id not in seen_ids:
+                    seen_ids.add(g.id)
+                    all_garments.append(g)
+
+        print("\n" + "=" * 60)
+        print("💬 LAYER 4 — PERSONALISED IMPROVEMENT ANALYSIS")
+        print("=" * 60)
+
+        try:
+            result = await self.improvement_explainer.explain_improvements(
+                garments=best.garments,
+                wardrobe=all_garments,
+                context=None,
+                user_season=self.user_season,
+                body_shape=self.body_shape,
+                tone="friendly",
+                detail_level="standard",
+            )
+        except Exception as exc:
+            logger.warning(f"OutfitImprovementExplainer failed: {exc}")
+            return None
+
+        # ── Print diagnosis ────────────────────────────────────────
+        print(f"\n✨ Outfit: {result.outfit_name}")
+        print(f"📝 Diagnosis  (score {result.current_score:.0%} → potential {result.potential_score:.0%})")
+        print(f"   {result.diagnosis_summary}")
+
+        if result.profile_note:
+            print(f"\n👤 Profile note : {result.profile_note}")
+
+        # ── Weak / strong dimensions ──────────────────────────────
+        if result.weak_dimensions:
+            print(f"\n⚠️  Weak dimensions  : {', '.join(result.weak_dimensions)}")
+        if result.strong_dimensions:
+            print(f"✅ Strong dimensions : {', '.join(result.strong_dimensions)}")
+
+        # ── Suggested improvements ────────────────────────────────
+        if result.suggested_pieces:
+            print(f"\n💡 Improvement suggestions ({len(result.suggested_pieces)}):")
+            print("-" * 60)
+            for piece in result.suggested_pieces:
+                icon = {"addition": "➕", "replacement": "🔄", "purchase": "🛍️"}.get(
+                    piece.suggestion_type, "•"
+                )
+                delta_str = (
+                    f"+{piece.expected_score_change:.1%}"
+                    if piece.expected_score_change >= 0
+                    else f"{piece.expected_score_change:.1%}"
+                )
+                print(f"\n   {icon} [{piece.suggestion_type.upper()}] {delta_str}")
+                print(f"      {piece.garment_description}")
+                print(f"      → {piece.llm_explanation}")
+        else:
+            print("\n   ✨ No significant improvements found — this outfit is already strong!")
+
+        # ── Short summary (mobile card) ───────────────────────────
+        if result.short_summary:
+            print(f"\n📱 Mobile summary : {result.short_summary}")
+
+        return result.to_dict()
     
     def _build_json_report(self, candidates: list, best, sorted_candidates: list) -> dict:
         """Build JSON report structure."""
@@ -561,7 +666,7 @@ class FullPipelineTester:
             "profile_used": self.profile
         }
     
-    def _generate_single_outfit_report(self, scorecard: OutfitScorecard) -> dict:
+    async def _generate_single_outfit_report(self, scorecard: OutfitScorecard) -> dict:
         """Generate report for a single outfit."""
         print("\n" + "=" * 60)
         print("📊 OUTFIT ANALYSIS COMPLETE")
@@ -581,8 +686,14 @@ class FullPipelineTester:
         
         # Show details
         self._print_score_details(scorecard)
-        
-        return scorecard.to_json(include_all_scores=False)
+
+        # ── Layer 4 : Personalised improvement explanations ──────────
+        improvement_data = await self._run_improvement_explainer_from_scorecard(scorecard)
+
+        result = scorecard.to_json(include_all_scores=False)
+        if improvement_data:
+            result["improvement_explanation"] = improvement_data
+        return result
     
     def _print_score_details(self, scorecard: OutfitScorecard) -> None:
         """Print detailed scoring information."""
@@ -599,3 +710,25 @@ class FullPipelineTester:
                     print(f"\n   {display_name}:")
                     for item in detail[:3]:
                         print(f"      • {item}")
+
+    async def _run_improvement_explainer_from_scorecard(self, scorecard: OutfitScorecard) -> Optional[dict]:
+        """
+        Wrapper for the single-outfit code paths (--images, --outfit-image).
+        Builds a trivial wardrobe = outfit garments only, then delegates to
+        _run_improvement_explainer which handles all the printing + async call.
+        """
+        if not self.improvement_explainer:
+            return None
+
+        # Wrap the scorecard in a minimal object compatible with _run_improvement_explainer
+        class _FakeBest:
+            def __init__(self, sc):
+                self.garments = sc.garments
+                self.name = " + ".join(
+                    g.attributes.subcategory or g.attributes.category.value
+                    for g in sc.garments
+                )
+                self.overall_score = sc.scores.get("overall", 0)
+                self.scorecard = sc
+
+        return await self._run_improvement_explainer(_FakeBest(scorecard), [_FakeBest(scorecard)])

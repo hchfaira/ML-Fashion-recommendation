@@ -8,20 +8,30 @@ Demonstrates the optimized outfit search algorithms:
 - A* Search  
 - Hybrid Search
 
-Compares performance and results with exhaustive search.
+Also demonstrates the HybridOutfitRecommender that combines
+StyleIntelligenceModel (Layer 2) with ContextEngine (Layer 3) to produce
+context-aware style rankings with dual scores.
 
 Usage:
     python scripts/demo_outfit_search.py [wardrobe_path] [--algorithm beam|astar|hybrid]
-    
+    python scripts/demo_outfit_search.py --hybrid            # dual-engine demo
+    python scripts/demo_outfit_search.py --hybrid --compare  # show style vs context breakdown
+
 Examples:
     # Use default sample wardrobe
     python scripts/demo_outfit_search.py
-    
+
     # Use custom wardrobe
     python scripts/demo_outfit_search.py /path/to/wardrobe
-    
+
     # Compare all algorithms
     python scripts/demo_outfit_search.py --compare
+
+    # Hybrid (StyleIntelligenceModel + ContextEngine) ranking
+    python scripts/demo_outfit_search.py --hybrid
+
+    # Hybrid with user photo for personalised scoring
+    python scripts/demo_outfit_search.py --hybrid --user-photo selfie.jpg
 """
 
 import argparse
@@ -46,7 +56,12 @@ from src.layer2_style.outfit_search import (
     create_outfit_search,
     search_best_outfits,
 )
-from src.core.models import Garment, UserContext
+from src.layer2_style.hybrid_recommender import (
+    HybridOutfitRecommender,
+    HybridScore,
+    RankedOutfit,
+)
+from src.core.models import Garment, UserContext, Occasion, FormalityLevel
 from src.core import get_logger
 
 logger = get_logger(__name__)
@@ -92,6 +107,36 @@ def print_candidate(candidate: OutfitCandidate, rank: int):
     print(f"   └─ Creativity: {scores.get('creativity', 0):.0%}")
 
 
+def print_ranked_outfit(ranked: "RankedOutfit", rank: int, show_breakdown: bool = False):
+    """Print a HybridOutfitRecommender result."""
+    medal = "🥇" if rank == 1 else "🥈" if rank == 2 else "🥉" if rank == 3 else f"#{rank}"
+    s = ranked.score
+    items = " + ".join(
+        g.attributes.subcategory or g.attributes.category.value
+        for g in ranked.garments
+    )
+
+    print(f"\n{medal} {items}")
+    print(f"   Combined Score : {s.combined_score:.1%}  [{s.grade}]")
+    print(f"   ├─ Style  ({s.style_weight:.0%})  : {s.style_score:.1%}")
+    print(f"   └─ Context({s.context_weight:.0%}) : {s.context_score:.1%}")
+
+    if show_breakdown:
+        if s.style_breakdown:
+            print("   Style breakdown:")
+            for k, v in s.style_breakdown.items():
+                if isinstance(v, (int, float)):
+                    print(f"      • {k}: {v:.0%}")
+        if s.context_breakdown:
+            print("   Context breakdown:")
+            for k, v in s.context_breakdown.items():
+                print(f"      • {k}: {v}")
+        if s.strengths:
+            print(f"   ✅ Strengths: {', '.join(s.strengths[:2])}")
+        if s.improvements:
+            print(f"   💡 Tips: {', '.join(s.improvements[:2])}")
+
+
 async def load_wardrobe(wardrobe_path: Optional[Path]) -> Dict[str, List[Garment]]:
     """Load wardrobe from path or use sample."""
     builder = OutfitBuilder()
@@ -133,7 +178,7 @@ def create_mock_wardrobe() -> Dict[str, List[Garment]]:
                 color=ColorInfo(primary=color, hex_codes=[]),
                 pattern=PatternInfo(type="solid"),
                 formality_level="casual",
-                season_suitable=["spring", "summer"],
+                season_suitable=["spring", "summer", "fall", "winter"],
                 fit="regular"
             )
         )
@@ -255,6 +300,106 @@ def run_quick_demo(wardrobe: Dict[str, List[Garment]]):
         print(f"\n❌ Error: {e}")
 
 
+async def run_hybrid_demo(
+    wardrobe: Dict[str, List[Garment]],
+    *,
+    show_breakdown: bool = False,
+    user_photo: Optional[Path] = None,
+    top_k: int = 5,
+):
+    """
+    Rank wardrobe combinations using the HybridOutfitRecommender
+    (StyleIntelligenceModel + ContextEngine) and display a dual-score table.
+    """
+    print_header("🤖 Hybrid Ranking — Style × Context")
+
+    # Optionally personalise from a user photo
+    color_season = None
+    body_shape_enum = None
+
+    if user_photo and user_photo.exists():
+        print(f"\n📸 Extracting user profile from: {user_photo}")
+        try:
+            from src.layer3_context.user_profile import StyleProfilePipeline, PipelineConfig
+            from src.layer2_style.season_color_harmony import ColorSeason as CS
+            from src.layer2_style.volume_balance_scorer import BodyShape as BS
+
+            pipeline = StyleProfilePipeline(PipelineConfig())
+            pr = pipeline.analyze(str(user_photo))
+            profile = pr.profile
+
+            if profile.skin_analysis and profile.skin_analysis.undertone:
+                undertone = profile.skin_analysis.undertone.value.lower()
+                season_map = {
+                    "warm": CS.AUTUMN,
+                    "cool": CS.WINTER,
+                    "neutral": CS.SPRING,
+                }
+                color_season = season_map.get(undertone, CS.SPRING)
+                print(f"   🎨 Detected color season: {color_season.value if hasattr(color_season, 'value') else color_season}")
+
+            if profile.body_metrics and profile.body_metrics.body_shape:
+                shape_val = profile.body_metrics.body_shape.value.upper().replace(" ", "_")
+                try:
+                    body_shape_enum = BS[shape_val]
+                    print(f"   👤 Detected body shape: {body_shape_enum.value if hasattr(body_shape_enum, 'value') else body_shape_enum}")
+                except KeyError:
+                    pass
+
+        except Exception as e:
+            print(f"   ⚠️  Could not extract profile: {e}")
+    else:
+        print("\n💡 Tip: pass --user-photo <selfie.jpg> for personalised scores")
+
+    # Build recommender
+    recommender = HybridOutfitRecommender(style_weight=0.40, context_weight=0.60)
+    if color_season or body_shape_enum:
+        recommender.set_user_profile(color_season=color_season, body_shape=body_shape_enum)
+
+    # Flatten wardrobe to flat list for recommender
+    all_garments: List[Garment] = [g for items in wardrobe.values() for g in items]
+
+    # Build a simple UserContext (casual occasion, no weather override)
+    user_context = UserContext(
+        occasion=Occasion.CASUAL,
+        formality_preference=FormalityLevel.CASUAL,
+    )
+
+    print(f"\n⏳ Scoring combinations (top {top_k}) …")
+    start = time.time()
+    ranked_outfits = await recommender.recommend(
+        all_garments,
+        user_context,
+        top_k=top_k,
+    )
+    elapsed = (time.time() - start) * 1000
+    print(f"   Done in {elapsed:.0f} ms — {len(ranked_outfits)} outfits ranked\n")
+
+    # ── Score comparison table ──────────────────────────────────────────
+    print(f"{'Rank':<5} {'Outfit':<38} {'Style':>7} {'Context':>9} {'Combined':>10} {'Grade':>6}")
+    print("─" * 80)
+    for rank, ro in enumerate(ranked_outfits, 1):
+        items_str = " + ".join(
+            (g.attributes.subcategory or g.attributes.category.value)[:12]
+            for g in ro.garments[:3]
+        )
+        if len(ro.garments) > 3:
+            items_str += f" (+{len(ro.garments)-3})"
+        marker = " ← ✅ RECOMMENDED" if rank == 1 else ""
+        print(
+            f"{rank:<5} {items_str:<38} {ro.score.style_score:>6.0%}  "
+            f"{ro.score.context_score:>8.0%}  {ro.score.combined_score:>9.0%}  "
+            f"{ro.score.grade:>5}{marker}"
+        )
+
+    # Detailed breakdown for top 3
+    print_header(f"Top {min(3, len(ranked_outfits))} Outfits — Full Breakdown")
+    for rank, ro in enumerate(ranked_outfits[:3], 1):
+        print_ranked_outfit(ro, rank, show_breakdown=show_breakdown)
+
+    print()
+
+
 async def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Outfit Search Demo")
@@ -284,6 +429,18 @@ async def main():
         help="Quick demo finding single best outfit"
     )
     parser.add_argument(
+        "--hybrid",
+        action="store_true",
+        help="Run HybridOutfitRecommender demo (StyleIntelligenceModel + ContextEngine)"
+    )
+    parser.add_argument(
+        "--user-photo",
+        type=Path,
+        default=None,
+        metavar="PHOTO",
+        help="User selfie for personalised hybrid scoring"
+    )
+    parser.add_argument(
         "--top-k",
         "-k",
         type=int,
@@ -310,7 +467,14 @@ async def main():
         return
     
     # Run demos
-    if args.compare:
+    if args.hybrid:
+        await run_hybrid_demo(
+            wardrobe,
+            show_breakdown=args.compare,
+            user_photo=args.user_photo,
+            top_k=args.top_k,
+        )
+    elif args.compare:
         run_algorithm_comparison(wardrobe)
     elif args.quick:
         run_quick_demo(wardrobe)
