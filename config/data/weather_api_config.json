@@ -1,0 +1,106 @@
+{
+  "_comment": "Real-time weather API config for WeatherAPIClient",
+
+  "providers": {
+    "open_meteo": {
+      "enabled": true,
+      "base_url": "https://api.open-meteo.com/v1/forecast",
+      "requires_key": false,
+      "timeout_seconds": 8,
+      "current_params": [
+        "temperature_2m",
+        "apparent_temperature",
+        "relative_humidity_2m",
+        "precipitation",
+        "weather_code",
+        "wind_speed_10m",
+        "uv_index"
+      ],
+      "daily_params": [
+        "sunrise",
+        "sunset"
+      ],
+      "timezone": "auto"
+    },
+    "openweathermap": {
+      "enabled": true,
+      "base_url": "https://api.openweathermap.org/data/2.5/weather",
+      "requires_key": true,
+      "env_key": "WEATHER_API_KEY",
+      "timeout_seconds": 8,
+      "units": "metric"
+    }
+  },
+
+  "cache": {
+    "ttl_seconds": 3600,
+    "stale_ttl_seconds": 86400,
+    "max_entries": 100,
+    "directory": ".weather_cache"
+  },
+
+  "geocoding": {
+    "open_meteo_url": "https://geocoding-api.open-meteo.com/v1/search",
+    "timeout_seconds": 5,
+    "max_results": 3
+  },
+
+  "defaults": {
+    "lat": 48.8566,
+    "lon": 2.3522,
+    "city": "Paris"
+  },
+
+  "outfit_impact": {
+    "rain": {
+      "penalise_materials": ["suede", "silk", "velvet", "linen"],
+      "penalise_footwear": ["open_toe", "canvas", "espadrille", "white_leather"],
+      "boost_accessories": ["umbrella", "rain_boots", "waterproof_jacket"],
+      "avoid_categories": [],
+      "score_penalty": 0.25
+    },
+    "drizzle": {
+      "penalise_materials": ["suede", "silk"],
+      "penalise_footwear": ["open_toe", "canvas"],
+      "boost_accessories": ["light_jacket"],
+      "avoid_categories": [],
+      "score_penalty": 0.10
+    },
+    "snow": {
+      "penalise_materials": ["linen", "silk", "light_cotton"],
+      "penalise_footwear": ["heels", "open_toe", "canvas"],
+      "boost_accessories": ["boots", "scarf", "gloves", "beanie"],
+      "avoid_categories": [],
+      "score_penalty": 0.20
+    },
+    "stormy": {
+      "penalise_materials": ["suede", "silk", "linen"],
+      "penalise_footwear": ["heels", "open_toe"],
+      "boost_accessories": ["trench_coat", "rain_boots"],
+      "avoid_categories": ["skirts", "wide_dresses"],
+      "score_penalty": 0.30
+    },
+    "wind_above_30kmh": {
+      "penalise_silhouettes": ["full_skirt", "wide_leg", "maxi_skirt", "wide_brim_hat"],
+      "boost_silhouettes": ["slim_fit", "fitted", "tailored"],
+      "score_penalty": 0.10
+    },
+    "uv_above_6": {
+      "boost_accessories": ["wide_brim_hat", "sunglasses", "light_scarf"],
+      "boost_materials": ["uv_protective"],
+      "score_penalty": 0
+    },
+    "hot_above_27": {
+      "penalise_materials": ["wool", "down", "fleece", "thick_denim"],
+      "boost_materials": ["linen", "light_cotton", "breathable"],
+      "boost_silhouettes": ["loose", "flowy", "airy"],
+      "score_penalty": 0.15
+    },
+    "cold_below_10": {
+      "penalise_materials": ["linen", "sheer"],
+      "boost_materials": ["wool", "cashmere", "fleece", "down"],
+      "boost_accessories": ["scarf", "gloves", "hat", "boots"],
+      "score_penalty": 0.15
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "98d7dec7-063f-4e22-8cf4-b1bbc049de1f",
+  "image_path": "data/sample_wardrobe/image copy 6.png",
+  "image_name": "image copy 6.png",
+  "extracted_at": "2026-03-14T12:05:36.834633",
+  "attributes": {
+    "category": "shoes",
+    "subcategory": "heels",
+    "product_type": "pump",
+    "outfit_role": "footwear",
+    "color": {
+      "primary": "black",
+      "secondary": "beige",
+      "color_palette": [
+        "black",
+        "beige",
+        "gold"
+      ],
+      "hex_codes": [
+        "#000000",
+        "#D4C0B0",
+        "#B8860B"
+      ],
+      "color_temperature": "neutral",
+      "color_depth": "dark"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "leather",
+      "texture": "glossy",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "structured",
+      "volume": "low"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "classic",
+      "elegant",
+      "modern",
+      "minimalist"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall",
+      "winter"
+    ]
+  }
+}

@@ -57,6 +57,22 @@ logs/
 .coverage
 htmlcov/
 .pytest_cache/
+tests/output/
+tests/output_*/
+
+# Pipeline runs & outputs
+*.png
+*.jpg
+*.jpeg
+rapport*.json
+best_outfit*.png
+scoring_dashboard*.png
+criteria_breakdown*.png
+scores_comparison*.png
+best_outfit_radar*.png
+color_distribution*.png
+results_dir/
+pipeline_runs/
 
 # Jupyter
 .ipynb_checkpoints/

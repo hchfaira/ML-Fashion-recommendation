@@ -1,0 +1,174 @@
+{
+  "profile": "default",
+  "total_combinations": 5,
+  "evaluated_at": "2026-03-14T12:26:03.587127",
+  "combinations": [
+    {
+      "rank": 1,
+      "name": "tank_top + trousers + heels",
+      "overall_score": 0.7567,
+      "grade": "B+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 1,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.738,
+        "total_style": 0.73,
+        "overall": 0.7567
+      }
+    },
+    {
+      "rank": 2,
+      "name": "tank_top + leggings + heels",
+      "overall_score": 0.6884,
+      "grade": "B-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "leggings",
+          "color": "gray",
+          "image": "image copy.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.727,
+        "total_style": 0.63,
+        "overall": 0.6884
+      }
+    },
+    {
+      "rank": 3,
+      "name": "tank_top + pants + heels",
+      "overall_score": 0.6882,
+      "grade": "B-",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "tank_top",
+          "color": "lilac",
+          "image": "image copy 2.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "pants",
+          "color": "tan",
+          "image": "image2.png"
+        },
+        {
+          "category": "shoes",
+          "subcategory": "heels",
+          "color": "black",
+          "image": "image copy 6.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.4,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 1,
+        "volume_balance": 0.3333,
+        "pattern_mixing": 0.95,
+        "design_principles": 0.726,
+        "total_style": 0.63,
+        "overall": 0.6882
+      }
+    },
+    {
+      "rank": 4,
+      "name": "mini dress",
+      "overall_score": 0.6315,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "dress",
+          "subcategory": "mini dress",
+          "color": "burgundy",
+          "image": "image copy 5.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.7,
+        "three_color": 1.0,
+        "proportion": 0.7,
+        "volume_balance": 0.7,
+        "pattern_mixing": 0.87,
+        "design_principles": 0.697,
+        "total_style": 0.58,
+        "overall": 0.6315
+      }
+    },
+    {
+      "rank": 5,
+      "name": "one-shoulder top + trousers",
+      "overall_score": 0.6134,
+      "grade": "C+",
+      "garments": [
+        {
+          "category": "top",
+          "subcategory": "one-shoulder top",
+          "color": "lightblue",
+          "image": "image copy 3.png"
+        },
+        {
+          "category": "bottom",
+          "subcategory": "trousers",
+          "color": "beige",
+          "image": "image.png"
+        }
+      ],
+      "scores": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "three_color": 1.0,
+        "proportion": 0.4,
+        "volume_balance": 0.6667,
+        "pattern_mixing": 0.87,
+        "design_principles": 0.758,
+        "total_style": 0.5,
+        "overall": 0.6134
+      }
+    }
+  ]
+}

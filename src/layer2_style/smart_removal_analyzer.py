@@ -24,9 +24,12 @@ Design constraints
 
 from __future__ import annotations
 
+import asyncio
+import functools
 import math
+import warnings
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar
 
 from src.core import get_logger
 from src.core.models import (
@@ -45,6 +48,27 @@ from src.core.models import (
     WearRecord,
 )
 from src.layer2_style.smart_removal_config import SmartRemovalProfile, SmartRemovalConfigLoader
+
+_F = TypeVar("_F", bound=Callable[..., Any])
+
+
+def _deprecated(replacement: str) -> Callable[[_F], _F]:
+    """Decorator that emits a DeprecationWarning on every call."""
+
+    def decorator(func: _F) -> _F:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            warnings.warn(
+                f"{func.__name__} is deprecated and will be removed in a future "
+                f"release. Use {replacement} instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            return func(*args, **kwargs)
+
+        return wrapper  # type: ignore[return-value]
+
+    return decorator
 
 logger = get_logger(__name__)
 
@@ -236,8 +260,215 @@ class SmartRemovalAnalyzer:
         return results
 
     # ------------------------------------------------------------------ #
+    # Neo4j-Enriched Async Methods  (Phase 4)                            #
+    # ------------------------------------------------------------------ #
+
+    async def analyze_with_neo4j(
+        self,
+        garment_id: str,
+        wardrobe: List[Garment],
+        neo4j_client: Any,
+        *,
+        outfits: Optional[List] = None,
+        context: Optional[UserContext] = None,
+        user_goal: UserRemovalGoal = UserRemovalGoal.MAXIMIZE_OPTIONS,
+    ) -> SmartRemovalVerdict:
+        """Analyze a single garment using Neo4j centrality enrichment.
+
+        Fetches pre-computed centrality scores (degree, pagerank,
+        betweenness) from Neo4j and injects a ``centrality`` signal into
+        the scoring model.  Falls back gracefully to the standard
+        :meth:`analyze` path when Neo4j is unavailable.
+
+        Parameters
+        ----------
+        garment_id:
+            ID of the garment to analyze.
+        wardrobe:
+            All garments belonging to the user.
+        neo4j_client:
+            An :class:`~src.core.neo4j_client.Neo4jClient` instance.
+            Passing ``None`` silently falls back to the base method.
+        outfits, context, user_goal:
+            Forwarded to :meth:`analyze`.
+
+        Returns
+        -------
+        SmartRemovalVerdict with an extra ``centrality`` entry in
+        ``signals`` when Neo4j data is available.
+        """
+        centrality_data: Optional[Dict[str, float]] = None
+
+        if neo4j_client is not None:
+            try:
+                centrality_data = await neo4j_client.get_centrality_scores(garment_id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "analyze_with_neo4j: could not fetch centrality for %s: %s",
+                    garment_id,
+                    exc,
+                )
+
+        # Run the synchronous core analysis
+        verdict = self.analyze(
+            garment_id, wardrobe,
+            outfits=outfits, context=context, user_goal=user_goal,
+        )
+
+        # Inject centrality signal into the verdict
+        centrality_score = self._centrality_signal(centrality_data)
+        verdict.signals["centrality"] = centrality_score
+
+        # Recalculate regret_risk to include centrality if a weight is set
+        goal_name = user_goal.value.upper()
+        if goal_name not in self.profile.goal_weights:
+            goal_name = user_goal.value
+        weights = self.profile.goal_weights.get(goal_name)
+        c_weight: float = 0.0
+        if weights is not None:
+            c_weight = getattr(weights, "centrality", 0.0)
+
+        if c_weight > 0.0:
+            contribution = centrality_score * c_weight
+            verdict.regret_risk = round(
+                max(0.0, min(1.0, verdict.regret_risk + contribution)), 3
+            )
+            direction = "supports_keeping" if centrality_score > 0.5 else "supports_removal"
+            verdict.reasons.append(
+                SmartRemovalReason(
+                    signal_name="centrality",
+                    direction=direction,
+                    weight=c_weight,
+                    score_contribution=round(contribution, 4),
+                    explanation=self._explain_signal(
+                        "centrality", centrality_score, None
+                    ),
+                )
+            )
+            verdict.reasons.sort(
+                key=lambda r: abs(r.score_contribution), reverse=True
+            )
+
+        return verdict
+
+    async def analyze_wardrobe_with_neo4j(
+        self,
+        wardrobe: List[Garment],
+        neo4j_client: Any,
+        *,
+        outfits: Optional[List] = None,
+        context: Optional[UserContext] = None,
+        user_goal: UserRemovalGoal = UserRemovalGoal.MAXIMIZE_OPTIONS,
+    ) -> List[SmartRemovalVerdict]:
+        """Analyze every garment using Neo4j centrality enrichment.
+
+        Centrality scores for all garments are fetched concurrently via
+        :func:`asyncio.gather` to minimise round-trip latency, then each
+        garment is analyzed synchronously and returned sorted by
+        ``regret_risk`` ascending (safest to remove first).
+
+        Parameters
+        ----------
+        wardrobe:
+            All garments belonging to the user.
+        neo4j_client:
+            Passed through to :meth:`analyze_with_neo4j`.
+        outfits, context, user_goal:
+            Forwarded to :meth:`analyze`.
+
+        Returns
+        -------
+        List of ``SmartRemovalVerdict`` sorted by ``regret_risk`` ascending.
+        """
+        active = [g for g in wardrobe if not g.history.is_retired]
+
+        # Batch-fetch centrality scores concurrently
+        if neo4j_client is not None:
+            centrality_map = await self._batch_fetch_centrality(
+                neo4j_client, [g.id for g in active]
+            )
+        else:
+            centrality_map = {}
+
+        results: List[SmartRemovalVerdict] = []
+        for garment in active:
+            centrality_data = centrality_map.get(garment.id)
+            verdict = self.analyze(
+                garment.id, wardrobe,
+                outfits=outfits, context=context, user_goal=user_goal,
+            )
+            centrality_score = self._centrality_signal(centrality_data)
+            verdict.signals["centrality"] = centrality_score
+
+            # Inject weighted contribution if profile weight > 0
+            goal_name = user_goal.value.upper()
+            if goal_name not in self.profile.goal_weights:
+                goal_name = user_goal.value
+            weights = self.profile.goal_weights.get(goal_name)
+            c_weight = 0.0
+            if weights is not None:
+                c_weight = getattr(weights, "centrality", 0.0)
+            if c_weight > 0.0:
+                verdict.regret_risk = round(
+                    max(0.0, min(1.0, verdict.regret_risk + centrality_score * c_weight)), 3
+                )
+
+            results.append(verdict)
+
+        results.sort(key=lambda v: v.regret_risk)
+        return results
+
+    # ------------------------------------------------------------------ #
     # Signal Computers                                                    #
     # ------------------------------------------------------------------ #
+
+    # -- Neo4j centrality helpers --
+
+    def _centrality_signal(
+        self, centrality_data: Optional[Dict[str, float]]
+    ) -> float:
+        """Convert Neo4j centrality scores to a [0, 1] keep-signal.
+
+        A **high** centrality score means the garment is a hub item that
+        participates in many compatible outfits → higher regret to remove
+        → higher keep-signal → *higher* regret_risk contribution when
+        combined with a positive ``centrality`` weight.
+
+        Formula::
+
+            score = 0.6 * degree_centrality + 0.4 * pagerank   (clamped [0,1])
+
+        When no data is available returns ``0.5`` (neutral / no opinion).
+        """
+        if not centrality_data:
+            return 0.5
+        degree = float(centrality_data.get("degree", 0.0) or 0.0)
+        pagerank = float(centrality_data.get("pagerank", 0.0) or 0.0)
+        raw = 0.6 * degree + 0.4 * pagerank
+        return round(max(0.0, min(1.0, raw)), 4)
+
+    @staticmethod
+    async def _batch_fetch_centrality(
+        neo4j_client: Any,
+        garment_ids: List[str],
+    ) -> Dict[str, Optional[Dict[str, float]]]:
+        """Concurrently fetch centrality scores for multiple garments.
+
+        Returns
+        -------
+        dict mapping garment_id → centrality dict (or ``None`` on error).
+        """
+
+        async def _safe_fetch(gid: str) -> Tuple[str, Optional[Dict[str, float]]]:
+            try:
+                data = await neo4j_client.get_centrality_scores(gid)
+                return gid, data
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("_batch_fetch_centrality: error for %s: %s", gid, exc)
+                return gid, None
+
+        pairs = await asyncio.gather(*[_safe_fetch(gid) for gid in garment_ids])
+        return dict(pairs)
 
     def _recency_score(
         self, garment: Garment, now: datetime,
@@ -638,8 +869,19 @@ class SmartRemovalAnalyzer:
 
         return lines
 
-    def _explain_signal(self, name: str, value: float, garment: Garment) -> str:
+    def _explain_signal(self, name: str, value: float, garment: Optional[Garment]) -> str:
         """One-sentence explanation for a signal."""
+        if name == "centrality":
+            if value == 0.5:
+                return "Graph centrality unknown — no Neo4j data available."
+            elif value > 0.7:
+                return "High graph centrality — this is a hub item that enables many outfits."
+            elif value > 0.4:
+                return "Moderate graph centrality — contributes to several outfit combinations."
+            else:
+                return "Low graph centrality — rarely appears in compatible outfit graphs."
+        if garment is None:
+            return f"Signal '{name}' has value {value:.2f}."
         if name == "recency":
             if value > 0.7:
                 return "Worn recently — removing it may feel like a loss."

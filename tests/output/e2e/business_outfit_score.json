@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "timestamp": "2026-03-12T19:11:23.271716",
+    "timestamp": "2026-03-14T21:53:28.666735",
     "num_items": 3,
     "profile": "default",
     "profile_name": "Balanced Scoring"
@@ -182,9 +182,9 @@
       "color_count": 1,
       "passes": true,
       "colors": [
+        "blue",
         "navy",
-        "light_blue",
-        "blue"
+        "light_blue"
       ]
     },
     "proportion": {

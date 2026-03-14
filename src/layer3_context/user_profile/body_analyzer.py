@@ -497,6 +497,15 @@ class BodyAnalyzer:
     
     def close(self):
         """Release resources."""
-        if self._pose:
-            self._pose.close()
-            self._pose = None
+        if self._pose_landmarker is not None:
+            try:
+                self._pose_landmarker.close()
+            except Exception:
+                pass
+            self._pose_landmarker = None
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass

@@ -1,0 +1,49 @@
+{
+  "id": "a3e8baa1-1a08-42c5-a532-d3cda49b11b7",
+  "image_path": "data/sample_wardrobe/image copy 5.png",
+  "image_name": "image copy 5.png",
+  "extracted_at": "2026-03-14T12:05:36.834539",
+  "attributes": {
+    "category": "dress",
+    "subcategory": "a_line_dress",
+    "product_type": "mini a-line dress with spaghetti straps",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "burgundy",
+      "secondary": null,
+      "color_palette": [
+        "burgundy"
+      ],
+      "hex_codes": [
+        "#800020"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "dark"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "polyester",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "regular",
+      "structure": "semi_structured",
+      "volume": "medium"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "elegant",
+      "romantic",
+      "modern"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

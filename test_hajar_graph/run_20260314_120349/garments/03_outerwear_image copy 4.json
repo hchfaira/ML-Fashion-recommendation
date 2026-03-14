@@ -1,0 +1,29 @@
+{
+  "id": "bee824e5-c056-4884-96c1-176f32a4ae94",
+  "image_path": "data/sample_wardrobe/image copy 4.png",
+  "image_name": "image copy 4.png",
+  "extracted_at": "2026-03-14T12:05:36.834458",
+  "attributes": {
+    "category": "outerwear",
+    "subcategory": "blazer",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "lavender",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

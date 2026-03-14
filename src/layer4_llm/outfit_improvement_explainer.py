@@ -9,7 +9,8 @@ Flow
 ----
   1. OutfitImprover (Layer 2) scores the outfit and produces:
        - OutfitDiagnosis  — weak / strong dimensions
-       - AdditionSuggestions  — items from the wardrobe to add
+       - AdditionSuggestions  — items from         # ── Step 3 : narrate each suggestion in parallel ─────────────
+        max_tokens = _TOKEN_BUDGET.get(detail_level, 150)e wardrobe to add
        - ReplacementSuggestions — swaps that raise the score
        - PurchaseTargeted  — what to buy to fix weak dimensions
   2. OutfitImprovementExplainer (this module) takes that raw data
@@ -150,17 +151,46 @@ _PLAIN_LANGUAGE: Dict[str, str] = {
 }
 
 def _plain(technical_name: str) -> str:
-    """Translate a technical scoring dimension name to plain language."""
-    return _PLAIN_LANGUAGE.get(technical_name, technical_name)
+    """Translate a technical scoring dimension name to plain language.
+
+    If *technical_name* is a short key present in _PLAIN_LANGUAGE, return
+    its plain-language equivalent.  Otherwise, scrub the full string of
+    any residual technical jargon (score percentages, dimension names,
+    rule references) so it is safe to show to a user or include in an
+    LLM prompt.
+    """
+    import re as _re
+
+    # 1. Direct lookup (for short dimension keys)
+    if technical_name in _PLAIN_LANGUAGE:
+        return _PLAIN_LANGUAGE[technical_name]
+
+    # 2. Scrub a longer reason string
+    text = technical_name
+
+    # Replace known dimension names inside the string
+    for tech, friendly in _PLAIN_LANGUAGE.items():
+        text = text.replace(tech, friendly)
+
+    # Remove parenthetical percentages like "(33%)" or "(0.33)"
+    text = _re.sub(r"\s*\(\d+\.?\d*%?\)", "", text)
+
+    # Remove stray "+XX%" or "-XX%" fragments
+    text = _re.sub(r"\+?\-?\d+\.?\d*%", "", text)
+
+    # Collapse double spaces
+    text = _re.sub(r"  +", " ", text).strip()
+
+    return text
 
 
 # ---------------------------------------------------------------------------
 # Detail-level token budgets
 # ---------------------------------------------------------------------------
 _TOKEN_BUDGET: Dict[str, int] = {
-    "brief":    80,
-    "standard": 150,
-    "detailed": 300,
+    "brief":    600,
+    "standard": 900,
+    "detailed": 1200,
 }
 
 # ---------------------------------------------------------------------------
@@ -321,7 +351,7 @@ class OutfitImprovementExplainer:
         raw_suggestions = raw_suggestions[: self._max_suggestions]
 
         # ── Step 3 : narrate each suggestion in parallel ─────────────
-        max_tokens = _TOKEN_BUDGET.get(detail_level, 150)
+        max_tokens = _TOKEN_BUDGET.get(detail_level, 600)
         narration_tasks = [
             self._narrate_suggestion(s, user_season, body_shape, tone, max_tokens)
             for s in raw_suggestions
@@ -419,8 +449,8 @@ class OutfitImprovementExplainer:
                 "type": "replacement",
                 "garment_id": r.replacement_garment_id,
                 "description": (
-                    f"Remplacer '{r.original_description}' "
-                    f"par '{r.replacement_description}'"
+                    f"Replace '{r.original_description}' "
+                    f"with '{r.replacement_description}'"
                 ),
                 "delta": r.expected_score_change,
                 "fallback_explanation": r.reason,
@@ -496,16 +526,22 @@ class OutfitImprovementExplainer:
             action_text = f"consider buying: {desc}"
 
         prompt = (
-            "You are a friendly personal stylist talking directly to a customer. "
-            "Use simple, everyday language — NO fashion jargon or technical scoring terms. "
-            "Do NOT mention scores, percentages, rule names, or system internals.\n\n"
+            "You are a friendly personal stylist talking directly to a customer.\n"
+            "CRITICAL RULES (follow strictly):\n"
+            "- Use simple, everyday language a non-fashion person would use.\n"
+            "- NEVER mention scores, percentages, rule names, point counts, "
+            "  volume balance, seven-point rules, or any system internals.\n"
+            "- Write a SHORT, PUNCHY reason: 1–2 sentences maximum (not more).\n"
+            "- Each sentence MUST be complete and end with a period.\n"
+            "- NO incomplete sentences, NO trailing thoughts.\n\n"
             f"### About this customer\n{profile_block}\n\n"
             f"### Suggested improvement\n"
             f"We recommend to {action_text}.\n"
             f"Why it helps: {plain_reason}\n\n"
-            "In 2–3 warm, conversational sentences, explain to this specific customer WHY this "
-            "suggestion suits them personally — referencing their colours or body shape where relevant. "
-            "Be encouraging, practical, and easy to understand."
+            "In just 1–2 complete sentences, explain WHY this suits this customer personally. "
+            "Reference their colours or body shape if possible. "
+            "Be warm, encouraging, and practical. "
+            "Keep it SHORT and punchy — don't over-explain."
         )
 
         try:

@@ -1,0 +1,320 @@
+{
+  "scoring_weights": {
+    "silhouette": 0.25,
+    "fit": 0.2,
+    "proportion": 0.15,
+    "fabric": 0.1,
+    "color_distribution": 0.1,
+    "pattern": 0.1,
+    "garment_balance": 0.1
+  },
+
+  "garment_features_schema": [
+    "category",
+    "silhouette",
+    "fit",
+    "length",
+    "rise",
+    "waist_position",
+    "neckline",
+    "shoulder_structure",
+    "sleeve_type",
+    "fabric_weight",
+    "fabric_drape",
+    "stretch",
+    "pattern_type",
+    "pattern_scale",
+    "color",
+    "color_value",
+    "color_contrast",
+    "visual_weight"
+  ],
+
+  "visual_goals_reference": [
+    "create_waist",
+    "elongate_legs",
+    "elongate_torso",
+    "balance_shoulders_hips",
+    "draw_attention_upper",
+    "draw_attention_lower",
+    "soften_shoulders",
+    "add_curves",
+    "streamline_midsection"
+  ],
+
+  "pattern_scale_values": [
+    "micro",
+    "small",
+    "medium",
+    "large",
+    "extra_large"
+  ],
+
+  "fabric_properties": [
+    "structured",
+    "medium_structure",
+    "fluid",
+    "clingy",
+    "heavy",
+    "light",
+    "stretchy"
+  ],
+
+  "body_type_recommendations": {
+
+    "rectangle": {
+      "visual_goals": {
+        "create_waist": true,
+        "add_curves": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "a_line", "weight": 0.9},
+          {"name": "fit_and_flare", "weight": 0.85},
+          {"name": "peplum", "weight": 0.8}
+        ],
+        "neutral": [
+          {"name": "straight", "weight": 0.5}
+        ],
+        "avoid": [
+          {"name": "boxy", "weight": -0.8},
+          {"name": "shapeless", "weight": -0.7}
+        ]
+      },
+
+      "garment_rules": {
+        "tops": {
+          "preferred_necklines": ["sweetheart", "scoop", "v_neck"],
+          "preferred_details": ["ruffles", "peplum", "belts"]
+        },
+        "bottoms": {
+          "preferred_fits": ["a_line", "flared"],
+          "preferred_rise": ["mid", "high"]
+        }
+      },
+
+      "fabric_preferences": {
+        "preferred": ["structured", "medium_structure"],
+        "avoid": ["ultra_clingy"]
+      },
+
+      "pattern_preferences": {
+        "preferred": ["horizontal_stripes", "color_blocking"],
+        "pattern_scale": ["small", "medium"]
+      }
+    },
+
+    "hourglass": {
+      "visual_goals": {
+        "create_waist": true,
+        "balance_shoulders_hips": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "wrap", "weight": 0.95},
+          {"name": "fitted", "weight": 0.9},
+          {"name": "bodycon", "weight": 0.85}
+        ],
+        "neutral": [
+          {"name": "tailored", "weight": 0.7}
+        ],
+        "avoid": [
+          {"name": "oversized", "weight": -0.7},
+          {"name": "boxy", "weight": -0.8}
+        ]
+      },
+
+      "garment_rules": {
+        "tops": {
+          "preferred_necklines": ["v_neck", "wrap", "sweetheart"]
+        },
+        "bottoms": {
+          "preferred_fits": ["pencil", "tailored"]
+        }
+      },
+
+      "fabric_preferences": {
+        "preferred": ["medium_structure", "stretchy"],
+        "avoid": ["bulky"]
+      },
+
+      "pattern_preferences": {
+        "preferred": ["any"],
+        "pattern_scale": ["small", "medium"]
+      }
+    },
+
+    "pear": {
+      "visual_goals": {
+        "balance_shoulders_hips": true,
+        "draw_attention_upper": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "a_line", "weight": 0.95},
+          {"name": "fit_and_flare", "weight": 0.9},
+          {"name": "empire_waist", "weight": 0.8}
+        ],
+        "avoid": [
+          {"name": "skinny_bottom", "weight": -0.85}
+        ]
+      },
+
+      "garment_rules": {
+        "tops": {
+          "preferred_necklines": ["boat", "square", "v_neck"],
+          "preferred_patterns": ["bold", "bright"]
+        },
+        "bottoms": {
+          "preferred_colors": ["dark"],
+          "preferred_fits": ["a_line", "wide_leg"]
+        }
+      },
+
+      "fabric_preferences": {
+        "tops": ["structured"],
+        "bottoms": ["fluid"]
+      },
+
+      "pattern_preferences": {
+        "preferred": ["on_top"],
+        "pattern_scale": ["medium", "large"]
+      }
+    },
+
+    "apple": {
+      "visual_goals": {
+        "streamline_midsection": true,
+        "elongate_torso": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "empire_waist", "weight": 0.9},
+          {"name": "a_line", "weight": 0.85}
+        ],
+        "avoid": [
+          {"name": "tight_waist", "weight": -0.9}
+        ]
+      },
+
+      "garment_rules": {
+        "tops": {
+          "preferred_necklines": ["v_neck", "deep_v", "wrap"]
+        },
+        "bottoms": {
+          "preferred_fits": ["straight", "slim"]
+        }
+      },
+
+      "fabric_preferences": {
+        "preferred": ["fluid", "medium_structure"],
+        "avoid": ["clingy"]
+      },
+
+      "pattern_preferences": {
+        "preferred": ["vertical_stripes"],
+        "pattern_scale": ["small", "medium"]
+      }
+    },
+
+    "inverted_triangle": {
+      "visual_goals": {
+        "balance_shoulders_hips": true,
+        "draw_attention_lower": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "a_line", "weight": 0.9},
+          {"name": "wide_leg", "weight": 0.85}
+        ],
+        "avoid": [
+          {"name": "shoulder_padded", "weight": -0.9}
+        ]
+      },
+
+      "garment_rules": {
+        "tops": {
+          "preferred_necklines": ["v_neck", "deep_v"]
+        },
+        "bottoms": {
+          "preferred_fits": ["wide_leg", "flared"]
+        }
+      },
+
+      "pattern_preferences": {
+        "preferred": ["volume_on_bottom"]
+      }
+    },
+
+    "athletic": {
+      "visual_goals": {
+        "add_curves": true
+      },
+
+      "silhouettes": {
+        "preferred": [
+          {"name": "ruffled", "weight": 0.8},
+          {"name": "fit_and_flare", "weight": 0.85}
+        ],
+        "avoid": [
+          {"name": "too_sporty", "weight": -0.5}
+        ]
+      },
+
+      "fabric_preferences": {
+        "preferred": ["soft", "fluid"]
+      },
+
+      "pattern_preferences": {
+        "preferred": ["florals", "soft_patterns"]
+      }
+    }
+  },
+
+  "general_recommendations": {
+    "silhouettes": ["balanced", "well_fitted"],
+    "tips": [
+      "Focus on fit and comfort",
+      "Wear what makes you feel confident"
+    ]
+  },
+
+  "user_preference_layer": {
+    "style_preferences": [
+      "minimal",
+      "classic",
+      "casual",
+      "romantic",
+      "streetwear",
+      "sporty"
+    ],
+
+    "fit_preferences": [
+      "tight",
+      "fitted",
+      "relaxed",
+      "oversized"
+    ],
+
+    "pattern_tolerance_range": [0, 1],
+
+    "color_preferences": [
+      "neutral",
+      "bright",
+      "dark",
+      "pastel"
+    ]
+  },
+
+  "occasion_rules": {
+    "formal": ["structured", "tailored"],
+    "casual": ["relaxed", "soft"],
+    "business": ["clean_lines", "tailored"],
+    "evening": ["sleek", "dramatic"]
+  }
+}

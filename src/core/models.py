@@ -1217,3 +1217,162 @@ class RecommendationResponse(BaseModel):
     recommendations: List[Outfit]
     processing_time_ms: float
     context_applied: Dict[str, Any]
+
+
+# ============== Capsule Wardrobe Models ==============
+
+class GarmentCapsuleRole(str, Enum):
+    """Role of a garment in a capsule wardrobe."""
+    KEY_PIECE = "key_piece"       # High versatility — used in many outfits
+    ACCEPTABLE = "acceptable"     # Mid versatility — useful but not critical
+    ORPHAN = "orphan"             # Low versatility — rarely combined
+    REDUNDANT = "redundant"       # Duplicate of another piece
+
+
+# Alias for backward-compat and convenience
+CapsuleGarmentRole = GarmentCapsuleRole
+
+
+class CapsuleGarmentScore(BaseModel):
+    """Versatility / capsule score for a single garment."""
+    garment_id: str
+    garment_description: str
+    versatility_score: float = Field(ge=0.0, le=1.0)
+    outfit_count: int = Field(default=0, description="Number of valid outfits this garment appears in")
+    total_outfits: int = Field(default=1, description="Total outfits in wardrobe (denominator)")
+    capsule_role: GarmentCapsuleRole = GarmentCapsuleRole.ACCEPTABLE
+    compatible_garment_ids: List[str] = Field(default_factory=list)
+
+
+class RedundantPair(BaseModel):
+    """A pair of garments that are functionally similar (potential duplicate)."""
+    garment_a_id: str
+    garment_a_description: str
+    garment_b_id: str
+    garment_b_description: str
+    similarity_score: float = Field(ge=0.0, le=1.0)
+    reason: str = ""
+
+
+class CapsuleSnapshot(BaseModel):
+    """Point-in-time snapshot of wardrobe capsule health."""
+    date: str = Field(description="ISO-8601 date string")
+    cohesion_score: float = Field(ge=0.0, le=100.0)
+    garments_count: int
+    outfits_count: int
+    key_pieces_count: int
+    orphans_count: int
+    action_taken: str = ""  # e.g. "Added black blazer", "Removed pink top"
+    delta_score: float = 0.0
+    delta_outfits: int = 0
+
+
+class CapsuleAnalysisResult(BaseModel):
+    """
+    Full capsule wardrobe analysis result (F1).
+
+    Extends the existing WardrobeAnalysisResult with capsule-specific metrics:
+    cohesion score, colour palette, orphan detection, redundancy pairs,
+    key pieces and a human-readable capsule recommendation.
+    """
+    # Core scores
+    cohesion_score: float = Field(ge=0.0, le=100.0, description="0–100 capsule health score")
+    color_cohesion_score: float = Field(ge=0.0, le=1.0)
+    versatility_ratio: float = Field(ge=0.0, le=1.0, description="% pieces used in >3 outfits")
+    redundancy_penalty: float = Field(ge=0.0, le=1.0)
+    orphan_penalty: float = Field(ge=0.0, le=1.0)
+
+    # Palette
+    dominant_colors: List[str] = Field(default_factory=list)
+    color_coverage_pct: float = Field(ge=0.0, le=1.0, description="% garments using dominant palette")
+
+    # Piece classification
+    garment_scores: List[CapsuleGarmentScore] = Field(default_factory=list)
+    key_pieces: List[str] = Field(default_factory=list, description="Garment IDs with high versatility")
+    orphan_pieces: List[str] = Field(default_factory=list, description="Garment IDs with low versatility")
+    redundant_pairs: List[RedundantPair] = Field(default_factory=list)
+
+    # Totals
+    total_garments: int = 0
+    total_outfits: int = 0
+
+    # Recommendation
+    capsule_profile: str = "standard"  # minimalist / standard / rich
+    recommendation: str = ""
+    projected_score_after_cleanup: float = Field(ge=0.0, le=100.0, default=0.0)
+
+
+class MissingPieceRecommendation(BaseModel):
+    """A single piece recommended to fill a capsule gap (F2)."""
+    priority: int = Field(ge=1)
+    category: str
+    description: str
+    reason: str
+    impact_outfits: int = Field(default=0, description="Estimated new outfits this piece enables")
+    suggested_colors: List[str] = Field(default_factory=list)
+    profile_note: str = ""   # personalised note (morphology / season)
+    llm_narration: str = ""  # LLM-generated explanation
+
+
+class MissingPiecesResult(BaseModel):
+    """Result of the missing-pieces recommender (F2)."""
+    current_cohesion: float
+    projected_cohesion: float
+    recommendations: List[MissingPieceRecommendation] = Field(default_factory=list)
+    summary: str = ""
+
+
+class ReplacementVerdict(BaseModel):
+    """Verdict for a redundant pair — which to keep (F3)."""
+    garment_keep_id: str
+    garment_keep_description: str = ""
+    garment_remove_id: str
+    garment_remove_description: str = ""
+    versatility_gain: float = Field(default=0.0, description="Versatility score difference (winner − loser)")
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    transition_timing: str = ""  # e.g. "Replace in September"
+    llm_narration: str = ""
+
+
+class ReplacementPlanResult(BaseModel):
+    """Full replacement plan for all redundant pairs (F3)."""
+    verdicts: List[ReplacementVerdict] = Field(default_factory=list)
+    total_outfits_gained: int = 0
+    summary: str = ""
+
+
+class CapsuleOutfit(BaseModel):
+    """An outfit selected / scored for its capsule quality (F4)."""
+    rank: int = 0
+    garment_ids: List[str] = Field(default_factory=list)
+    garment_descriptions: List[str] = Field(default_factory=list)
+    capsule_score: float = Field(ge=0.0, le=100.0, default=0.0)
+    overall_style_score: float = Field(ge=0.0, le=1.0, default=0.0)
+    pct_key_pieces: float = Field(ge=0.0, le=1.0, default=0.0)
+    avg_versatility: float = Field(ge=0.0, le=1.0, default=0.0)
+    tier: str = "creative"   # basic / semi_creative / creative
+    occasions: List[str] = Field(default_factory=list)
+    variations_count: int = 0
+    llm_narration: str = ""
+
+
+class CapsuleOutfitsResult(BaseModel):
+    """Result of the capsule outfit generator (F4)."""
+    outfits: List[CapsuleOutfit] = Field(default_factory=list)
+    basic_count: int = 0
+    semi_creative_count: int = 0
+    creative_count: int = 0
+
+
+class CapsuleEvolutionResult(BaseModel):
+    """Result of the evolution tracker (F5)."""
+    snapshots: List[CapsuleSnapshot] = Field(default_factory=list)
+    delta_score: float = 0.0
+    delta_outfits: int = 0
+    delta_pieces: int = 0
+    outfit_ratio: float = 1.0   # current / initial outfits
+    pieces_ratio: float = 1.0   # initial / current pieces
+    predicted_weeks_to_90: Optional[int] = None
+    trend_direction: str = "stable"  # improving / declining / stable
+    latest_cohesion: float = 0.0
+

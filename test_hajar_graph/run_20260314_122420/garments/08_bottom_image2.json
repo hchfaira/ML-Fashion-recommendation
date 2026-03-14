@@ -1,0 +1,49 @@
+{
+  "id": "2b211652-ef4d-447b-84a0-22701e307dbd",
+  "image_path": "data/sample_wardrobe/image2.png",
+  "image_name": "image2.png",
+  "extracted_at": "2026-03-14T12:26:03.586775",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "pants",
+    "product_type": "bootcut_pants",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "tan",
+      "secondary": null,
+      "color_palette": [
+        "tan"
+      ],
+      "hex_codes": [
+        "#B89B74"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "medium"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "minimalist"
+    ],
+    "seasons": [
+      "spring",
+      "fall",
+      "winter"
+    ]
+  }
+}

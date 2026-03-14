@@ -189,11 +189,14 @@ def extract_user_profile(
         
         # Run pipeline
         pipeline = StyleProfilePipeline(config)
-        result = pipeline.analyze(
-            str(photo_path),
-            height_cm=height_cm,
-            weight_kg=weight_kg,
-        )
+        try:
+            result = pipeline.analyze(
+                str(photo_path),
+                height_cm=height_cm,
+                weight_kg=weight_kg,
+            )
+        finally:
+            pipeline.close()  # Explicitly close MediaPipe landmarkers before GC
         
         profile = result.profile
         

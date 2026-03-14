@@ -234,6 +234,49 @@ class OutfitImprover:
                 if g not in candidates:
                     candidates.append(g)
 
+        # ── Formality filter: skip candidates that clash with outfit formality ──
+        # Determine the outfit's dominant formality from the existing garments
+        outfit_formality_levels = [
+            FORMALITY_ORDER.get(g.attributes.formality_level, 2)
+            for g in garments
+        ]
+        if outfit_formality_levels:
+            avg_formality = sum(outfit_formality_levels) / len(outfit_formality_levels)
+        else:
+            avg_formality = 2  # default: casual
+
+        # Also consider context occasion (business → higher formality floor)
+        if context and context.occasion:
+            occasion_formality_map = {
+                Occasion.BUSINESS: 5, Occasion.FORMAL: 6, Occasion.WEDDING: 6,
+                Occasion.INTERVIEW: 5, Occasion.DATE: 4, Occasion.COCKTAIL: 5,
+                Occasion.EVENING: 4, Occasion.WORK: 4,
+                Occasion.CASUAL: 2, Occasion.SPORT: 1, Occasion.TRAVEL: 2,
+                Occasion.DAILY_WEAR: 2, Occasion.WEEKEND: 2, Occasion.BEACH: 1,
+                Occasion.GYM: 1, Occasion.OUTDOOR: 2, Occasion.EVENT: 4,
+            }
+            if hasattr(context.occasion, "value"):
+                occ_key = context.occasion
+            else:
+                occ_key = context.occasion
+            occ_floor = occasion_formality_map.get(occ_key, 2)
+            avg_formality = max(avg_formality, occ_floor)
+
+        # Filter: reject candidates whose formality is ≥2 steps below outfit
+        filtered_candidates = []
+        for c in candidates:
+            cand_formality = FORMALITY_ORDER.get(c.attributes.formality_level, 2)
+            # Allow candidates within 1 step below the outfit, or at/above
+            if cand_formality >= avg_formality - 1:
+                filtered_candidates.append(c)
+            else:
+                logger.debug(
+                    "Skipping addition %s (%s): formality %d too low for outfit %d",
+                    c.id, c.attributes.subcategory or c.attributes.category.value,
+                    cand_formality, avg_formality,
+                )
+        candidates = filtered_candidates
+
         if not candidates:
             return []
 
@@ -298,6 +341,13 @@ class OutfitImprover:
             ]
 
             for alt in alternatives:
+                # ── Formality gate: reject alternatives too casual for the outfit ──
+                alt_formality = FORMALITY_ORDER.get(alt.attributes.formality_level, 2)
+                orig_formality = FORMALITY_ORDER.get(original.attributes.formality_level, 2)
+                # Don't downgrade formality by more than 1 step
+                if alt_formality < orig_formality - 1:
+                    continue
+
                 # Build new outfit with replacement
                 new_garments = garments[:i] + [alt] + garments[i + 1:]
                 new_score = self._quick_score(new_garments, context, profile)
@@ -558,7 +608,7 @@ class OutfitImprover:
             ]
             return PurchaseTargeted(
                 category="accessory",
-                description="An accessory in a complementary color to improve color harmony",
+                description="A colour-coordinating accessory like a scarf, bag, or jewellery piece",
                 reason=f"Color harmony is low ({current_score:.0%}). A well-chosen accent piece can tie the palette together.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -570,7 +620,7 @@ class OutfitImprover:
         elif dimension == "proportion":
             return PurchaseTargeted(
                 category="bottom" if GarmentCategory.BOTTOM not in outfit_cats else "top",
-                description="A garment with better proportional balance",
+                description="A tailored piece that creates a flattering silhouette (e.g. high-waisted trousers or a structured blazer)",
                 reason=f"Proportions score is low ({current_score:.0%}). Aim for a 1/3-2/3 or golden ratio silhouette.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -582,7 +632,7 @@ class OutfitImprover:
         elif dimension == "volume_balance":
             return PurchaseTargeted(
                 category="top" if GarmentCategory.TOP in outfit_cats else "bottom",
-                description="A garment that balances volume with existing pieces",
+                description="A fitted piece to contrast with your looser items (e.g. a slim knit or tailored shirt)",
                 reason=f"Volume balance is low ({current_score:.0%}). Pair voluminous pieces with fitted ones.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -593,7 +643,7 @@ class OutfitImprover:
         elif dimension == "seven_point":
             return PurchaseTargeted(
                 category="accessory",
-                description="An accessory to adjust the outfit's seven-point count",
+                description="A simple finishing touch like a belt, watch, or delicate necklace",
                 reason=f"Seven-point score is low ({current_score:.0%}). Accessories can fine-tune the complexity level.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -604,7 +654,7 @@ class OutfitImprover:
         elif dimension == "three_color":
             return PurchaseTargeted(
                 category="accessory",
-                description="A neutral-toned accessory to simplify the color scheme",
+                description="A neutral accessory in black, white, grey, or navy to simplify the colour palette",
                 reason=f"Three-color rule score is low ({current_score:.0%}). Reduce the number of distinct colors.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -615,7 +665,7 @@ class OutfitImprover:
         elif dimension == "pattern_mixing":
             return PurchaseTargeted(
                 category="top" if GarmentCategory.TOP in outfit_cats else "bottom",
-                description="A solid or subtly patterned piece to balance pattern mixing",
+                description="A solid-colour or subtly textured piece to calm a busy pattern mix",
                 reason=f"Pattern mixing score is low ({current_score:.0%}). Replace a clashing pattern with a solid.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={
@@ -626,7 +676,7 @@ class OutfitImprover:
         elif dimension == "design_principles":
             return PurchaseTargeted(
                 category="top",
-                description="A well-structured piece that follows design fundamentals",
+                description="A clean-cut, well-structured top or jacket with simple lines",
                 reason=f"Design principles score is low ({current_score:.0%}). Consider pieces with clean lines and balanced structure.",
                 expected_score_change=round(delta, 3),
                 suggested_attributes={

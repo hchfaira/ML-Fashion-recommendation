@@ -7,15 +7,23 @@ Tests cover:
 - Outfit total score calculation
 - Harmony detection (7-10 points range)
 - Pattern/texture recognition
+- Config-driven domain knowledge (style_rules_config.json)
 """
+import json
+from pathlib import Path
 import pytest
 
 from src.layer2_style.seven_point_rule import (
     SevenPointRuleScorer, GarmentPointValue, SevenPointResult
 )
 from src.core.models import (
-    Garment, GarmentAttributes, GarmentCategory, 
+    Garment, GarmentAttributes, GarmentCategory,
     ColorInfo, PatternInfo
+)
+
+_CONFIG_PATH = (
+    Path(__file__).parent.parent.parent.parent
+    / "config" / "data" / "style_rules_config.json"
 )
 
 
@@ -137,9 +145,35 @@ class TestSevenPointRuleScorerInit:
         assert "sequin" in scorer.statement_textures
     
     def test_init_defines_optimal_range(self, scorer):
-        """Test that optimal range is defined (7-10)."""
+        """Test that optimal range is loaded from config (defaults: 7-10)."""
         assert scorer.min_optimal_points == 7
         assert scorer.max_optimal_points == 10
+
+    def test_optimal_range_matches_config(self, scorer):
+        """Test that min/max optimal points match style_rules_config.json."""
+        with open(_CONFIG_PATH) as f:
+            cfg = json.load(f)["seven_point_rule"]
+        assert scorer.min_optimal_points == cfg["min_optimal_points"]
+        assert scorer.max_optimal_points == cfg["max_optimal_points"]
+        assert scorer._optimal_center == cfg["optimal_center"]
+
+    def test_statement_patterns_match_config(self, scorer):
+        """Test that statement patterns are driven by config, not hardcoded."""
+        with open(_CONFIG_PATH) as f:
+            cfg_patterns = set(json.load(f)["seven_point_rule"]["statement_patterns"])
+        assert scorer.statement_patterns == cfg_patterns
+
+    def test_statement_textures_match_config(self, scorer):
+        """Test that statement textures are driven by config, not hardcoded."""
+        with open(_CONFIG_PATH) as f:
+            cfg_textures = set(json.load(f)["seven_point_rule"]["statement_textures"])
+        assert scorer.statement_textures == cfg_textures
+
+    def test_bold_colors_match_config(self, scorer):
+        """Test that bold colors are driven by config."""
+        with open(_CONFIG_PATH) as f:
+            cfg_colors = set(json.load(f)["seven_point_rule"]["bold_colors"])
+        assert scorer.bold_colors == cfg_colors
 
 
 class TestGarmentPointCalculation:

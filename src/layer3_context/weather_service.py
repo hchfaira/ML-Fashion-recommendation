@@ -1,186 +1,161 @@
 """
 Weather Service
-Fetches and processes weather data for recommendations.
-"""
-from typing import Optional
-import httpx
+===============
+High-level façade for all weather functionality.
 
-from config import get_settings
+This module exposes a unified ``WeatherService`` (alias of
+``RealWeatherService``) that:
+
+  1. Tries the real-time ``WeatherAPIClient`` (Open-Meteo → OWM fallback).
+  2. Falls back to stale cache, then static ``weather_data.json``.
+  3. Converts ``WeatherData`` → ``WeatherContext`` for downstream consumers.
+  4. Exposes ``WeatherOutfitAdvisor`` for scoring garment recommendations.
+
+Backward compatibility
+----------------------
+The old ``WeatherService`` class is preserved as an alias so existing imports
+work unchanged.  New code should call ``get_weather_data()`` for the rich DTO.
+"""
+from __future__ import annotations
+
+from typing import Optional
+
 from src.core.models import WeatherContext
-from src.core.exceptions import ContextEngineError
 from src.core import get_logger
+from src.layer3_context.weather.weather_api_client import WeatherAPIClient
+from src.layer3_context.weather.weather_cache import WeatherCache
+from src.layer3_context.weather.weather_models import WeatherData
+from src.layer3_context.weather.weather_outfit_advisor import WeatherOutfitAdvisor
 
 logger = get_logger(__name__)
 
 
 class WeatherService:
     """
-    Service for fetching weather information.
-    
-    Uses weather API to get current conditions
-    for recommendation adjustments.
+    Real-time weather service.
+
+    Uses Open-Meteo (no key required) as primary source, with
+    OpenWeatherMap as optional secondary provider.  Falls back to
+    stale cache → static JSON → sentinel on total failure.
+
+    Parameters
+    ----------
+    cache : WeatherCache | None
+        Custom cache; ``None`` uses the default file-backed cache.
+    owm_api_key : str | None
+        OpenWeatherMap key.  Falls back to ``WEATHER_API_KEY`` env-var.
     """
-    
-    def __init__(self):
-        self.settings = get_settings()
-        self.api_key = self.settings.weather_api_key
-        self.base_url = "https://api.openweathermap.org/data/2.5/weather"
-    
+
+    def __init__(
+        self,
+        cache: WeatherCache | None = None,
+        owm_api_key: str | None = None,
+    ) -> None:
+        self._client = WeatherAPIClient(cache=cache, owm_api_key=owm_api_key)
+
+    # ------------------------------------------------------------------
+    # Rich API (returns WeatherData)
+    # ------------------------------------------------------------------
+
+    async def get_weather_data(
+        self,
+        location: str | None = None,
+        lat: float | None = None,
+        lon: float | None = None,
+        *,
+        force_refresh: bool = False,
+    ) -> WeatherData:
+        """
+        Fetch current weather as a rich ``WeatherData`` object.
+
+        Priority: coordinates > city name > default location.
+        """
+        if lat is not None and lon is not None:
+            return await self._client.get_by_coords(
+                lat, lon, city=location, force_refresh=force_refresh
+            )
+        if location:
+            return await self._client.get_by_city(location)
+        return await self._client.get_default()
+
+    def get_outfit_advisor(self, weather_data: WeatherData) -> WeatherOutfitAdvisor:
+        """Return a ``WeatherOutfitAdvisor`` for the given weather snapshot."""
+        return WeatherOutfitAdvisor(weather_data)
+
+    # ------------------------------------------------------------------
+    # Backward-compatible thin API (returns WeatherContext)
+    # ------------------------------------------------------------------
+
     async def get_weather(self, location: str) -> Optional[WeatherContext]:
-        """
-        Get current weather for a location.
-        
-        Args:
-            location: City name or coordinates
-            
-        Returns:
-            WeatherContext with current conditions
-        """
-        if not self.api_key:
-            logger.warning("Weather API key not configured")
-            return None
-        
+        """Backward-compatible.  Returns ``WeatherContext`` or ``None``."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    self.base_url,
-                    params={
-                        "q": location,
-                        "appid": self.api_key,
-                        "units": "metric"
-                    },
-                    timeout=10.0
-                )
-                
-                if response.status_code != 200:
-                    logger.warning(f"Weather API error: {response.status_code}")
-                    return None
-                
-                data = response.json()
-                return self._parse_weather_response(data)
-                
-        except Exception as e:
-            logger.error(f"Weather fetch failed: {e}")
+            data = await self._client.get_by_city(location)
+            if data.condition.value == "unknown":
+                return None
+            return data.to_weather_context()
+        except Exception as exc:
+            logger.error("get_weather failed: %s", exc)
             return None
-    
+
     async def get_weather_by_coords(
         self,
         lat: float,
-        lon: float
+        lon: float,
     ) -> Optional[WeatherContext]:
-        """
-        Get weather by coordinates.
-        
-        Args:
-            lat: Latitude
-            lon: Longitude
-            
-        Returns:
-            WeatherContext
-        """
-        if not self.api_key:
-            return None
-        
+        """Backward-compatible.  Returns ``WeatherContext`` or ``None``."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    self.base_url,
-                    params={
-                        "lat": lat,
-                        "lon": lon,
-                        "appid": self.api_key,
-                        "units": "metric"
-                    },
-                    timeout=10.0
-                )
-                
-                if response.status_code == 200:
-                    return self._parse_weather_response(response.json())
-                    
-        except Exception as e:
-            logger.error(f"Weather fetch failed: {e}")
-        
-        return None
-    
-    def _parse_weather_response(self, data: dict) -> WeatherContext:
-        """Parse OpenWeatherMap response."""
-        main = data.get("main", {})
-        weather = data.get("weather", [{}])[0]
-        wind = data.get("wind", {})
-        
-        # Map weather condition
-        condition_map = {
-            "clear": "sunny",
-            "clouds": "cloudy",
-            "rain": "rainy",
-            "drizzle": "rainy",
-            "thunderstorm": "rainy",
-            "snow": "snowy",
-            "mist": "cloudy",
-            "fog": "cloudy"
+            data = await self._client.get_by_coords(lat, lon)
+            if data.condition.value == "unknown":
+                return None
+            return data.to_weather_context()
+        except Exception as exc:
+            logger.error("get_weather_by_coords failed: %s", exc)
+            return None
+
+    def get_clothing_recommendations(self, weather: WeatherContext) -> dict:
+        """
+        Backward-compatible clothing recommendation dict.
+
+        Internally delegates to ``WeatherOutfitAdvisor``.
+        """
+        from src.layer3_context.weather.weather_models import WeatherCondition as WC
+        cond_map = {
+            "sunny": WC.SUNNY, "cloudy": WC.CLOUDY, "rainy": WC.RAINY,
+            "snowy": WC.SNOWY, "stormy": WC.STORMY, "foggy": WC.FOGGY,
+            "drizzle": WC.DRIZZLE,
         }
-        
-        raw_condition = weather.get("main", "clear").lower()
-        condition = condition_map.get(raw_condition, "cloudy")
-        
-        return WeatherContext(
-            temperature_celsius=main.get("temp", 20),
-            condition=condition,
-            humidity=main.get("humidity"),
-            wind_speed_kmh=wind.get("speed", 0) * 3.6  # m/s to km/h
+        cond = cond_map.get(str(weather.condition).lower(), WC.CLOUDY)
+        wd = WeatherData(
+            temperature_celsius=weather.temperature_celsius,
+            feels_like_celsius=getattr(weather, "feels_like_celsius", None)
+            or weather.temperature_celsius,
+            condition=cond,
+            humidity=weather.humidity,
+            wind_speed_kmh=weather.wind_speed_kmh or 0.0,
+            uv_index=weather.uv_index,
         )
-    
-    def get_clothing_recommendations(
-        self,
-        weather: WeatherContext
-    ) -> dict:
-        """
-        Get clothing recommendations based on weather.
-        
-        Args:
-            weather: Current weather conditions
-            
-        Returns:
-            Dictionary with clothing suggestions
-        """
+        advisor = WeatherOutfitAdvisor(wd)
+        advice = advisor.get_advice()
+
         temp = weather.temperature_celsius
-        condition = weather.condition
-        
-        recommendations = {
+        recommendations: dict = {
             "layers": [],
-            "avoid": [],
-            "suggested_materials": [],
-            "accessories": []
+            "avoid": advice["penalise_materials"] + advice["penalise_footwear"],
+            "suggested_materials": advice["boost_materials"],
+            "accessories": advice["boost_accessories"],
         }
-        
-        # Temperature-based recommendations
         if temp < 5:
             recommendations["layers"] = ["heavy_coat", "sweater", "thermal"]
-            recommendations["suggested_materials"] = ["wool", "down", "fleece"]
-            recommendations["accessories"] = ["scarf", "gloves", "beanie"]
         elif temp < 12:
             recommendations["layers"] = ["jacket", "light_sweater"]
-            recommendations["suggested_materials"] = ["wool", "cotton", "denim"]
-            recommendations["accessories"] = ["light_scarf"]
         elif temp < 18:
             recommendations["layers"] = ["light_jacket", "cardigan"]
-            recommendations["suggested_materials"] = ["cotton", "linen blend"]
         elif temp < 25:
             recommendations["layers"] = ["light_layers"]
-            recommendations["suggested_materials"] = ["cotton", "linen"]
-            recommendations["avoid"] = ["heavy_fabrics", "dark_colors"]
         else:
             recommendations["layers"] = ["minimal"]
-            recommendations["suggested_materials"] = ["linen", "light_cotton", "breathable"]
-            recommendations["avoid"] = ["wool", "heavy_fabrics", "layers"]
-        
-        # Condition-based adjustments
-        if condition == "rainy":
-            recommendations["accessories"].append("umbrella")
-            recommendations["suggested_materials"].append("water_resistant")
-            recommendations["avoid"].extend(["suede", "silk"])
-        
-        if condition == "sunny" and temp > 20:
-            recommendations["accessories"].extend(["sunglasses", "hat"])
-        
         return recommendations
+
+
+# Backward-compat alias
+RealWeatherService = WeatherService

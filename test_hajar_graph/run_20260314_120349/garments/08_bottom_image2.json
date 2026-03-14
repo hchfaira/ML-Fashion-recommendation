@@ -1,0 +1,49 @@
+{
+  "id": "5821990a-4343-469b-beb8-bfd243f96898",
+  "image_path": "data/sample_wardrobe/image2.png",
+  "image_name": "image2.png",
+  "extracted_at": "2026-03-14T12:05:36.834878",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "pants",
+    "product_type": "flare_pants",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "tan",
+      "secondary": null,
+      "color_palette": [
+        "tan"
+      ],
+      "hex_codes": [
+        "#B89B74"
+      ],
+      "color_temperature": "warm",
+      "color_depth": "medium"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "medium"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "classic",
+      "modern",
+      "minimalist"
+    ],
+    "seasons": [
+      "spring",
+      "fall",
+      "winter"
+    ]
+  }
+}

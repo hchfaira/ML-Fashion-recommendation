@@ -1,0 +1,51 @@
+{
+  "id": "1afd673f-2f8a-4256-aa9a-857e0d6d1d70",
+  "image_path": "data/sample_wardrobe/image copy 2.png",
+  "image_name": "image copy 2.png",
+  "extracted_at": "2026-03-14T12:26:03.585712",
+  "attributes": {
+    "category": "top",
+    "subcategory": "tank_top",
+    "product_type": "ribbed_graphic_crop_tank_top",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "lilac",
+      "secondary": "white",
+      "color_palette": [
+        "lilac",
+        "white"
+      ],
+      "hex_codes": [
+        "#D8BFD8",
+        "#FFFFFF"
+      ],
+      "color_temperature": "cool",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "graphic",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "ribbed",
+      "fabric_weight": "light"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "streetwear",
+      "athleisure",
+      "sporty",
+      "modern"
+    ],
+    "seasons": [
+      "spring",
+      "summer"
+    ]
+  }
+}

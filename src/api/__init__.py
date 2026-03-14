@@ -1,6 +1,6 @@
 # API Module
 from fastapi import APIRouter
-from .routes import recommendation, wardrobe, analysis, chat, scoring, context, pipeline, wardrobe_analysis
+from .routes import recommendation, wardrobe, analysis, chat, scoring, context, pipeline, wardrobe_analysis, custom_outfits
 
 router = APIRouter()
 
@@ -13,3 +13,4 @@ router.include_router(analysis.router, prefix="/analyze", tags=["Analysis"])
 router.include_router(chat.router, prefix="/chat", tags=["Chat"])
 router.include_router(scoring.router, prefix="/scoring", tags=["Scoring"])
 router.include_router(context.router, prefix="/context", tags=["Context"])
+router.include_router(custom_outfits.router, prefix="", tags=["Custom Outfits & Premium"])

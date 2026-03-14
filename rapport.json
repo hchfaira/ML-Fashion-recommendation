@@ -1,558 +1,159 @@
 {
+  "neo4j_used": true,
+  "garments_count": 8,
+  "outfits_generated": 4,
   "best_outfit": {
-    "name": "tank_top + trousers + pumps + blazer",
-    "overall_score": 0.7433666666666666,
+    "name": "blouse + skirt + hat",
+    "overall_score": 0.5403833333333333,
     "garments": [
       {
-        "id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
-        "image": "image copy 2.png",
+        "id": "c5474b76-4246-45b8-91f0-2b5a71b87741",
         "category": "top",
-        "subcategory": "tank_top",
-        "color": "lavender",
-        "color_secondary": "white",
-        "pattern": "graphic"
+        "subcategory": "blouse",
+        "color": "ivory",
+        "fit": "regular",
+        "pattern": "solid",
+        "formality_level": "smart_casual"
       },
       {
-        "id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
-        "image": "image.png",
+        "id": "902d17ba-d027-40e3-95ca-ff5b24cd1184",
         "category": "bottom",
-        "subcategory": "trousers",
-        "color": "beige",
-        "color_secondary": null,
-        "pattern": "solid"
-      },
-      {
-        "id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
-        "image": "image copy 6.png",
-        "category": "shoes",
-        "subcategory": "pumps",
-        "color": "black",
-        "color_secondary": null,
-        "pattern": "solid"
-      },
-      {
-        "id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
-        "image": "image copy 4.png",
-        "category": "outerwear",
-        "subcategory": "blazer",
+        "subcategory": "skirt",
         "color": "lavender",
-        "color_secondary": null,
-        "pattern": "solid"
+        "fit": "slim",
+        "pattern": "solid",
+        "formality_level": "smart_casual"
+      },
+      {
+        "id": "8425f8d4-6316-44c7-83f6-dd85494f64f7",
+        "category": "accessory",
+        "subcategory": "hat",
+        "color": "beige",
+        "fit": "null",
+        "pattern": "solid",
+        "formality_level": "smart_casual"
       }
     ],
-    "scores": {
-      "metadata": {
-        "timestamp": "2026-03-09T08:19:20.298700",
-        "num_items": 4,
-        "profile": "default",
-        "profile_name": "Balanced Scoring"
-      },
-      "garments": [
-        {
-          "id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
-          "image_url": null,
-          "image_path": "data/sample_wardrobe/image copy 2.png",
-          "category": "top",
-          "subcategory": "tank_top",
-          "color": {
-            "primary": "lavender",
-            "secondary": "white",
-            "accent": null,
-            "hex_codes": [
-              "#D8BFD8",
-              "#FFFFFF"
-            ]
-          },
-          "pattern": {
-            "type": "graphic",
-            "scale": null,
-            "density": null,
-            "pattern_colors": []
-          },
-          "material": {
-            "primary": "knit",
-            "secondary": null,
-            "texture": "ribbed"
-          },
-          "formality_level": "casual",
-          "season_suitable": [
-            "spring",
-            "summer"
-          ],
-          "silhouette": "slim",
-          "fit": "slim",
-          "style_tags": [
-            "casual",
-            "modern",
-            "sporty",
-            "streetwear"
-          ],
-          "neckline": "crewneck",
-          "length_type": "crop",
-          "waist_rise": null,
-          "closure": "pull_on",
-          "metadata": {}
-        },
-        {
-          "id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
-          "image_url": null,
-          "image_path": "data/sample_wardrobe/image.png",
-          "category": "bottom",
-          "subcategory": "trousers",
-          "color": {
-            "primary": "beige",
-            "secondary": null,
-            "accent": null,
-            "hex_codes": [
-              "#E0D7C7"
-            ]
-          },
-          "pattern": {
-            "type": "solid",
-            "scale": null,
-            "density": null,
-            "pattern_colors": []
-          },
-          "material": {
-            "primary": "polyester",
-            "secondary": null,
-            "texture": "smooth"
-          },
-          "formality_level": "smart_casual",
-          "season_suitable": [
-            "spring",
-            "summer",
-            "fall"
-          ],
-          "silhouette": "relaxed",
-          "fit": "relaxed",
-          "style_tags": [
-            "classic",
-            "modern",
-            "minimalist",
-            "elegant",
-            "business_casual"
-          ],
-          "neckline": null,
-          "length_type": null,
-          "waist_rise": "high_rise",
-          "closure": "zipper",
-          "metadata": {}
-        },
-        {
-          "id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
-          "image_url": null,
-          "image_path": "data/sample_wardrobe/image copy 6.png",
-          "category": "shoes",
-          "subcategory": "pumps",
-          "color": {
-            "primary": "black",
-            "secondary": null,
-            "accent": null,
-            "hex_codes": []
-          },
-          "pattern": {
-            "type": "solid",
-            "scale": null,
-            "density": null,
-            "pattern_colors": []
-          },
-          "material": null,
-          "formality_level": "casual",
-          "season_suitable": [],
-          "silhouette": null,
-          "fit": null,
-          "style_tags": [],
-          "neckline": null,
-          "length_type": null,
-          "waist_rise": null,
-          "closure": null,
-          "metadata": {}
-        },
-        {
-          "id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
-          "image_url": null,
-          "image_path": "data/sample_wardrobe/image copy 4.png",
-          "category": "outerwear",
-          "subcategory": "blazer",
-          "color": {
-            "primary": "lavender",
-            "secondary": null,
-            "accent": null,
-            "hex_codes": []
-          },
-          "pattern": {
-            "type": "solid",
-            "scale": null,
-            "density": null,
-            "pattern_colors": []
-          },
-          "material": null,
-          "formality_level": "casual",
-          "season_suitable": [],
-          "silhouette": null,
-          "fit": null,
-          "style_tags": [],
-          "neckline": null,
-          "length_type": null,
-          "waist_rise": null,
-          "closure": null,
-          "metadata": {}
-        }
-      ],
-      "scores": {
-        "seven_point": 0.5,
-        "color_harmony": 0.9,
-        "three_color": 1.0,
-        "proportion": 1,
-        "volume_balance": 0.6667,
-        "pattern_mixing": 1.0,
-        "design_principles": 0.738,
-        "total_style": 0.71,
-        "overall": 0.7434
-      },
-      "details": {
-        "seven_point": {
-          "total_points": 5,
-          "is_harmonious": false,
-          "breakdown": [
-            {
-              "garment_id": "e1a147f1-ac76-4468-9e13-2253fb97afe4",
-              "category": "top",
-              "subcategory": "tank_top",
-              "color": "lavender",
-              "points": 1,
-              "point_type": "basic",
-              "reasons": [
-                "basic staple piece"
-              ]
-            },
-            {
-              "garment_id": "a88d28b4-3951-49e0-a29e-b457fa2c839f",
-              "category": "bottom",
-              "subcategory": "trousers",
-              "color": "beige",
-              "points": 1,
-              "point_type": "basic",
-              "reasons": [
-                "basic staple piece"
-              ]
-            },
-            {
-              "garment_id": "959ca647-9d9b-4797-b3ec-d853b5624f36",
-              "category": "shoes",
-              "subcategory": "pumps",
-              "color": "black",
-              "points": 1,
-              "point_type": "basic",
-              "reasons": [
-                "basic staple piece"
-              ]
-            },
-            {
-              "garment_id": "f6a33481-2dd2-4311-9e2f-ac3a1aaf00f8",
-              "category": "outerwear",
-              "subcategory": "blazer",
-              "color": "lavender",
-              "points": 2,
-              "point_type": "statement",
-              "reasons": [
-                "statement blazer"
-              ]
-            }
-          ]
-        },
-        "color_harmony": {
-          "score": 0.9
-        },
-        "three_color": {
-          "color_count": 1,
-          "passes": true,
-          "colors": [
-            "lavender"
-          ]
-        },
-        "proportion": {
-          "ratio": "1/3 - 2/3",
-          "top_portion": "short (1/3)",
-          "bottom_portion": "high-waisted (elongates legs)"
-        },
-        "pattern_mixing": {
-          "pattern_count": 1,
-          "solid_count": 3,
-          "has_scale_contrast": true,
-          "grade": "A"
-        },
-        "design_principles": {
-          "grade": "B",
-          "proportion": 0.95,
-          "balance": 0.9,
-          "harmony": 0.6666666666666666,
-          "emphasis": 0.5,
-          "style": "classic"
-        },
-        "total_style": {
-          "grade": "B",
-          "seven_point": 0.5,
-          "color": 0.7,
-          "proportion": 1,
-          "volume": 0.667
-        },
-        "creativity": {
-          "level": "safe",
-          "rules_broken": 1,
-          "is_successful": false,
-          "fashion_forward": 0.043
-        }
-      },
-      "summary": {
-        "overall_score": 0.74,
-        "overall_percentage": "74%",
-        "grade": "B",
-        "categories": [
-          "top",
-          "bottom",
-          "shoes",
-          "outerwear"
-        ],
-        "primary_colors": [
-          "lavender",
-          "beige",
-          "black",
-          "lavender"
-        ]
-      },
-      "criteria_config": {
-        "seven_point": {
-          "display_name": "7-Point Rule",
-          "weight": 0.15,
-          "enabled": true
-        },
-        "color_harmony": {
-          "display_name": "Color Harmony",
-          "weight": 0.15,
-          "enabled": true
-        },
-        "three_color": {
-          "display_name": "3-Color Rule",
-          "weight": 0.1,
-          "enabled": true
-        },
-        "proportion": {
-          "display_name": "Proportions",
-          "weight": 0.15,
-          "enabled": true
-        },
-        "volume_balance": {
-          "display_name": "Volume Balance",
-          "weight": 0.1,
-          "enabled": true
-        },
-        "pattern_mixing": {
-          "display_name": "Pattern Mixing",
-          "weight": 0.1,
-          "enabled": true
-        },
-        "design_principles": {
-          "display_name": "Design Principles",
-          "weight": 0.15,
-          "enabled": true
-        },
-        "creativity": {
-          "display_name": "Creativity",
-          "weight": 0.1,
-          "enabled": true
-        }
-      }
-    },
-    "context_adjusted_score": 0.7873533333333333
+    "context_adjusted_score": 0.64423
   },
-  "all_combinations": [
+  "improvement_suggestions": {
+    "current_score": 0.641,
+    "grade": "C+",
+    "potential_score": 0.795,
+    "outfit_name": "Stylish Ensemble",
+    "diagnosis_summary": "This outfit has",
+    "weak_dimensions": [
+      "personal style and originality",
+      "balance between fitted and flowy pieces",
+      "outfit variety (mixing basics and statement pieces)"
+    ],
+    "strong_dimensions": [
+      "colour balance (not too many colours at once)",
+      "colour coordination",
+      "mixing prints and textures without clashing",
+      "overall visual harmony of the look"
+    ],
+    "suggested_pieces": [
+      {
+        "type": "addition",
+        "garment_id": "db0653c1-d0e7-420f-81ca-12e41bfc30b0",
+        "description": "lavender blazer polyester",
+        "expected_score_change": 0.099,
+        "explanation": "This blazer will beautifully define your waist and complement your balanced hourglass shape. It also adds a lovely fresh touch to your warm and earthy tones.",
+        "priority": 1
+      },
+      {
+        "type": "addition",
+        "garment_id": "eccc3288-7e82-4daf-bb8d-5c14369705a9",
+        "description": "black heels",
+        "expected_score_change": 0.015,
+        "explanation": "These heels will beautifully lengthen your legs, which really highlights your lovely hourglass shape. They add a touch of elegance that works wonderfully with your balanced proportions.",
+        "priority": 2
+      },
+      {
+        "type": "purchase",
+        "garment_id": null,
+        "description": "A fitted piece to contrast with your looser items (e.g. a slim knit or tailored shirt)",
+        "expected_score_change": 0.167,
+        "explanation": "A fitted piece will beautifully highlight your defined waist, which is perfect for your hourglass figure. It will also create a lovely contrast when paired with your other looser items.",
+        "priority": 3
+      },
+      {
+        "type": "purchase",
+        "garment_id": null,
+        "description": "A simple finishing touch like a belt, watch, or delicate necklace",
+        "expected_score_change": 0.05,
+        "explanation": "Adding a simple belt will beautifully highlight your hourglass figure and define your waist. A delicate necklace or watch in your warm, earthy tones can also tie your whole look together perfectly.",
+        "priority": 4
+      }
+    ],
+    "profile_note": "Hey",
+    "short_summary": "That outfit"
+  },
+  "all_outfits": [
     {
       "rank": 1,
-      "score": 0.7433666666666666,
-      "garments": [
-        {
-          "category": "top",
-          "description": "lavender/white tank_top (graphic)",
-          "image": "image copy 2.png"
-        },
-        {
-          "category": "bottom",
-          "description": "beige trousers",
-          "image": "image.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
+      "name": "blouse + skirt + hat",
+      "score": 0.5403833333333333,
+      "score_breakdown": {
+        "seven_point": 0.49999999999999994,
+        "color_harmony": 0.9,
+        "proportion": 0.6,
+        "volume_balance": 0.3333333333333333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.747,
+        "total_style": 0.56,
+        "creativity": 0.06,
+        "overall": 0.5403833333333333
+      }
     },
     {
       "rank": 2,
-      "score": 0.7161833333333333,
-      "garments": [
-        {
-          "category": "top",
-          "description": "lavender/white tank_top (graphic)",
-          "image": "image copy 2.png"
-        },
-        {
-          "category": "bottom",
-          "description": "tan pants",
-          "image": "image2.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
+      "name": "blouse + flare leggings + hat",
+      "score": 0.5203333333333333,
+      "score_breakdown": {
+        "seven_point": 0.3999999999999999,
+        "color_harmony": 0.9,
+        "proportion": 0.6,
+        "volume_balance": 0.3333333333333333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.68,
+        "total_style": 0.53,
+        "creativity": 0.06,
+        "overall": 0.5203333333333333
+      }
     },
     {
       "rank": 3,
-      "score": 0.70745,
-      "garments": [
-        {
-          "category": "top",
-          "description": "skyblue blouse",
-          "image": "image copy 3.png"
-        },
-        {
-          "category": "bottom",
-          "description": "tan pants",
-          "image": "image2.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
+      "name": "cardigan + flare leggings + hat",
+      "score": 0.5172333333333333,
+      "score_breakdown": {
+        "seven_point": 0.3,
+        "color_harmony": 0.9,
+        "proportion": 0.6,
+        "volume_balance": 0.3333333333333333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.726,
+        "total_style": 0.5,
+        "creativity": 0.06,
+        "overall": 0.5172333333333333
+      }
     },
     {
       "rank": 4,
-      "score": 0.6406666666666667,
-      "garments": [
-        {
-          "category": "top",
-          "description": "skyblue blouse",
-          "image": "image copy 3.png"
-        },
-        {
-          "category": "bottom",
-          "description": "gray leggings",
-          "image": "image copy.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
-    },
-    {
-      "rank": 5,
-      "score": 0.6237833333333334,
-      "garments": [
-        {
-          "category": "top",
-          "description": "lavender/white tank_top (graphic)",
-          "image": "image copy 2.png"
-        },
-        {
-          "category": "bottom",
-          "description": "gray leggings",
-          "image": "image copy.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
-    },
-    {
-      "rank": 6,
-      "score": 0.6124,
-      "garments": [
-        {
-          "category": "top",
-          "description": "skyblue blouse",
-          "image": "image copy 3.png"
-        },
-        {
-          "category": "bottom",
-          "description": "beige trousers",
-          "image": "image.png"
-        },
-        {
-          "category": "shoes",
-          "description": "black pumps",
-          "image": "image copy 6.png"
-        },
-        {
-          "category": "outerwear",
-          "description": "lavender blazer",
-          "image": "image copy 4.png"
-        }
-      ]
+      "name": "cardigan + skirt + hat",
+      "score": 0.5142833333333333,
+      "score_breakdown": {
+        "seven_point": 0.3999999999999999,
+        "color_harmony": 0.7,
+        "proportion": 0.6,
+        "volume_balance": 0.3333333333333333,
+        "pattern_mixing": 0.9,
+        "design_principles": 0.773,
+        "total_style": 0.53,
+        "creativity": 0.06,
+        "overall": 0.5142833333333333
+      }
     }
-  ],
-  "total_combinations": 6,
-  "profile_used": "default",
-  "context_analysis": {
-    "fit": {
-      "score": 1.0,
-      "fit_type": "perfect",
-      "notes": [
-        "Size matches well"
-      ]
-    },
-    "proportions": {
-      "score": 0.7,
-      "harmony_level": "good",
-      "positive_factors": [],
-      "negative_factors": [],
-      "tips": []
-    },
-    "color_harmony": {
-      "score": 0.86,
-      "harmony_level": "excellent",
-      "matching_colors": [
-        "black",
-        "black"
-      ],
-      "clashing_colors": [],
-      "notes": []
-    },
-    "overall_context_score": 0.8533333333333334,
-    "blended_score": 0.7873533333333333
-  }
+  ]
 }

@@ -1,0 +1,91 @@
+{
+  "enabled": true,
+  "connection": {
+    "uri": "bolt://localhost:7687",
+    "username": "neo4j",
+    "password": "neo4j_password_123",
+    "database": "neo4j",
+    "timeout": 30,
+    "max_pool_size": 50,
+    "min_pool_size": 10
+  },
+  "query_cache": {
+    "enabled": true,
+    "max_size": 1000,
+    "default_ttl_seconds": 3600,
+    "ttl_by_query_type": {
+      "compatible_items": 7200,
+      "centrality_scores": 86400,
+      "outfit_paths": 3600,
+      "seasonal_items": 86400,
+      "color_harmony": 86400
+    }
+  },
+  "retry_policy": {
+    "enabled": true,
+    "max_retries": 3,
+    "initial_backoff_ms": 100,
+    "max_backoff_ms": 5000,
+    "backoff_multiplier": 2.0
+  },
+  "fallback": {
+    "enabled": true,
+    "use_in_memory": true,
+    "log_fallback": true
+  },
+  "graph_initialization": {
+    "clear_on_startup": false,
+    "auto_create_indexes": true,
+    "auto_create_reference_nodes": true
+  },
+  "performance": {
+    "batch_query_size": 100,
+    "enable_statistics": true,
+    "log_slow_queries_ms": 1000,
+    "connection_pool_leak_detection": true
+  },
+  "centrality_scores": {
+    "compute_interval_hours": 24,
+    "algorithms": ["pagerank", "betweenness_centrality", "eigenvector_centrality"],
+    "personalization_iterations": 40,
+    "pagerank_damping": 0.85,
+    "pagerank_iterations": 5
+  },
+  "reference_nodes": {
+    "seasons": ["SPRING", "SUMMER", "FALL", "WINTER"],
+    "occasions": ["CASUAL", "BUSINESS", "FORMAL", "WEDDING", "ATHLETIC"],
+    "formality_levels": {
+      "0": "Very Casual",
+      "1": "Casual",
+      "2": "Smart Casual",
+      "3": "Business Casual",
+      "4": "Business",
+      "5": "Semi-Formal",
+      "6": "Black Tie"
+    },
+    "categories": ["TOP", "BOTTOM", "SHOES", "JACKET", "DRESS", "ACCESSORY", "OUTERWEAR"],
+    "color_palettes": [
+      "NEUTRAL",
+      "EARTH_TONES",
+      "PASTELS",
+      "VIBRANT",
+      "COOL_TONES",
+      "WARM_TONES"
+    ]
+  },
+  "constraints": {
+    "min_compatibility_weight": 0.5,
+    "max_outfit_size": 4,
+    "min_outfit_score": 0.6,
+    "formality_tolerance": 1,
+    "pattern_conflict_threshold": 0.3,
+    "default_reference_edge_weight": 0.8
+  },
+  "monitoring": {
+    "health_check_interval_seconds": 300,
+    "track_query_performance": true,
+    "track_cache_stats": true,
+    "export_metrics_enabled": false,
+    "export_metrics_endpoint": "http://localhost:9090/metrics"
+  }
+}

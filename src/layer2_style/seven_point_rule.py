@@ -7,7 +7,12 @@ The 7-point rule states that a harmonious outfit should score between 7-10 point
 - Statement/special items = 2 points (textures, prints, eye-catching designs)
 
 This ensures balance between simple and special pieces.
+
+Domain knowledge (statement patterns, textures, optimal range, etc.) is loaded
+from config/data/style_rules_config.json so stylists can tune it without code changes.
 """
+import json
+from pathlib import Path
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
 from enum import Enum
@@ -16,6 +21,20 @@ from src.core.models import Garment, GarmentCategory, TransparencyLevel
 from src.core import get_logger
 
 logger = get_logger(__name__)
+
+_STYLE_RULES_CONFIG_PATH = (
+    Path(__file__).parent.parent.parent / "config" / "data" / "style_rules_config.json"
+)
+
+
+def _load_style_rules_config() -> dict:
+    """Load style rules config, returning empty dict on failure."""
+    try:
+        with open(_STYLE_RULES_CONFIG_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as exc:
+        logger.warning("Could not load style_rules_config.json: %s — using built-in defaults.", exc)
+        return {}
 
 
 class GarmentPointValue(Enum):
@@ -47,36 +66,47 @@ class SevenPointRuleScorer:
     """
     
     def __init__(self):
+        cfg = _load_style_rules_config().get("seven_point_rule", {})
+
         # Patterns that make an item a statement piece
-        self.statement_patterns = {
+        self.statement_patterns: set = set(cfg.get("statement_patterns", [
             "stripes", "plaid", "floral", "geometric", "animal",
             "abstract", "paisley", "polka_dot", "checkered", "leopard",
-            "zebra", "tropical", "tie_dye", "camo", "houndstooth"
-        }
-        
+            "zebra", "tropical", "tie_dye", "camo", "houndstooth",
+        ]))
+
         # Textures that add visual interest
-        self.statement_textures = {
+        self.statement_textures: set = set(cfg.get("statement_textures", [
             "velvet", "sequin", "leather", "lace", "fur", "faux_fur",
             "metallic", "satin", "silk", "tweed", "boucle", "crochet",
-            "knit_cable", "quilted", "embossed", "pleated"
-        }
-        
+            "knit_cable", "quilted", "embossed", "pleated",
+        ]))
+
         # Embellishments that make statement pieces
-        self.statement_embellishments = {
+        self.statement_embellishments: set = set(cfg.get("statement_embellishments", [
             "sequins", "beading", "embroidery", "ruffles", "fringe",
             "studs", "crystals", "pearls", "patches", "applique",
-            "cutouts", "lace_trim", "metallic_hardware"
-        }
-        
+            "cutouts", "lace_trim", "metallic_hardware",
+        ]))
+
         # Categories that are typically statement by nature
-        self.inherently_statement_subcategories = {
-            "blazer", "statement_jewelry", "cocktail_dress", "gown",
-            "fur_coat", "leather_jacket", "sequin_top", "maxi_dress"
-        }
-        
+        self.inherently_statement_subcategories: set = set(cfg.get(
+            "inherently_statement_subcategories", [
+                "blazer", "statement_jewelry", "cocktail_dress", "gown",
+                "fur_coat", "leather_jacket", "sequin_top", "maxi_dress",
+            ]
+        ))
+
+        # Bold colors (non-neutrals) that count as statement
+        self.bold_colors: set = set(cfg.get("bold_colors", [
+            "red", "orange", "yellow", "fuchsia", "magenta", "purple",
+            "electric_blue", "lime", "coral", "hot_pink", "neon",
+        ]))
+
         # Optimal range for harmonious outfits
-        self.min_optimal_points = 7
-        self.max_optimal_points = 10
+        self.min_optimal_points: int = cfg.get("min_optimal_points", 7)
+        self.max_optimal_points: int = cfg.get("max_optimal_points", 10)
+        self._optimal_center: float = cfg.get("optimal_center", 8.5)
     
     def calculate_garment_points(self, garment: Garment) -> Tuple[int, List[str]]:
         """
@@ -224,8 +254,8 @@ class SevenPointRuleScorer:
         if num_items == 0:
             return 0.0
         
-        # Optimal center is 8.5 (middle of 7-10)
-        optimal_center = 8.5
+        # Optimal center is mid-point of the harmonious range
+        optimal_center = self._optimal_center
         
         # Calculate distance from optimal
         if self.min_optimal_points <= total_points <= self.max_optimal_points:

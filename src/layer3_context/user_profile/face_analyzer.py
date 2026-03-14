@@ -296,6 +296,15 @@ class FaceAnalyzer:
     
     def close(self):
         """Release resources."""
-        if self._face_mesh:
-            self._face_mesh.close()
+        if self._face_mesh is not None:
+            try:
+                self._face_mesh.close()
+            except Exception:
+                pass
             self._face_mesh = None
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass

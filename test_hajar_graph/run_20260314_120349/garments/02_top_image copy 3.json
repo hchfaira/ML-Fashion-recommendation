@@ -1,0 +1,48 @@
+{
+  "id": "82018535-ee88-43d0-835d-d0b7b5f48f71",
+  "image_path": "data/sample_wardrobe/image copy 3.png",
+  "image_name": "image copy 3.png",
+  "extracted_at": "2026-03-14T12:05:36.834352",
+  "attributes": {
+    "category": "top",
+    "subcategory": "tank_top",
+    "product_type": "One-shoulder asymmetrical draped top",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "lightblue",
+      "secondary": null,
+      "color_palette": [
+        "lightblue"
+      ],
+      "hex_codes": [
+        "#A7D7ED"
+      ],
+      "color_temperature": "cool",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "polyester",
+      "texture": "smooth",
+      "fabric_weight": "light"
+    },
+    "silhouette": {
+      "fit": "relaxed",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "modern",
+      "elegant",
+      "romantic"
+    ],
+    "seasons": [
+      "spring",
+      "summer"
+    ]
+  }
+}

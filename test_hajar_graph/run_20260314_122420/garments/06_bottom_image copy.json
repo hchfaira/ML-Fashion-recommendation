@@ -1,0 +1,51 @@
+{
+  "id": "08e69332-cbd1-4756-91e5-f46b2b3971a3",
+  "image_path": "data/sample_wardrobe/image copy.png",
+  "image_name": "image copy.png",
+  "extracted_at": "2026-03-14T12:26:03.586445",
+  "attributes": {
+    "category": "bottom",
+    "subcategory": "leggings",
+    "product_type": "flare leggings",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "gray",
+      "secondary": null,
+      "color_palette": [
+        "gray"
+      ],
+      "hex_codes": [
+        "#B0B0B0"
+      ],
+      "color_temperature": "neutral",
+      "color_depth": "medium"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "smooth",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "low"
+    },
+    "formality_level": "casual",
+    "style_tags": [
+      "athleisure",
+      "sporty",
+      "modern",
+      "casual",
+      "minimalist"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

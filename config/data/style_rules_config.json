@@ -1,0 +1,205 @@
+{
+  "_description": "Style Rules Configuration — All domain knowledge editable by stylists without code changes",
+  "_last_updated": "2026-03-14",
+
+  "seven_point_rule": {
+    "_description": "The 7-point rule: harmonious outfits score between min and max optimal points. Basic pieces = 1pt, statement pieces = 2pts.",
+    "min_optimal_points": 7,
+    "max_optimal_points": 10,
+    "optimal_center": 8.5,
+    "statement_patterns": [
+      "stripes", "plaid", "floral", "geometric", "animal",
+      "abstract", "paisley", "polka_dot", "checkered", "leopard",
+      "zebra", "tropical", "tie_dye", "camo", "houndstooth"
+    ],
+    "statement_textures": [
+      "velvet", "sequin", "leather", "lace", "fur", "faux_fur",
+      "metallic", "satin", "silk", "tweed", "boucle", "crochet",
+      "knit_cable", "quilted", "embossed", "pleated"
+    ],
+    "statement_embellishments": [
+      "sequins", "beading", "embroidery", "ruffles", "fringe",
+      "studs", "crystals", "pearls", "patches", "applique",
+      "cutouts", "lace_trim", "metallic_hardware"
+    ],
+    "inherently_statement_subcategories": [
+      "blazer", "statement_jewelry", "cocktail_dress", "gown",
+      "fur_coat", "leather_jacket", "sequin_top", "maxi_dress"
+    ],
+    "bold_colors": [
+      "red", "orange", "yellow", "fuchsia", "magenta", "purple",
+      "electric_blue", "lime", "coral", "hot_pink", "neon"
+    ]
+  },
+
+  "creativity": {
+    "_description": "Rules for evaluating outfit creativity — rule-breaking, style fusions, and risk pieces.",
+    "scoring_weights": {
+      "rule_breaking": 0.30,
+      "intentionality": 0.30,
+      "novelty": 0.25,
+      "risk": 0.15
+    },
+    "safe_combos": {
+      "colors": [
+        ["black", "white", "gray"],
+        ["navy", "white", "beige"],
+        ["monochrome"]
+      ],
+      "formality": "consistent",
+      "patterns": "one_or_none",
+      "proportions": "balanced"
+    },
+    "creative_combos": {
+      "color_clashes_that_work": [
+        ["pink", "red"],
+        ["orange", "pink"],
+        ["purple", "green"],
+        ["brown", "black"],
+        ["navy", "black"]
+      ],
+      "formality_fusions": [
+        ["sneakers", "formal"],
+        ["hoodie", "tailored"],
+        ["t-shirt", "evening"]
+      ],
+      "style_fusions": [
+        ["sporty", "elegant"],
+        ["punk", "preppy"],
+        ["bohemian", "minimalist"],
+        ["streetwear", "tailored"]
+      ]
+    },
+    "risk_pieces": {
+      "patterns": ["animal", "camo", "tie_dye", "abstract", "novelty"],
+      "colors": ["neon", "lime", "hot pink", "orange", "yellow"],
+      "styles": ["avant-garde", "deconstructed", "oversized", "sheer"],
+      "combos": ["multiple patterns", "color blocking", "mixed metals"]
+    },
+    "style_tribes": {
+      "sporty":     ["athletic", "sporty", "activewear", "athleisure"],
+      "elegant":    ["elegant", "sophisticated", "refined", "dressy"],
+      "punk":       ["punk", "edgy", "grunge", "rock"],
+      "preppy":     ["preppy", "classic", "collegiate", "traditional"],
+      "bohemian":   ["boho", "bohemian", "hippie", "free-spirited"],
+      "minimalist": ["minimal", "minimalist", "clean", "simple"],
+      "streetwear": ["street", "urban", "hip-hop", "skate"],
+      "romantic":   ["romantic", "feminine", "soft", "delicate"]
+    },
+    "novel_materials": ["pvc", "latex", "neoprene", "mesh", "vinyl"],
+    "novel_patterns":  ["abstract", "tie_dye", "camo", "novelty"],
+    "novel_style_tags": [
+      "deconstructed", "avant-garde", "experimental",
+      "architectural", "sculptural", "transformable"
+    ],
+    "coherent_rule_break_pairs": [
+      ["formality_mix", "style_fusion"],
+      ["color_clash",   "pattern_overload"],
+      ["volume_extreme","proportion_inversion"]
+    ],
+    "thresholds": {
+      "safe_max_score":       0.20,
+      "moderate_max_score":   0.40,
+      "creative_max_score":   0.70,
+      "intentionality_min_creative":    0.60,
+      "intentionality_min_avant_garde": 0.50,
+      "fashion_forward_min":  0.50,
+      "success_creativity_min": 0.30,
+      "success_style_min":    0.60,
+      "success_intentionality_min": 0.60,
+      "max_intentional_coherence_bonus": 0.15,
+      "max_rule_breaking_severity_divisor": 3.0,
+      "max_novelty_points": 1.0,
+      "max_risk_points": 1.0,
+      "novelty_material_score": 0.30,
+      "novelty_pattern_score":  0.20,
+      "novelty_tag_score":      0.30,
+      "risk_pattern_score":     0.25,
+      "risk_color_score":       0.20,
+      "risk_style_score":       0.30,
+      "risk_sheer_score":       0.20
+    }
+  },
+
+  "neo4j_graph": {
+    "_description": "Reference taxonomy used when building the Neo4j graph. Extend here to add new seasons, occasions, etc.",
+    "seasons": ["SPRING", "SUMMER", "FALL", "WINTER"],
+    "occasions": [
+      "CASUAL", "BUSINESS", "FORMAL", "WEDDING", "ATHLETIC",
+      "EVENING", "BEACH", "DATE", "TRAVEL"
+    ],
+    "formality_levels": [
+      {"name": "Very Casual",     "value": 0},
+      {"name": "Casual",          "value": 1},
+      {"name": "Smart Casual",    "value": 2},
+      {"name": "Business Casual", "value": 3},
+      {"name": "Business",        "value": 4},
+      {"name": "Formal",          "value": 5},
+      {"name": "Black Tie",       "value": 6}
+    ],
+    "categories": [
+      {"name": "Top",       "value": "top",       "priority": 1},
+      {"name": "Bottom",    "value": "bottom",    "priority": 2},
+      {"name": "Dress",     "value": "dress",     "priority": 3},
+      {"name": "Outerwear", "value": "outerwear", "priority": 4},
+      {"name": "Shoes",     "value": "shoes",     "priority": 5},
+      {"name": "Accessory", "value": "accessory", "priority": 6},
+      {"name": "Bag",       "value": "bag",       "priority": 7}
+    ],
+    "colors": [
+      {"name": "black",    "hex": "#000000", "role": "neutral"},
+      {"name": "white",    "hex": "#FFFFFF", "role": "neutral"},
+      {"name": "navy",     "hex": "#001F5B", "role": "cool"},
+      {"name": "grey",     "hex": "#808080", "role": "neutral"},
+      {"name": "beige",    "hex": "#F5F5DC", "role": "neutral"},
+      {"name": "brown",    "hex": "#8B4513", "role": "warm"},
+      {"name": "red",      "hex": "#FF0000", "role": "warm"},
+      {"name": "blue",     "hex": "#0000FF", "role": "cool"},
+      {"name": "green",    "hex": "#008000", "role": "cool"},
+      {"name": "yellow",   "hex": "#FFFF00", "role": "warm"},
+      {"name": "orange",   "hex": "#FFA500", "role": "warm"},
+      {"name": "pink",     "hex": "#FFC0CB", "role": "warm"},
+      {"name": "purple",   "hex": "#800080", "role": "cool"},
+      {"name": "camel",    "hex": "#C19A6B", "role": "warm"},
+      {"name": "cream",    "hex": "#FFFDD0", "role": "neutral"},
+      {"name": "tan",      "hex": "#D2B48C", "role": "warm"},
+      {"name": "burgundy", "hex": "#800020", "role": "warm"},
+      {"name": "olive",    "hex": "#808000", "role": "neutral"},
+      {"name": "teal",     "hex": "#008080", "role": "cool"},
+      {"name": "coral",    "hex": "#FF7F50", "role": "warm"}
+    ],
+    "color_harmonies": [
+      {"from": "navy",     "to": "white",    "type": "COMPLEMENTS", "weight": 0.95},
+      {"from": "navy",     "to": "beige",    "type": "ANALOGOUS",   "weight": 0.85},
+      {"from": "navy",     "to": "camel",    "type": "COMPLEMENTS", "weight": 0.90},
+      {"from": "navy",     "to": "grey",     "type": "ANALOGOUS",   "weight": 0.80},
+      {"from": "black",    "to": "white",    "type": "COMPLEMENTS", "weight": 0.95},
+      {"from": "black",    "to": "red",      "type": "COMPLEMENTS", "weight": 0.85},
+      {"from": "black",    "to": "camel",    "type": "COMPLEMENTS", "weight": 0.88},
+      {"from": "black",    "to": "beige",    "type": "COMPLEMENTS", "weight": 0.82},
+      {"from": "white",    "to": "navy",     "type": "COMPLEMENTS", "weight": 0.95},
+      {"from": "white",    "to": "black",    "type": "COMPLEMENTS", "weight": 0.95},
+      {"from": "white",    "to": "beige",    "type": "ANALOGOUS",   "weight": 0.75},
+      {"from": "grey",     "to": "navy",     "type": "ANALOGOUS",   "weight": 0.80},
+      {"from": "grey",     "to": "black",    "type": "ANALOGOUS",   "weight": 0.85},
+      {"from": "grey",     "to": "white",    "type": "ANALOGOUS",   "weight": 0.80},
+      {"from": "beige",    "to": "brown",    "type": "ANALOGOUS",   "weight": 0.85},
+      {"from": "beige",    "to": "camel",    "type": "ANALOGOUS",   "weight": 0.88},
+      {"from": "beige",    "to": "navy",     "type": "COMPLEMENTS", "weight": 0.85},
+      {"from": "beige",    "to": "white",    "type": "ANALOGOUS",   "weight": 0.80},
+      {"from": "camel",    "to": "black",    "type": "COMPLEMENTS", "weight": 0.88},
+      {"from": "camel",    "to": "white",    "type": "COMPLEMENTS", "weight": 0.85},
+      {"from": "camel",    "to": "navy",     "type": "COMPLEMENTS", "weight": 0.90},
+      {"from": "burgundy", "to": "camel",    "type": "COMPLEMENTS", "weight": 0.85},
+      {"from": "burgundy", "to": "grey",     "type": "COMPLEMENTS", "weight": 0.80},
+      {"from": "burgundy", "to": "navy",     "type": "ANALOGOUS",   "weight": 0.78},
+      {"from": "red",      "to": "black",    "type": "COMPLEMENTS", "weight": 0.85},
+      {"from": "red",      "to": "white",    "type": "COMPLEMENTS", "weight": 0.82},
+      {"from": "blue",     "to": "orange",   "type": "COMPLEMENTS", "weight": 0.88},
+      {"from": "green",    "to": "red",      "type": "COMPLEMENTS", "weight": 0.75},
+      {"from": "purple",   "to": "yellow",   "type": "COMPLEMENTS", "weight": 0.78},
+      {"from": "teal",     "to": "coral",    "type": "COMPLEMENTS", "weight": 0.82},
+      {"from": "olive",    "to": "burgundy", "type": "COMPLEMENTS", "weight": 0.80}
+    ]
+  }
+}

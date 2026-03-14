@@ -1,0 +1,70 @@
+{
+  "_comment": "Capsule Wardrobe configuration — thresholds, weights and profile definitions.",
+
+  "versatility_thresholds": {
+    "orphan_max": 0.05,
+    "key_piece_min": 0.15,
+    "acceptable_min": 0.05
+  },
+
+  "redundancy": {
+    "same_category_color_similarity_threshold": 0.85,
+    "max_same_subcategory": 2
+  },
+
+  "cohesion_weights": {
+    "color_cohesion": 0.30,
+    "versatility_ratio": 0.30,
+    "redundancy_penalty": 0.20,
+    "orphan_penalty": 0.20
+  },
+
+  "capsule_standard": {
+    "minimalist": {
+      "total_pieces": [12, 20],
+      "target_cohesion": 80,
+      "required_categories": {
+        "top": 3, "bottom": 2, "shoes": 2, "outerwear": 1
+      }
+    },
+    "standard": {
+      "total_pieces": [20, 35],
+      "target_cohesion": 65,
+      "required_categories": {
+        "top": 5, "bottom": 3, "shoes": 3, "outerwear": 2, "dress": 1
+      }
+    },
+    "rich": {
+      "total_pieces": [35, 60],
+      "target_cohesion": 50,
+      "required_categories": {
+        "top": 8, "bottom": 5, "shoes": 5, "outerwear": 3, "dress": 2, "accessory": 3
+      }
+    }
+  },
+
+  "impact_simulation": {
+    "candidate_colors_neutral": ["black", "white", "grey", "navy", "beige", "camel"],
+    "candidate_colors_by_season": {
+      "autumn": ["rust", "olive", "camel", "burgundy", "mustard", "brown"],
+      "spring": ["blush", "sage", "lavender", "peach", "mint", "ivory"],
+      "summer": ["cobalt", "coral", "white", "navy", "turquoise", "yellow"],
+      "winter": ["black", "charcoal", "burgundy", "forest", "slate", "white"]
+    }
+  },
+
+  "cache_ttl_days": {
+    "wardrobe_analysis": 7,
+    "missing_pieces": 7,
+    "llm_narration": 30
+  },
+
+  "visualization": {
+    "timeline_color": "#8B6F4E",
+    "key_piece_color": "#4CAF50",
+    "orphan_color": "#F44336",
+    "acceptable_color": "#FF9800",
+    "canvas_width": 1200,
+    "canvas_height": 600
+  }
+}

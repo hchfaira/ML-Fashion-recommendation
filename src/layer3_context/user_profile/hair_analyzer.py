@@ -428,6 +428,15 @@ class HairAnalyzer:
     
     def close(self):
         """Release resources."""
-        if self._segmenter:
-            self._segmenter.close()
+        if self._segmenter is not None:
+            try:
+                self._segmenter.close()
+            except Exception:
+                pass
             self._segmenter = None
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass

@@ -1,0 +1,51 @@
+{
+  "id": "ba349ee6-8afe-4b17-9978-1b40badb488c",
+  "image_path": "data/sample_wardrobe/Screenshot from 2026-03-12 23-14-57.png",
+  "image_name": "Screenshot from 2026-03-12 23-14-57.png",
+  "extracted_at": "2026-03-14T12:05:36.833751",
+  "attributes": {
+    "category": "top",
+    "subcategory": "cardigan",
+    "product_type": "short-sleeve puff sleeve cardigan",
+    "outfit_role": "main_piece",
+    "color": {
+      "primary": "pink",
+      "secondary": "ivory",
+      "color_palette": [
+        "pink",
+        "ivory"
+      ],
+      "hex_codes": [
+        "#F8C8D8",
+        "#F5F5DC"
+      ],
+      "color_temperature": "cool",
+      "color_depth": "light"
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": {
+      "primary": "knit",
+      "texture": "ribbed",
+      "fabric_weight": "medium"
+    },
+    "silhouette": {
+      "fit": "slim",
+      "structure": "soft",
+      "volume": "medium"
+    },
+    "formality_level": "smart_casual",
+    "style_tags": [
+      "romantic",
+      "modern",
+      "classic"
+    ],
+    "seasons": [
+      "spring",
+      "summer",
+      "fall"
+    ]
+  }
+}

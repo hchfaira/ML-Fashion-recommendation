@@ -2,6 +2,8 @@
 from typing import List, Optional, Dict, Tuple, Set
 from dataclasses import dataclass, field
 from enum import Enum
+import json
+from pathlib import Path
 
 from src.core.models import (
     Garment, GarmentCategory, FormalityLevel,
@@ -10,6 +12,20 @@ from src.core.models import (
 from src.core import get_logger
 
 logger = get_logger(__name__)
+
+_STYLE_RULES_CONFIG_PATH = (
+    Path(__file__).parent.parent.parent / "config" / "data" / "style_rules_config.json"
+)
+
+
+def _load_creativity_config() -> dict:
+    """Load the creativity section of style_rules_config.json."""
+    try:
+        with open(_STYLE_RULES_CONFIG_PATH, "r", encoding="utf-8") as f:
+            return json.load(f).get("creativity", {})
+    except Exception as exc:
+        logger.warning("Could not load style_rules_config.json: %s — using built-in defaults.", exc)
+        return {}
 
 
 class CreativityLevel(str, Enum):
@@ -71,68 +87,108 @@ class CreativityScorer:
     """
     Evaluates outfit creativity - the intentional breaking of rules
     to create something new and interesting.
-    
-    Creative scoring philosophy:
-    - Creativity requires RISK (breaking safe rules)
-    - But also requires COHERENCE (intentional, not random)
-    - The best creativity WORKS aesthetically despite rule-breaking
-    
+
+    Domain knowledge (safe combos, creative combos, style tribes, risk pieces,
+    scoring weights and thresholds) is loaded from
+    config/data/style_rules_config.json so stylists can tune it without code changes.
+
     Formula:
-    creativity = (rule_breaking * 0.3) + (intentionality * 0.3) + 
-                 (novelty * 0.25) + (risk * 0.15)
-    
+    creativity = (rule_breaking * w_rb) + (intentionality * w_int) +
+                 (novelty * w_nov) + (risk * w_risk)
+
     fashion_forward = creativity * style_success_rate
     """
-    
-    # "Safe" combinations (breaking these = creative)
-    SAFE_COMBOS = {
-        "colors": [
-            {"black", "white", "gray"},
-            {"navy", "white", "beige"},
-            {"monochrome"},
-        ],
-        "formality": "consistent",  # All same level
-        "patterns": "one_or_none",  # Max 1 pattern
-        "proportions": "balanced",  # 1:1 or golden ratio
-    }
-    
-    # Unexpected but potentially successful combinations
-    CREATIVE_COMBOS = {
-        "color_clashes_that_work": [
-            ("pink", "red"),
-            ("orange", "pink"),
-            ("purple", "green"),
-            ("brown", "black"),  # Once considered a faux pas
-            ("navy", "black"),
-        ],
-        "formality_fusions": [
-            ("sneakers", "formal"),  # Sneakers with suit
-            ("hoodie", "tailored"),  # Hoodie under blazer
-            ("t-shirt", "evening"),  # Tee with sequin skirt
-        ],
-        "style_fusions": [
-            ("sporty", "elegant"),
-            ("punk", "preppy"),
-            ("bohemian", "minimalist"),
-            ("streetwear", "tailored"),
-        ],
-    }
-    
-    # High-risk pieces that require skill to style
-    RISK_PIECES = {
-        "patterns": ["animal", "camo", "tie_dye", "abstract", "novelty"],
-        "colors": ["neon", "lime", "hot pink", "orange", "yellow"],
-        "styles": ["avant-garde", "deconstructed", "oversized", "sheer"],
-        "combos": ["multiple patterns", "color blocking", "mixed metals"],
-    }
-    
+
     def __init__(self):
-        self.weights = {
+        cfg = _load_creativity_config()
+
+        self.weights: Dict[str, float] = cfg.get("scoring_weights", {
             "rule_breaking": 0.30,
             "intentionality": 0.30,
             "novelty": 0.25,
-            "risk": 0.15
+            "risk": 0.15,
+        })
+
+        # Safe combinations (breaking these = creative)
+        self.SAFE_COMBOS: dict = cfg.get("safe_combos", {
+            "colors": [["black", "white", "gray"], ["navy", "white", "beige"], ["monochrome"]],
+            "formality": "consistent",
+            "patterns": "one_or_none",
+            "proportions": "balanced",
+        })
+
+        # Unexpected but potentially successful combinations
+        _cc = cfg.get("creative_combos", {})
+        self.CREATIVE_COMBOS: dict = {
+            "color_clashes_that_work": [tuple(p) for p in _cc.get("color_clashes_that_work", [
+                ("pink", "red"), ("orange", "pink"), ("purple", "green"),
+                ("brown", "black"), ("navy", "black"),
+            ])],
+            "formality_fusions": [tuple(p) for p in _cc.get("formality_fusions", [
+                ("sneakers", "formal"), ("hoodie", "tailored"), ("t-shirt", "evening"),
+            ])],
+            "style_fusions": [tuple(p) for p in _cc.get("style_fusions", [
+                ("sporty", "elegant"), ("punk", "preppy"),
+                ("bohemian", "minimalist"), ("streetwear", "tailored"),
+            ])],
         }
+
+        # High-risk pieces that require skill to style
+        self.RISK_PIECES: dict = cfg.get("risk_pieces", {
+            "patterns": ["animal", "camo", "tie_dye", "abstract", "novelty"],
+            "colors": ["neon", "lime", "hot pink", "orange", "yellow"],
+            "styles": ["avant-garde", "deconstructed", "oversized", "sheer"],
+            "combos": ["multiple patterns", "color blocking", "mixed metals"],
+        })
+
+        # Style tribes for style-fusion detection
+        self._style_tribes: Dict[str, List[str]] = cfg.get("style_tribes", {
+            "sporty":     ["athletic", "sporty", "activewear", "athleisure"],
+            "elegant":    ["elegant", "sophisticated", "refined", "dressy"],
+            "punk":       ["punk", "edgy", "grunge", "rock"],
+            "preppy":     ["preppy", "classic", "collegiate", "traditional"],
+            "bohemian":   ["boho", "bohemian", "hippie", "free-spirited"],
+            "minimalist": ["minimal", "minimalist", "clean", "simple"],
+            "streetwear": ["street", "urban", "hip-hop", "skate"],
+            "romantic":   ["romantic", "feminine", "soft", "delicate"],
+        })
+
+        # Novelty & risk scoring granularity
+        self._novel_materials: List[str]   = cfg.get("novel_materials", ["pvc", "latex", "neoprene", "mesh", "vinyl"])
+        self._novel_patterns:  List[str]   = cfg.get("novel_patterns",  ["abstract", "tie_dye", "camo", "novelty"])
+        self._novel_tags:      List[str]   = cfg.get("novel_style_tags", [
+            "deconstructed", "avant-garde", "experimental", "architectural", "sculptural", "transformable",
+        ])
+
+        # Coherent rule-break pairs (same rule-types that reinforce each other)
+        self._coherent_pairs: List[set] = [
+            {rb[0], rb[1]} for rb in cfg.get("coherent_rule_break_pairs", [
+                ["formality_mix", "style_fusion"],
+                ["color_clash",   "pattern_overload"],
+                ["volume_extreme","proportion_inversion"],
+            ])
+        ]
+
+        # Numeric thresholds
+        _t = cfg.get("thresholds", {})
+        self._t_safe_max       = _t.get("safe_max_score",       0.20)
+        self._t_moderate_max   = _t.get("moderate_max_score",   0.40)
+        self._t_creative_max   = _t.get("creative_max_score",   0.70)
+        self._t_int_creative   = _t.get("intentionality_min_creative",    0.60)
+        self._t_int_avant      = _t.get("intentionality_min_avant_garde", 0.50)
+        self._t_ff_min         = _t.get("fashion_forward_min",  0.50)
+        self._t_success_creat  = _t.get("success_creativity_min", 0.30)
+        self._t_success_style  = _t.get("success_style_min",    0.60)
+        self._t_success_intent = _t.get("success_intentionality_min", 0.60)
+        self._t_coherence_bonus = _t.get("max_intentional_coherence_bonus", 0.15)
+        self._t_rb_divisor     = _t.get("max_rule_breaking_severity_divisor", 3.0)
+        self._t_novelty_mat    = _t.get("novelty_material_score", 0.30)
+        self._t_novelty_pat    = _t.get("novelty_pattern_score",  0.20)
+        self._t_novelty_tag    = _t.get("novelty_tag_score",      0.30)
+        self._t_risk_pat       = _t.get("risk_pattern_score",     0.25)
+        self._t_risk_col       = _t.get("risk_color_score",       0.20)
+        self._t_risk_sty       = _t.get("risk_style_score",       0.30)
+        self._t_risk_sheer     = _t.get("risk_sheer_score",       0.20)
     
     def analyze_creativity(
         self,
@@ -401,16 +457,7 @@ class CreativityScorer:
         for item in items:
             all_tags.extend([t.lower() for t in item.attributes.style_tags])
         
-        style_tribes = {
-            "sporty": ["athletic", "sporty", "activewear", "athleisure"],
-            "elegant": ["elegant", "sophisticated", "refined", "dressy"],
-            "punk": ["punk", "edgy", "grunge", "rock"],
-            "preppy": ["preppy", "classic", "collegiate", "traditional"],
-            "bohemian": ["boho", "bohemian", "hippie", "free-spirited"],
-            "minimalist": ["minimal", "minimalist", "clean", "simple"],
-            "streetwear": ["street", "urban", "hip-hop", "skate"],
-            "romantic": ["romantic", "feminine", "soft", "delicate"],
-        }
+        style_tribes = self._style_tribes
         
         found_tribes = set()
         for tribe, keywords in style_tribes.items():
@@ -439,8 +486,7 @@ class CreativityScorer:
             return 0.0
         
         total_severity = sum(rb.severity for rb in rules_broken)
-        # Normalize: assume max 5 rules broken at max severity
-        return min(total_severity / 3, 1.0)
+        return min(total_severity / self._t_rb_divisor, 1.0)
     
     def _calculate_intentionality(
         self, 
@@ -456,18 +502,11 @@ class CreativityScorer:
         
         # Bonus for coherent rule-breaking
         # If multiple rules broken but they "go together"
-        types = [rb.rule_type for rb in rules_broken]
+        types = [rb.rule_type.value for rb in rules_broken]
         
-        # Coherent combinations
-        coherent_pairs = [
-            {RuleBreakType.FORMALITY_MIX, RuleBreakType.STYLE_FUSION},
-            {RuleBreakType.COLOR_CLASH, RuleBreakType.PATTERN_OVERLOAD},
-            {RuleBreakType.VOLUME_EXTREME, RuleBreakType.PROPORTION_INVERSION},
-        ]
-        
-        for pair in coherent_pairs:
+        for pair in self._coherent_pairs:
             if pair.issubset(set(types)):
-                base_score += 0.15
+                base_score += self._t_coherence_bonus
         
         return min(base_score, 1.0)
     
@@ -476,25 +515,20 @@ class CreativityScorer:
         novelty_points = 0
         
         for item in items:
-            # Unusual category combinations
-            subcategory = (item.attributes.subcategory or "").lower()
-            
             # Novel materials
             if item.attributes.material:
                 material = item.attributes.material.primary.lower()
-                if material in ["pvc", "latex", "neoprene", "mesh", "vinyl"]:
-                    novelty_points += 0.3
+                if material in self._novel_materials:
+                    novelty_points += self._t_novelty_mat
             
             # Novel patterns
             pattern = item.attributes.pattern.type.lower()
-            if pattern in ["abstract", "tie_dye", "camo", "novelty"]:
-                novelty_points += 0.2
+            if pattern in self._novel_patterns:
+                novelty_points += self._t_novelty_pat
             
             # Novel style tags
-            novel_tags = ["deconstructed", "avant-garde", "experimental", 
-                         "architectural", "sculptural", "transformable"]
-            if any(nt in " ".join(item.attributes.style_tags).lower() for nt in novel_tags):
-                novelty_points += 0.3
+            if any(nt in " ".join(item.attributes.style_tags).lower() for nt in self._novel_tags):
+                novelty_points += self._t_novelty_tag
         
         return min(novelty_points, 1.0)
     
@@ -506,21 +540,21 @@ class CreativityScorer:
             # Risky patterns
             pattern = item.attributes.pattern.type.lower()
             if pattern in self.RISK_PIECES["patterns"]:
-                risk_points += 0.25
+                risk_points += self._t_risk_pat
             
             # Risky colors
             color = item.attributes.color.primary.lower()
             if any(rc in color for rc in self.RISK_PIECES["colors"]):
-                risk_points += 0.2
+                risk_points += self._t_risk_col
             
             # Risky styles
             tags = " ".join(item.attributes.style_tags).lower()
             if any(rs in tags for rs in self.RISK_PIECES["styles"]):
-                risk_points += 0.3
+                risk_points += self._t_risk_sty
             
             # Sheer/transparent
             if item.attributes.details.transparency.value != "opaque":
-                risk_points += 0.2
+                risk_points += self._t_risk_sheer
         
         return min(risk_points, 1.0)
     
@@ -531,17 +565,17 @@ class CreativityScorer:
         rules_broken: List[RuleBreak]
     ) -> CreativityLevel:
         """Classify the creativity level."""
-        if score < 0.2:
+        if score < self._t_safe_max:
             return CreativityLevel.SAFE
-        elif score < 0.4:
+        elif score < self._t_moderate_max:
             return CreativityLevel.MODERATE
-        elif score < 0.7:
-            if intentionality >= 0.6:
+        elif score < self._t_creative_max:
+            if intentionality >= self._t_int_creative:
                 return CreativityLevel.CREATIVE
             else:
                 return CreativityLevel.MODERATE
         else:
-            if intentionality >= 0.5:
+            if intentionality >= self._t_int_avant:
                 return CreativityLevel.AVANT_GARDE
             else:
                 return CreativityLevel.CHAOTIC
@@ -588,11 +622,9 @@ class CreativityScorer:
     ) -> bool:
         """Determine if the creativity is successful."""
         if style_score is not None:
-            # Creative + good style score = success
-            return creativity >= 0.3 and style_score >= 0.6
+            return creativity >= self._t_success_creat and style_score >= self._t_success_style
         else:
-            # Fall back to intentionality
-            return creativity >= 0.3 and intentionality >= 0.6
+            return creativity >= self._t_success_creat and intentionality >= self._t_success_intent
     
     def _generate_recommendation(
         self,

@@ -1,0 +1,29 @@
+{
+  "id": "d75051aa-8f28-4a66-a04a-fc4dbaf90af7",
+  "image_path": "data/sample_wardrobe/Screenshot from 2026-03-12 23-14-57.png",
+  "image_name": "Screenshot from 2026-03-12 23-14-57.png",
+  "extracted_at": "2026-03-14T12:26:03.585502",
+  "attributes": {
+    "category": "top",
+    "subcategory": "cardigan",
+    "product_type": null,
+    "outfit_role": null,
+    "color": {
+      "primary": "pink",
+      "secondary": null,
+      "color_palette": [],
+      "hex_codes": [],
+      "color_temperature": null,
+      "color_depth": null
+    },
+    "pattern": {
+      "type": "solid",
+      "scale": null
+    },
+    "material": null,
+    "silhouette": null,
+    "formality_level": "casual",
+    "style_tags": [],
+    "seasons": []
+  }
+}

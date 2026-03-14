@@ -1,0 +1,44 @@
+{
+  "run_timestamp": "20260314_120349",
+  "run_directory": "test_hajar_graph/run_20260314_120349",
+  "summary": {
+    "total_garments_analyzed": 0,
+    "total_combinations": 5,
+    "best_score": 0.69395,
+    "profile_used": "default"
+  },
+  "best_outfit": {
+    "name": "tank_top + pants + heels",
+    "overall_score": 0.69395,
+    "garments": [
+      {
+        "id": "82018535-ee88-43d0-835d-d0b7b5f48f71",
+        "category": "top",
+        "subcategory": "tank_top",
+        "color": "lightblue"
+      },
+      {
+        "id": "5821990a-4343-469b-beb8-bfd243f96898",
+        "category": "bottom",
+        "subcategory": "pants",
+        "color": "tan"
+      },
+      {
+        "id": "98d7dec7-063f-4e22-8cf4-b1bbc049de1f",
+        "category": "shoes",
+        "subcategory": "heels",
+        "color": "black"
+      }
+    ]
+  },
+  "score_distribution": {
+    "excellent": 0,
+    "good": 5,
+    "needs_work": 0
+  },
+  "files_generated": {
+    "garments": "test_hajar_graph/run_20260314_120349/garments",
+    "combinations": "test_hajar_graph/run_20260314_120349/combinations",
+    "graphs": "test_hajar_graph/run_20260314_120349/graphs"
+  }
+}
