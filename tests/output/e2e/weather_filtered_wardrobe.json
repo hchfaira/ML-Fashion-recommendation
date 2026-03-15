@@ -2,8 +2,8 @@
   "temperature": 5.0,
   "filtered_items": 3,
   "categories_included": [
-    "outerwear",
+    "shoes",
     "bottom",
-    "shoes"
+    "outerwear"
   ]
 }

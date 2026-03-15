@@ -665,11 +665,130 @@ def write_final_report(
 # Main
 # ══════════════════════════════════════════════════════════════════════════════
 
+def run_travel_mode(garments, args, run: RunDirectory) -> None:
+    """Run the travel planning pipeline and write results."""
+    from src.layer3_context.travel.constraint_parser import ConstraintParser
+    from src.layer2_style.travel.travel_wardrobe_planner import TravelWardrobePlanner
+    from src.layer2_style.travel.packing_score_calculator import PackingScoreCalculator
+
+    _section("Travel Planning")
+    parser_c = ConstraintParser()
+    constraints = parser_c.parse(
+        destination=args.destination or "generic",
+        days=args.days,
+        occasions=args.occasions,
+        max_pieces=args.max_pieces,
+        travel_date=args.travel_date,
+        body_shape=args.body_shape,
+        season=args.season,
+    )
+    _info(f"Destination : {constraints.destination} | {constraints.days} days | "
+          f"{constraints.max_pieces} pieces max")
+    _info(f"Occasions   : {constraints.occasions}")
+
+    planner = TravelWardrobePlanner()
+    t0 = time.time()
+    plan = planner.plan(garments, constraints)
+    elapsed = time.time() - t0
+
+    _ok(f"Packing plan generated in {elapsed:.2f}s")
+    _ok(f"Pieces packed    : {len(plan.packed_garments)} / {constraints.max_pieces}")
+    _ok(f"Packing score    : {plan.packing_score:.1f}/100 ({plan.score_label})")
+    _ok(f"Versatility ratio: {plan.versatility_ratio:.1f} outfits/piece")
+    if plan.warnings:
+        for w in plan.warnings:
+            _warn(w)
+
+    path = run.write_json("travel/packing_plan.json", plan.model_dump())
+    _ok(f"Packing plan → {path.relative_to(run.root.parent.parent)}")
+
+
+def run_season_mode(garments, args, run: RunDirectory) -> None:
+    """Run the season planning pipeline and write results."""
+    from src.layer2_style.travel.seasonal_audit_engine import SeasonalAuditEngine
+    from src.layer2_style.travel.shopping_list_optimizer import ShoppingListOptimizer
+    from src.layer3_context.travel.season_transition_advisor import SeasonTransitionAdvisor
+    from src.layer3_context.travel.weekly_rotation_planner import WeeklyRotationPlanner
+
+    target_season = args.target_season or args.season or "fall"
+
+    # --- Seasonal audit ---
+    _section("Season Audit")
+    engine = SeasonalAuditEngine()
+    audit = engine.audit(garments, target_season)
+    _ok(f"Target season     : {target_season}")
+    _ok(f"Ready             : {audit.ready_count} pieces")
+    _ok(f"Adaptable         : {audit.adaptable_count} pieces")
+    _ok(f"Store             : {audit.store_count} pieces")
+    _ok(f"Overall readiness : {audit.overall_readiness_pct:.1f}%")
+    if audit.top_gaps:
+        for gap in audit.top_gaps:
+            _warn(gap)
+
+    run.write_json("season/audit.json", audit.model_dump())
+
+    # --- Shopping list ---
+    _section("Shopping List Optimiser")
+    hard_gaps = [c.category for c in audit.coverage_by_category if c.gap > 0]
+    optimizer = ShoppingListOptimizer()
+    shopping = optimizer.optimize(
+        garments,
+        budget=args.budget,
+        season=target_season,
+        body_shape=args.body_shape,
+        hard_gaps=hard_gaps,
+    )
+    _ok(f"Budget            : €{shopping.budget_eur:.0f}")
+    _ok(f"Within budget     : {len(shopping.within_budget)} items (€{shopping.total_estimated_cost:.0f})")
+    _ok(f"Projected new outfits: +{shopping.projected_new_outfits}")
+    for item in shopping.within_budget[:3]:
+        _info(f"  [{item.urgency.upper()}] {item.description} (ROI={item.roi:.1f}) — €{item.estimated_price_eur:.0f}")
+
+    run.write_json("season/shopping_list.json", shopping.model_dump())
+
+    # --- Season transition ---
+    _section("Season Transition Plan")
+    advisor = SeasonTransitionAdvisor()
+    transition = advisor.advise(garments, args.season or "summer", target_season)
+    _ok(f"Store : {len(transition.store_ids)} pieces")
+    _ok(f"Keep  : {len(transition.keep_ids)} pieces")
+    if transition.color_shift_notes:
+        for note in transition.color_shift_notes[:3]:
+            _info(f"  🎨  {note}")
+
+    run.write_json("season/transition_plan.json", transition.model_dump())
+
+    # --- Weekly rotation ---
+    _section("Weekly Rotation Plan")
+    rotation_planner = WeeklyRotationPlanner()
+    weekly = rotation_planner.plan(
+        garments,
+        work_days=args.work_days,
+        weekend_days=args.weekend_days,
+        work_occasion="work",
+        weekend_occasion="casual",
+    )
+    _ok(f"Slots planned     : {len(weekly.slots)}")
+    _ok(f"Repeat rate       : {weekly.repeat_rate:.0%}")
+    _ok(f"Coverage          : {weekly.coverage_pct:.0%}")
+    if weekly.warnings:
+        for w in weekly.warnings:
+            _warn(w)
+
+    run.write_json("season/weekly_rotation.json", weekly.model_dump())
+
+
 async def main() -> None:
     parser = argparse.ArgumentParser(
         description="Analyse a wardrobe folder through the full capsule pipeline.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
+    )
+
+    # ── Mode ───────────────────────────────────────────────────────────────
+    parser.add_argument(
+        "--mode", choices=["capsule", "travel", "season"], default="capsule",
+        help="Analysis mode (default: capsule)",
     )
 
     # ── Input ──────────────────────────────────────────────────────────────
@@ -749,6 +868,50 @@ async def main() -> None:
         help="Enable all optional enrichments (--llm + --charts)",
     )
 
+    # ── Travel mode args ───────────────────────────────────────────────────
+    travel_group = parser.add_argument_group("Travel Mode (--mode travel)")
+    travel_group.add_argument(
+        "--destination", default=None,
+        help="Trip destination city/country (e.g. 'Rome')",
+    )
+    travel_group.add_argument(
+        "--days", type=int, default=7,
+        help="Number of trip days (default: 7)",
+    )
+    travel_group.add_argument(
+        "--occasions", default=None,
+        help="Occasions CSV: 'casual:4,evening:2,tourism:1'",
+    )
+    travel_group.add_argument(
+        "--max-pieces", type=int, default=12, dest="max_pieces",
+        help="Max items to pack (default: 12)",
+    )
+    travel_group.add_argument(
+        "--travel-date", default=None, dest="travel_date",
+        help="Travel start date ISO format YYYY-MM-DD (infers season if not set)",
+    )
+
+    # ── Season mode args ───────────────────────────────────────────────────
+    season_group = parser.add_argument_group("Season Mode (--mode season)")
+    season_group.add_argument(
+        "--target-season",
+        choices=["spring", "summer", "fall", "autumn", "winter"],
+        default=None, dest="target_season",
+        help="Target season to prepare for",
+    )
+    season_group.add_argument(
+        "--budget", type=float, default=300.0,
+        help="Shopping budget in EUR (default: 300)",
+    )
+    season_group.add_argument(
+        "--work-days", type=int, default=5, dest="work_days",
+        help="Number of work days in weekly rotation (default: 5)",
+    )
+    season_group.add_argument(
+        "--weekend-days", type=int, default=2, dest="weekend_days",
+        help="Number of weekend days in weekly rotation (default: 2)",
+    )
+
     args = parser.parse_args()
 
     if args.all:
@@ -773,13 +936,22 @@ async def main() -> None:
             sys.exit(1)
 
     # ══════════════════════════════════════════════════════════════════════
-    _banner("Wardrobe Capsule Analyser")
+    _banner("Wardrobe Analyser")
+    print(f"  Mode      : {args.mode}")
     print(f"  Wardrobe  : {args.wardrobe}")
     print(f"  Output    : {args.out}")
     print(f"  Season    : {args.season or 'not specified'}")
     print(f"  Body shape: {args.body_shape or 'not specified'}")
-    print(f"  LLM       : {'yes' if args.llm else 'no'}")
-    print(f"  Charts    : {'yes' if args.charts else 'no'}")
+    if args.mode == "travel":
+        print(f"  Destination : {args.destination or 'generic'}")
+        print(f"  Days        : {args.days}")
+        print(f"  Max pieces  : {args.max_pieces}")
+    elif args.mode == "season":
+        print(f"  Target season: {args.target_season or args.season or 'fall'}")
+        print(f"  Budget       : €{args.budget:.0f}")
+    else:
+        print(f"  LLM       : {'yes' if args.llm else 'no'}")
+        print(f"  Charts    : {'yes' if args.charts else 'no'}")
 
     run   = RunDirectory(args.out)
     t_start = time.time()
@@ -798,7 +970,24 @@ async def main() -> None:
         print("❌  No garments could be extracted. Aborting.")
         sys.exit(1)
 
-    # ── F1 ────────────────────────────────────────────────────────────────
+    # ── Route to mode ─────────────────────────────────────────────────────
+    if args.mode == "travel":
+        run_travel_mode(garments, args, run)
+        elapsed_total = time.time() - t_start
+        _banner("Travel Planning Complete ✅")
+        print(f"  Total time : {elapsed_total:.1f} s")
+        print(f"  Results    : {run.root}")
+        return
+
+    if args.mode == "season":
+        run_season_mode(garments, args, run)
+        elapsed_total = time.time() - t_start
+        _banner("Season Planning Complete ✅")
+        print(f"  Total time : {elapsed_total:.1f} s")
+        print(f"  Results    : {run.root}")
+        return
+
+    # ── Capsule mode (default) ─────────────────────────────────────────────
     analysis = run_capsule_analysis(garments, run)
 
     # ── F2 ────────────────────────────────────────────────────────────────

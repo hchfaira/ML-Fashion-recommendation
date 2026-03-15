@@ -1,0 +1,159 @@
+{
+  "_comment": "Travel and destination profiles for wardrobe planning",
+
+  "climate_profiles": {
+    "tropical": {
+      "temp_range_c": [25, 38],
+      "humidity": "high",
+      "typical_rain": "afternoon_showers",
+      "boost_materials": ["linen", "cotton", "jersey"],
+      "penalise_materials": ["wool", "velvet", "leather", "fleece"],
+      "boost_categories": ["top", "dress", "accessory"],
+      "pack_essentials": ["sunscreen", "sunglasses", "hat", "light_rain_jacket"]
+    },
+    "mediterranean": {
+      "temp_range_c": [18, 30],
+      "humidity": "moderate",
+      "typical_rain": "rare",
+      "boost_materials": ["linen", "cotton", "silk"],
+      "penalise_materials": ["heavy_wool", "fleece"],
+      "boost_categories": ["top", "dress", "shoes"],
+      "pack_essentials": ["sunglasses", "light_layer"]
+    },
+    "continental": {
+      "temp_range_c": [5, 20],
+      "humidity": "moderate",
+      "typical_rain": "occasional",
+      "boost_materials": ["wool", "cotton", "polyester"],
+      "penalise_materials": ["linen", "very_lightweight"],
+      "boost_categories": ["outerwear", "top", "bottom"],
+      "pack_essentials": ["layers", "rain_jacket", "comfortable_shoes"]
+    },
+    "cold": {
+      "temp_range_c": [-10, 5],
+      "humidity": "low",
+      "typical_rain": "snow_possible",
+      "boost_materials": ["wool", "cashmere", "fleece", "down"],
+      "penalise_materials": ["linen", "silk", "lightweight_cotton"],
+      "boost_categories": ["outerwear", "accessory"],
+      "pack_essentials": ["heavy_coat", "boots", "scarf", "gloves"]
+    },
+    "arid": {
+      "temp_range_c": [20, 42],
+      "humidity": "very_low",
+      "typical_rain": "very_rare",
+      "boost_materials": ["linen", "loose_cotton", "moisture_wicking"],
+      "penalise_materials": ["synthetic_non_wicking", "dark_colors"],
+      "boost_categories": ["top", "accessory"],
+      "pack_essentials": ["sunscreen", "hat", "sunglasses", "light_layers_for_evening"]
+    }
+  },
+
+  "destination_profiles": {
+    "paris": {
+      "climate": "continental",
+      "occasions": ["casual", "business", "evening", "tourism"],
+      "dress_code": "smart_casual",
+      "notes": "Parisians tend to dress neatly; avoid overly casual looks for restaurants"
+    },
+    "tokyo": {
+      "climate": "continental",
+      "occasions": ["casual", "business", "evening", "tourism"],
+      "dress_code": "smart_casual",
+      "notes": "Comfortable walking shoes essential; modest dress preferred"
+    },
+    "rome": {
+      "climate": "mediterranean",
+      "occasions": ["casual", "tourism", "evening", "formal"],
+      "dress_code": "casual_to_smart",
+      "notes": "Cover shoulders for churches; evening dress slightly elevated"
+    },
+    "new_york": {
+      "climate": "continental",
+      "occasions": ["casual", "business", "evening", "tourism"],
+      "dress_code": "varied",
+      "notes": "Very mixed; business districts are formal, neighbourhoods are casual"
+    },
+    "bali": {
+      "climate": "tropical",
+      "occasions": ["casual", "beach", "tourism"],
+      "dress_code": "casual",
+      "notes": "Cover shoulders/legs for temple visits; beach wear acceptable elsewhere"
+    },
+    "dubai": {
+      "climate": "arid",
+      "occasions": ["business", "tourism", "evening"],
+      "dress_code": "modest_to_formal",
+      "notes": "Modest dress in public; smart casual for malls; formal for fine dining"
+    },
+    "london": {
+      "climate": "continental",
+      "occasions": ["casual", "business", "evening", "tourism"],
+      "dress_code": "smart_casual",
+      "notes": "Highly variable weather; layering is key"
+    },
+    "barcelona": {
+      "climate": "mediterranean",
+      "occasions": ["casual", "beach", "tourism", "evening"],
+      "dress_code": "casual_to_smart",
+      "notes": "Very relaxed; evening dining is dressy"
+    },
+    "new_delhi": {
+      "climate": "tropical",
+      "occasions": ["casual", "business", "tourism"],
+      "dress_code": "modest",
+      "notes": "Modest dress preferred; cover knees and shoulders"
+    },
+    "generic": {
+      "climate": "continental",
+      "occasions": ["casual", "business", "tourism"],
+      "dress_code": "smart_casual",
+      "notes": "Default profile for unknown destinations"
+    }
+  },
+
+  "occasion_day_weight": {
+    "beach": 0.6,
+    "tourism": 1.0,
+    "casual": 1.0,
+    "business": 1.5,
+    "evening": 1.2,
+    "formal": 1.8,
+    "sport": 0.8,
+    "outdoor": 0.9,
+    "shopping": 0.7,
+    "travel": 0.5
+  },
+
+  "price_estimates_eur": {
+    "top": {"budget": 20, "mid": 60, "luxury": 200},
+    "bottom": {"budget": 25, "mid": 80, "luxury": 250},
+    "dress": {"budget": 35, "mid": 100, "luxury": 400},
+    "outerwear": {"budget": 60, "mid": 180, "luxury": 600},
+    "shoes": {"budget": 40, "mid": 120, "luxury": 500},
+    "accessory": {"budget": 15, "mid": 50, "luxury": 300}
+  },
+
+  "versatility_synergy_bonus": {
+    "color_family_match": 0.10,
+    "style_tag_overlap": 0.05,
+    "formality_match": 0.08,
+    "material_complement": 0.04
+  },
+
+  "packing_score_thresholds": {
+    "excellent": 80,
+    "good": 60,
+    "fair": 40,
+    "poor": 0
+  },
+
+  "max_repeat_threshold_days": 3,
+
+  "scoring_weights": {
+    "versatility": 0.30,
+    "occasion_match": 0.30,
+    "weather_fit": 0.25,
+    "morphology": 0.15
+  }
+}

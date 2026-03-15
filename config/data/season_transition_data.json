@@ -1,0 +1,134 @@
+{
+  "_comment": "Rules for transitioning wardrobe between seasons",
+
+  "season_pairs": {
+    "summer_to_fall": {
+      "store": ["swimwear", "light_summer_dress", "shorts", "sandals"],
+      "keep_adaptable": ["light_denim", "tshirt", "blouse", "sneakers"],
+      "bring_out": ["knit_sweater", "light_jacket", "ankle_boots", "scarves"],
+      "color_shift": {
+        "retire": ["neon", "coral", "turquoise"],
+        "introduce": ["rust", "olive", "camel", "burgundy", "mustard"]
+      },
+      "layering_strategy": "start_with_light_knits",
+      "key_transition_pieces": ["trench_coat", "midi_skirt", "loafers"],
+      "shopping_priority": ["boots", "knitwear", "structured_jacket"]
+    },
+    "fall_to_winter": {
+      "store": ["light_jackets", "thin_blouses"],
+      "keep_adaptable": ["sweaters", "thick_denim", "ankle_boots"],
+      "bring_out": ["heavy_coats", "wool_pieces", "knee_boots", "gloves", "scarves"],
+      "color_shift": {
+        "retire": ["mustard", "rust"],
+        "introduce": ["navy", "charcoal", "dark_green", "cream", "black"]
+      },
+      "layering_strategy": "thermal_base_layers",
+      "key_transition_pieces": ["turtleneck", "heavy_scarf", "wool_trousers"],
+      "shopping_priority": ["heavy_coat", "thermal_layers", "warm_accessories"]
+    },
+    "winter_to_spring": {
+      "store": ["heavy_coats", "thermal_layers", "heavy_boots"],
+      "keep_adaptable": ["light_sweaters", "denim", "ankle_boots", "sneakers"],
+      "bring_out": ["trench_coat", "light_dresses", "blouses", "loafers"],
+      "color_shift": {
+        "retire": ["charcoal", "navy_heavy"],
+        "introduce": ["pastel_pink", "lavender", "light_blue", "soft_green", "white"]
+      },
+      "layering_strategy": "light_layers_over_basics",
+      "key_transition_pieces": ["wrap_dress", "light_cardigan", "white_sneakers"],
+      "shopping_priority": ["transitional_coat", "spring_footwear", "light_dresses"]
+    },
+    "spring_to_summer": {
+      "store": ["heavy_knits", "trench_coats", "closed_boots"],
+      "keep_adaptable": ["light_denim", "linen_blouse", "sandals", "sneakers"],
+      "bring_out": ["swimwear", "shorts", "light_dresses", "sandals"],
+      "color_shift": {
+        "retire": ["pastel_heavy"],
+        "introduce": ["neon", "coral", "turquoise", "yellow", "bright_white"]
+      },
+      "layering_strategy": "minimal_layering",
+      "key_transition_pieces": ["linen_shirt", "midi_dress", "espadrilles"],
+      "shopping_priority": ["swimwear", "summer_shoes", "light_dresses"]
+    }
+  },
+
+  "season_readiness": {
+    "spring": {
+      "boost_materials": ["cotton", "linen", "jersey", "light_denim"],
+      "penalise_materials": ["heavy_wool", "fleece", "down"],
+      "boost_colors": ["pastels", "white", "light_blue", "soft_pink", "lavender"],
+      "penalise_colors": ["heavy_dark", "deep_burgundy"],
+      "boost_formality": ["casual", "smart_casual"],
+      "required_coverage": {
+        "top": 3,
+        "bottom": 2,
+        "outerwear": 1,
+        "shoes": 2
+      }
+    },
+    "summer": {
+      "boost_materials": ["linen", "cotton", "jersey", "silk"],
+      "penalise_materials": ["wool", "fleece", "heavy_denim"],
+      "boost_colors": ["white", "neon", "coral", "turquoise", "light_colors"],
+      "penalise_colors": ["very_dark"],
+      "boost_formality": ["casual", "resort"],
+      "required_coverage": {
+        "top": 4,
+        "bottom": 2,
+        "dress": 1,
+        "shoes": 2
+      }
+    },
+    "fall": {
+      "boost_materials": ["denim", "cotton_knit", "light_wool", "corduroy"],
+      "penalise_materials": ["linen", "very_lightweight"],
+      "boost_colors": ["rust", "olive", "camel", "burgundy", "mustard", "brown"],
+      "penalise_colors": ["neon", "very_light"],
+      "boost_formality": ["casual", "smart_casual", "business_casual"],
+      "required_coverage": {
+        "top": 4,
+        "bottom": 3,
+        "outerwear": 1,
+        "shoes": 2
+      }
+    },
+    "winter": {
+      "boost_materials": ["wool", "cashmere", "fleece", "heavy_denim", "leather"],
+      "penalise_materials": ["linen", "silk", "very_lightweight_cotton"],
+      "boost_colors": ["dark_colors", "navy", "charcoal", "black", "cream"],
+      "penalise_colors": ["neon", "very_light"],
+      "boost_formality": ["smart_casual", "business", "formal"],
+      "required_coverage": {
+        "top": 4,
+        "bottom": 3,
+        "outerwear": 2,
+        "shoes": 2,
+        "accessory": 2
+      }
+    }
+  },
+
+  "transition_phases": {
+    "phase_1": {
+      "name": "Immediate swaps",
+      "duration_weeks": 1,
+      "description": "Store off-season items, pull out season-starters"
+    },
+    "phase_2": {
+      "name": "Color refresh",
+      "duration_weeks": 2,
+      "description": "Introduce seasonal color palette, retire clashing tones"
+    },
+    "phase_3": {
+      "name": "Gap filling",
+      "duration_weeks": 3,
+      "description": "Identify and shop for missing seasonal pieces"
+    }
+  },
+
+  "adaptability_score": {
+    "multi_season_materials": ["denim", "cotton", "jersey", "knit"],
+    "neutral_colors": ["black", "white", "navy", "grey", "beige", "camel"],
+    "versatile_formality": ["smart_casual", "casual"]
+  }
+}

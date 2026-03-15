@@ -25,10 +25,10 @@
       "seven_point_harmonious": null,
       "explanation": null,
       "tags": [],
-      "created_at": "2026-03-14T20:53:46.962390Z",
+      "created_at": "2026-03-14T23:59:43.810063Z",
       "history": {
         "creation": {
-          "created_at": "2026-03-14T20:53:46.962399Z",
+          "created_at": "2026-03-14T23:59:43.810071Z",
           "created_by": null,
           "occasion_intent": null,
           "season_intent": null,
@@ -53,5 +53,5 @@
       "days_since_last_worn": null
     }
   ],
-  "updated_at": "2026-03-14T20:53:46.962481"
+  "updated_at": "2026-03-14T23:59:43.810138"
 }
