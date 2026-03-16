@@ -193,16 +193,17 @@ class ResultsStorage:
     
     def save_final_report(self, report: dict, best_outfit, candidates: list) -> Path:
         """Save comprehensive final report."""
+        best_outfit_data = report.get("best_outfit") or {}
         final_report = {
             "run_timestamp": self.timestamp,
             "run_directory": str(self.run_dir),
             "summary": {
                 "total_garments_analyzed": report.get("total_combinations", 0),
                 "total_combinations": len(candidates) if candidates else 0,
-                "best_score": report.get("best_outfit", {}).get("overall_score", 0),
+                "best_score": best_outfit_data.get("overall_score", 0),
                 "profile_used": report.get("profile_used", "default")
             },
-            "best_outfit": report.get("best_outfit", {}),
+            "best_outfit": best_outfit_data,
             "score_distribution": {
                 "excellent": sum(1 for c in candidates if c.overall_score >= 0.8),
                 "good": sum(1 for c in candidates if 0.6 <= c.overall_score < 0.8),

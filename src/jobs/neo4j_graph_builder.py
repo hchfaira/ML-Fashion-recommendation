@@ -479,6 +479,25 @@ class Neo4jGraphBuilder:
                 errors.append(f"Index '{name}': {exc}")
                 logger.warning("Could not create index '%s': %s", name, exc)
 
+        # ── Drop plain indexes that conflict with upcoming constraints ──
+        # A uniqueness constraint cannot be created when a plain index
+        # already exists on the same label+property combination.
+        # We drop by name (IF EXISTS) — Neo4j will recreate the backing
+        # index automatically as part of the constraint.
+        _conflicting_indexes = [
+            "garment_id",    # conflicts with garment_id_unique  (:Garment {id})
+            "user_id",       # conflicts with user_id_unique      (:User {id})
+            "season_name",   # conflicts with season_name_unique  (:Season {name})
+            "occasion_name", # conflicts with occasion_name_unique (:Occasion {name})
+            "color_name",    # conflicts with color_name_unique   (:Color {name})
+        ]
+        for idx_name in _conflicting_indexes:
+            try:
+                await client.query(f"DROP INDEX {idx_name} IF EXISTS", ttl=0)
+                logger.debug("Dropped conflicting plain index '%s' (if it existed)", idx_name)
+            except Neo4jException as exc:
+                logger.debug("Could not drop index '%s' (may not exist): %s", idx_name, exc)
+
         # Uniqueness constraints
         constraints = [
             (

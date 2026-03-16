@@ -150,6 +150,27 @@ from .pipeline import (
     extract_garments
 )
 
+# =============================================================================
+# Quality Checking & Import Session
+# =============================================================================
+from .quality_checker import (
+    ProblemCode,
+    Severity,
+    GarmentStatus,
+    QualityWarning,
+    GarmentReport,
+    ImportSessionReport,
+    QualityThresholds,
+    QualityChecker,
+)
+from .session_manager import (
+    SessionState,
+    GarmentDecision,
+    GarmentDecisionRecord,
+    ImportSession,
+    ImportSessionManager,
+)
+
 
 # =============================================================================
 # Legacy Compatibility Layer

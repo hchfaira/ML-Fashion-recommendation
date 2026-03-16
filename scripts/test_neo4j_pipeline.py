@@ -32,6 +32,9 @@ Usage
   # Skip the Neo4j graph build (graph already built from a previous run)
   python scripts/test_neo4j_pipeline.py --wardrobe data/sample_wardrobe/ --skip-graph-build
 
+  # Run Layer-0 quality check before the main pipeline
+  python scripts/test_neo4j_pipeline.py --wardrobe data/sample_wardrobe/ --quality-check
+
   # Also run smart-removal analysis on the wardrobe
   python scripts/test_neo4j_pipeline.py --demo --removal-analysis
 
@@ -53,7 +56,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Make sure the project root is on the path
@@ -116,6 +119,22 @@ from src.layer5_visualization.minimalist_visualizer import QuietLuxuryVisualizer
 # Pipeline helpers (reused from the existing scripts/pipeline package)
 from pipeline.report_generator import ReportGenerator
 from pipeline.results_storage import ResultsStorage
+
+# ---------------------------------------------------------------------------
+# Layer 0 — Quality Check (optional, activated by --quality-check)
+# ---------------------------------------------------------------------------
+try:
+    import numpy as _np
+    from PIL import Image as _PIL_Image
+    from uuid import uuid4 as _uuid4
+    from src.layer0_segmentation.pipeline import create_pipeline as _create_l0_pipeline
+    from src.layer0_segmentation.models import ExtractedGarment as _ExtractedGarment
+    from src.layer0_segmentation.quality_checker import QualityChecker as _QualityChecker
+    from src.layer0_segmentation.session_manager import ImportSessionManager as _ImportSessionManager
+    from src.layer0_segmentation.taxonomy import GarmentCategory as _L0Category
+    _LAYER0_AVAILABLE = True
+except ImportError:
+    _LAYER0_AVAILABLE = False
 
 logger = get_logger(__name__)
 
@@ -598,6 +617,378 @@ async def load_wardrobe_from_folder(wardrobe_path: Path, profile: str) -> List[G
             print(f"    • {cat:<12} {sub:<30} {col}")
     else:
         _warn("No garments extracted — check that the folder contains images and GOOGLE_API_KEY is set.")
+
+    return garments
+
+
+# ===========================================================================
+# Layer 0 — category conversion + quality-check wardrobe loader
+# ===========================================================================
+
+# Maps Layer 0 taxonomy values → core GarmentCategory
+_L0_TO_CORE_CAT: Dict[str, "GarmentCategory"] = {}  # populated lazily below
+
+def _build_cat_map() -> Dict[str, "GarmentCategory"]:
+    return {
+        "tops":        GarmentCategory.TOP,
+        "bottoms":     GarmentCategory.BOTTOM,
+        "full_body":   GarmentCategory.DRESS,
+        "outerwear":   GarmentCategory.OUTERWEAR,
+        "footwear":    GarmentCategory.SHOES,
+        "accessories": GarmentCategory.ACCESSORY,
+        "unknown":     GarmentCategory.TOP,  # safe fallback
+    }
+
+
+# ---------------------------------------------------------------------------
+# Filename-based category heuristics for Layer-0 simple mode
+# (GroundingDINO not available → every garment comes out as "unknown")
+# ---------------------------------------------------------------------------
+
+_FILENAME_CAT_HINTS: List[Tuple[List[str], "GarmentCategory", str]] = []
+# Populated lazily after GarmentCategory is imported
+
+def _build_filename_hints() -> List[Tuple[List[str], Any, str]]:
+    return [
+        # (keywords, category, subcategory_label)
+        (["pants", "jeans", "trouser", "chino", "skirt", "shorts", "bottom", "leg"],
+         GarmentCategory.BOTTOM, "pants"),
+        (["dress", "gown", "jumpsuit", "romper", "overall"],
+         GarmentCategory.DRESS, "dress"),
+        (["jacket", "coat", "blazer", "outerwear", "parka", "trench"],
+         GarmentCategory.OUTERWEAR, "jacket"),
+        (["shoe", "boot", "sneaker", "heel", "sandal", "loafer", "footwear"],
+         GarmentCategory.SHOES, "shoes"),
+        (["bag", "purse", "scarf", "hat", "belt", "accessory", "jewelry", "watch"],
+         GarmentCategory.ACCESSORY, "accessory"),
+        (["shirt", "tshirt", "t-shirt", "blouse", "top", "sweater", "hoodie",
+          "tank", "crop", "polo", "knit", "cardigan"],
+         GarmentCategory.TOP, "shirt"),
+    ]
+
+_FILENAME_HINTS: List[Tuple[List[str], Any, str]] = []  # populated lazily
+
+
+def _category_from_filename(filename: str) -> Tuple[Any, str]:
+    """
+    Guess GarmentCategory + subcategory label from the image filename.
+    Falls back to (GarmentCategory.TOP, 'garment') when no keyword matches.
+    """
+    global _FILENAME_HINTS
+    if not _FILENAME_HINTS:
+        _FILENAME_HINTS = _build_filename_hints()
+
+    name_lower = Path(filename).stem.lower().replace("-", " ").replace("_", " ")
+    for keywords, cat, sub in _FILENAME_HINTS:
+        if any(kw in name_lower for kw in keywords):
+            return cat, sub
+    return GarmentCategory.TOP, "garment"
+
+
+def _extract_dominant_color(image_array: "_np.ndarray") -> str:
+    """
+    Extract the dominant color from an image.
+    Returns a color name string (e.g. 'white', 'black', 'blue', 'red', 'green', 'yellow', 'brown', 'gray', 'purple', 'pink', 'orange').
+    Falls back to 'unknown' if the image is too small.
+    """
+    try:
+        if image_array is None or image_array.size == 0:
+            return "unknown"
+        
+        # Reshape to (n_pixels, 3) and convert to RGB if needed
+        if len(image_array.shape) != 3 or image_array.shape[2] < 3:
+            return "unknown"
+        
+        pixels = image_array.reshape(-1, image_array.shape[2])[:, :3].astype(float)
+        
+        # Get dominant color (average of top-k brightest pixels for better results)
+        brightness = pixels.sum(axis=1)
+        top_k = max(10, len(pixels) // 100)  # top 1% of brightest pixels
+        top_indices = _np.argsort(brightness)[-top_k:]
+        dominant_rgb = pixels[top_indices].mean(axis=0).astype(int)
+        
+        r, g, b = dominant_rgb
+        
+        # Simple color classification based on RGB
+        # (max channel defines the hue direction)
+        max_c = max(r, g, b)
+        min_c = min(r, g, b)
+        delta = max_c - min_c
+        
+        # Check for achromatic colors first
+        if delta < 30:  # low saturation
+            if max_c > 200:
+                return "white"
+            elif max_c < 50:
+                return "black"
+            else:
+                return "gray"
+        
+        # Chromatic colors
+        if max_c == r:
+            if g > b:
+                return "orange" if g > 150 else "brown"
+            else:
+                return "red" if r > 150 else "purple"
+        elif max_c == g:
+            return "green" if g > 150 else "olive"
+        else:  # max_c == b
+            return "blue" if b > 150 else "navy"
+    except Exception:
+        return "unknown"
+
+
+def _detect_pattern(image_array: "_np.ndarray") -> str:
+    """
+    Detect pattern type from image texture analysis.
+    Returns: 'solid', 'striped', 'checkered', 'floral', 'patterned', or 'textured'.
+    Falls back to 'solid' if analysis fails.
+    """
+    try:
+        if image_array is None or image_array.size == 0 or len(image_array.shape) != 3:
+            return "solid"
+        
+        # Convert to grayscale for edge detection
+        gray = _np.dot(image_array[..., :3], [0.299, 0.587, 0.114]).astype(_np.uint8)
+        
+        # Compute Laplacian (edge detection) as a texture measure
+        # High variance in edges = textured/patterned
+        if gray.size < 100:
+            return "solid"
+        
+        gy, gx = _np.gradient(gray.astype(float))
+        edge_strength = _np.sqrt(gx**2 + gy**2)
+        edge_variance = edge_strength.var()
+        
+        if edge_variance < 50:
+            return "solid"
+        elif edge_variance < 150:
+            return "textured"
+        elif edge_variance < 300:
+            return "patterned"
+        else:
+            return "striped"
+    except Exception:
+        return "solid"
+
+
+def _extracted_to_garment(eg: "_ExtractedGarment", image_array: Optional["_np.ndarray"] = None) -> Garment:
+    """
+    Convert a Layer-0 ExtractedGarment into a core Garment.
+    
+    Args:
+        eg: ExtractedGarment from Layer 0
+        image_array: Optional original image for color/pattern extraction
+    """
+    global _L0_TO_CORE_CAT
+    if not _L0_TO_CORE_CAT:
+        _L0_TO_CORE_CAT = _build_cat_map()
+
+    l0_cat_val = eg.category.value  # e.g. "tops", "bottoms", "unknown"
+    if l0_cat_val != "unknown":
+        # Layer 0 gave a real category — use it
+        core_cat = _L0_TO_CORE_CAT.get(l0_cat_val, GarmentCategory.TOP)
+        sub = eg.label
+    else:
+        # simple mode → try filename heuristic
+        src = eg.source_path or ""
+        core_cat, sub = _category_from_filename(src)
+
+    # Extract color and pattern from image if available
+    color_name = eg.metadata.get("color", None)
+    pattern_name = eg.metadata.get("pattern", None)
+    
+    if color_name is None and image_array is not None:
+        color_name = _extract_dominant_color(image_array)
+    color_name = color_name or "unknown"
+    
+    if pattern_name is None and image_array is not None:
+        pattern_name = _detect_pattern(image_array)
+    pattern_name = pattern_name or "solid"
+
+    from uuid import uuid4
+    return Garment(
+        id=str(uuid4()),
+        attributes=GarmentAttributes(
+            category=core_cat,
+            subcategory=sub,
+            color=ColorProfile(
+                primary=color_name,
+                hex_codes=[],
+            ),
+            pattern=PatternInfo(type=pattern_name),
+            formality_level=FormalityLevel.CASUAL,
+            season_suitable=["spring", "summer", "fall", "winter"],
+        ),
+        history=GarmentHistory(),
+    )
+
+
+async def load_wardrobe_with_quality_check(
+    wardrobe_path: Path,
+    profile: str,
+    *,
+    interactive: bool = False,
+) -> List[Garment]:
+    """
+    Load wardrobe images through the Layer-0 extraction pipeline,
+    then run QualityChecker + ImportSessionManager before converting
+    accepted ExtractedGarments into core Garment objects.
+
+    If Layer-0 is not available (missing optional dependencies) the function
+    falls back to the standard vision-API loader automatically.
+    """
+    if not _LAYER0_AVAILABLE:
+        _warn("Layer-0 dependencies not available — falling back to Vision AI loader.")
+        return await load_wardrobe_from_folder(wardrobe_path, profile)
+
+    _banner("Phase 1 — Wardrobe Loading + Quality Check (Layer 0)")
+    print(f"\n  Loading images from: {wardrobe_path}")
+
+    # ── 1. Collect image paths ────────────────────────────────────────────
+    image_paths: List[Path] = []
+    for ext in ("*.jpg", "*.jpeg", "*.png", "*.webp", "*.JPG", "*.JPEG", "*.PNG"):
+        image_paths.extend(wardrobe_path.glob(ext))
+    image_paths = sorted(set(image_paths))
+
+    if not image_paths:
+        _warn("No images found in the wardrobe folder.")
+        return []
+
+    print(f"  Found {len(image_paths)} image(s) to process.\n")
+
+    # ── 2. Run Layer-0 extraction pipeline per image ──────────────────────
+    all_extracted: List["_ExtractedGarment"] = []
+    image_array_map: Dict[str, "_np.ndarray"] = {}  # map source_path → image array
+    try:
+        l0_pipeline = _create_l0_pipeline(mode="auto")
+    except Exception as exc:
+        _warn(f"Could not create Layer-0 pipeline: {exc} — falling back to Vision AI loader.")
+        return await load_wardrobe_from_folder(wardrobe_path, profile)
+
+    for img_path in image_paths:
+        try:
+            pil_img = _PIL_Image.open(img_path).convert("RGB")
+            img_array = _np.array(pil_img)
+            result = l0_pipeline.process(img_array)
+            if result.garments:
+                for eg in result.garments:
+                    if eg.source_path is None:
+                        eg.source_path = img_path
+                    image_array_map[str(eg.source_path)] = img_array
+                all_extracted.extend(result.garments)
+                _ok(f"  {img_path.name}: {len(result.garments)} garment(s) extracted")
+            else:
+                _warn(f"  {img_path.name}: no garments detected")
+        except Exception as exc:
+            _warn(f"  {img_path.name}: Layer-0 failed ({exc}) — skipped")
+
+    if not all_extracted:
+        _warn("Layer-0 extracted no garments — falling back to Vision AI loader.")
+        return await load_wardrobe_from_folder(wardrobe_path, profile)
+
+    # ── 3 & 4. Quality check + session ───────────────────────────────────
+    print(f"\n  Running quality check on {len(all_extracted)} extracted garment(s)…")
+    manager = _ImportSessionManager()
+    session = manager.create_session(all_extracted)
+
+    ready_count        = sum(1 for r in session.garment_records.values() if r.report.status.value == "ready")
+    needs_review_count = sum(1 for r in session.garment_records.values() if r.report.status.value == "needs_review")
+    failed_count       = sum(1 for r in session.garment_records.values() if r.report.status.value == "failed")
+
+    _ok(
+        f"  Quality check: {ready_count} ready  |  "
+        f"{needs_review_count} needs-review  |  "
+        f"{failed_count} failed"
+    )
+    if needs_review_count or failed_count:
+        print(
+            f"  ℹ️   All {needs_review_count + failed_count} flagged garment(s) will still be imported "
+            f"— warnings are informational only."
+        )
+
+    # Print per-garment warnings (one line per unique code, status-labelled)
+    for garment_id, record in session.garment_records.items():
+        status_val = record.report.status.value   # "ready" | "needs_review" | "failed"
+        if status_val == "ready":
+            continue  # no warnings to show for ready garments
+        status_tag = "FAILED" if status_val == "failed" else "NEEDS REVIEW"
+        seen_codes: set = set()
+        for w in record.report.warnings:
+            if w.code not in seen_codes:
+                seen_codes.add(w.code)
+                _warn(
+                    f"  [{status_tag}] [{record.report.garment.label}] "
+                    f"{w.user_message} → {w.suggestion}"
+                )
+
+    # Accept EVERY garment regardless of quality status —
+    # quality issues are warnings, not blockers in non-interactive mode.
+    for garment_id, record in list(session.garment_records.items()):
+        if record.decision.value == "pending":
+            try:
+                manager.accept_garment(session.session_id, garment_id)
+            except Exception:
+                pass  # already decided (e.g. auto-accepted READY)
+
+    # ── 5. Finalise and convert to core Garment objects ──────────────────
+    accepted_records = manager.finalise(session.session_id)
+    garments: List[Garment] = []
+
+    if accepted_records:
+        _ok(f"\n  {len(accepted_records)} garment(s) imported (quality warnings are non-blocking)")
+        for rec in accepted_records:
+            # Get the original image array for color/pattern extraction
+            src_path_str = str(rec.report.garment.source_path) if rec.report.garment.source_path else None
+            img_array = image_array_map.get(src_path_str, None) if src_path_str else None
+            g = _extracted_to_garment(rec.report.garment, image_array=img_array)
+            garments.append(g)
+            status_val = rec.report.status.value
+            badge = (
+                " ⚠️  FAILED"      if status_val == "failed"
+                else " ⚠️  REVIEW" if status_val == "needs_review"
+                else ""
+            )
+            col = g.attributes.color.primary if g.attributes.color else "?"
+            sub = g.attributes.subcategory or g.attributes.category.value
+            cat = g.attributes.category.value
+            print(f"    • {cat:<12} {sub:<30} {col}{badge}")
+
+        # ── Round-robin category redistribution (simple-mode fallback) ────
+        # When GroundingDINO/SAM are unavailable, all garments come out as
+        # "unknown" and the filename heuristic couldn't help either.
+        # To avoid 0 outfits, distribute the wardrobe across a realistic
+        # category mix (tops → bottoms → shoes → outerwear → accessories).
+        all_tops = all(g.attributes.category == GarmentCategory.TOP for g in garments)
+        if all_tops and len(garments) >= 2:
+            _info(
+                "  ℹ️  All garments defaulted to 'top' (simple mode, no filename hints).\n"
+                "     Redistributing across categories so outfit generation can proceed."
+            )
+            _DIST_CYCLE: List[Tuple[GarmentCategory, str]] = [
+                (GarmentCategory.TOP,       "shirt"),
+                (GarmentCategory.BOTTOM,    "pants"),
+                (GarmentCategory.TOP,       "shirt"),
+                (GarmentCategory.SHOES,     "shoes"),
+                (GarmentCategory.BOTTOM,    "pants"),
+                (GarmentCategory.OUTERWEAR, "jacket"),
+                (GarmentCategory.TOP,       "shirt"),
+                (GarmentCategory.ACCESSORY, "accessory"),
+            ]
+            for i, g in enumerate(garments):
+                cat_enum, sub_label = _DIST_CYCLE[i % len(_DIST_CYCLE)]
+                g.attributes.category = cat_enum
+                g.attributes.subcategory = sub_label
+            # Print updated list
+            print()
+            for g in garments:
+                col = g.attributes.color.primary if g.attributes.color else "?"
+                sub = g.attributes.subcategory or g.attributes.category.value
+                cat = g.attributes.category.value
+                print(f"    → {cat:<12} {sub:<30} {col}  (redistributed)")
+
+    else:
+        _warn("No garments imported — Layer-0 extraction produced no results.")
 
     return garments
 
@@ -1341,6 +1732,16 @@ Examples:
         default="casual",
         help="Target occasion for outfit filtering (default: casual)",
     )
+    parser.add_argument(
+        "--quality-check",
+        action="store_true",
+        help=(
+            "Pass wardrobe images through the Layer-0 extraction pipeline + "
+            "QualityChecker before entering the main pipeline. "
+            "Requires optional Layer-0 dependencies; falls back to Vision AI "
+            "loader automatically if they are not available."
+        ),
+    )
 
     # ── Neo4j options ────────────────────────────────────────────────────
     ngroup = parser.add_argument_group("Neo4j options")
@@ -1468,7 +1869,10 @@ Examples:
             col = g.attributes.color.primary if g.attributes.color else "?"
             print(f"    • {cat:<12} {sub:<20} {col}")
     elif args.wardrobe:
-        garments = await load_wardrobe_from_folder(args.wardrobe, args.profile)
+        if getattr(args, "quality_check", False):
+            garments = await load_wardrobe_with_quality_check(args.wardrobe, args.profile)
+        else:
+            garments = await load_wardrobe_from_folder(args.wardrobe, args.profile)
     elif args.outfit_image:
         _banner("Phase 1 — Single Outfit Image")
         if not args.outfit_image.exists():

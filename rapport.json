@@ -7,7 +7,7 @@
     "overall_score": 0.5403833333333333,
     "garments": [
       {
-        "id": "c5474b76-4246-45b8-91f0-2b5a71b87741",
+        "id": "fc1e89b2-d8c4-4847-aebe-92138dabc3ea",
         "category": "top",
         "subcategory": "blouse",
         "color": "ivory",
@@ -16,7 +16,7 @@
         "formality_level": "smart_casual"
       },
       {
-        "id": "902d17ba-d027-40e3-95ca-ff5b24cd1184",
+        "id": "95c2ea01-a58e-4817-9536-f56e05fca782",
         "category": "bottom",
         "subcategory": "skirt",
         "color": "lavender",
@@ -25,7 +25,7 @@
         "formality_level": "smart_casual"
       },
       {
-        "id": "8425f8d4-6316-44c7-83f6-dd85494f64f7",
+        "id": "3014602d-88cc-415b-868f-80770ed60a8a",
         "category": "accessory",
         "subcategory": "hat",
         "color": "beige",
@@ -41,7 +41,7 @@
     "grade": "C+",
     "potential_score": 0.795,
     "outfit_name": "Stylish Ensemble",
-    "diagnosis_summary": "This outfit has",
+    "diagnosis_summary": "This",
     "weak_dimensions": [
       "personal style and originality",
       "balance between fitted and flowy pieces",
@@ -56,18 +56,18 @@
     "suggested_pieces": [
       {
         "type": "addition",
-        "garment_id": "db0653c1-d0e7-420f-81ca-12e41bfc30b0",
+        "garment_id": "a669d759-f417-45d0-a617-caf4bb56b8bc",
         "description": "lavender blazer polyester",
         "expected_score_change": 0.099,
-        "explanation": "This blazer will beautifully define your waist and complement your balanced hourglass shape. It also adds a lovely fresh touch to your warm and earthy tones.",
+        "explanation": "This blazer will beautifully highlight your defined waist, making the most of your lovely hourglass shape. Its soft lavender shade can also add a fresh, unexpected touch that complements your warm, earthy",
         "priority": 1
       },
       {
         "type": "addition",
-        "garment_id": "eccc3288-7e82-4daf-bb8d-5c14369705a9",
+        "garment_id": "6fe1371b-d1fc-4a47-9248-7a6f0a6b0ffa",
         "description": "black heels",
         "expected_score_change": 0.015,
-        "explanation": "These heels will beautifully lengthen your legs, which really highlights your lovely hourglass shape. They add a touch of elegance that works wonderfully with your balanced proportions.",
+        "explanation": "These black heels will beautifully lengthen your legs. This really enhances the elegant lines of your hourglass figure.",
         "priority": 2
       },
       {
@@ -75,7 +75,7 @@
         "garment_id": null,
         "description": "A fitted piece to contrast with your looser items (e.g. a slim knit or tailored shirt)",
         "expected_score_change": 0.167,
-        "explanation": "A fitted piece will beautifully highlight your defined waist, which is perfect for your hourglass figure. It will also create a lovely contrast when paired with your other looser items.",
+        "explanation": "A fitted top will beautifully highlight your defined waist, which is perfect for your hourglass shape. It also creates a lovely contrast when paired with your looser pieces.",
         "priority": 3
       },
       {
@@ -83,12 +83,12 @@
         "garment_id": null,
         "description": "A simple finishing touch like a belt, watch, or delicate necklace",
         "expected_score_change": 0.05,
-        "explanation": "Adding a simple belt will beautifully highlight your hourglass figure and define your waist. A delicate necklace or watch in your warm, earthy tones can also tie your whole look together perfectly.",
+        "explanation": "A simple belt will beautifully highlight your defined waist, perfect for your hourglass shape. You can also pick a delicate necklace in warm, earthy tones to really make your best colours shine.",
         "priority": 4
       }
     ],
     "profile_note": "Hey",
-    "short_summary": "That outfit"
+    "short_summary": ""
   },
   "all_outfits": [
     {

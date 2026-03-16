@@ -347,12 +347,14 @@ class Neo4jClient:
         Returns:
             Dict with centrality scores
         """
+        # Use coalesce() so the query never fires "missing property" notifications
+        # when centrality scores haven't been computed yet (e.g. --skip-centrality).
         query = """
         MATCH (g:Garment {id: $garment_id})
-        RETURN g.degree_centrality as degree,
-               g.betweenness_centrality as betweenness,
-               g.eigenvector_centrality as eigenvector,
-               g.pagerank as pagerank
+        RETURN coalesce(g.degree_centrality,     0.0) as degree,
+               coalesce(g.betweenness_centrality, 0.0) as betweenness,
+               coalesce(g.eigenvector_centrality, 0.0) as eigenvector,
+               coalesce(g.pagerank,               0.0) as pagerank
         """
         
         result = await self.query(query, {'garment_id': garment_id})
@@ -385,9 +387,10 @@ class Neo4jClient:
         limit: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """Get garments suitable for a season."""
+        # Season nodes are merged on {name: ...} (not {value: ...})
         query = """
         MATCH (g:Garment {user_id: $user_id})
-              -[r:SUITABLE_FOR]-> (s:Season {value: $season})
+              -[r:SUITABLE_FOR]-> (s:Season {name: $season})
         RETURN g.id as garment_id, g.title as title, r.weight as score
         ORDER BY r.weight DESC
         """
@@ -407,9 +410,10 @@ class Neo4jClient:
         limit: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """Get garments suitable for an occasion."""
+        # Occasion nodes are merged on {name: ...} (not {value: ...})
         query = """
         MATCH (g:Garment {user_id: $user_id})
-              -[r:SUITABLE_FOR_OCCASION]-> (o:Occasion {value: $occasion})
+              -[r:SUITABLE_FOR_OCCASION]-> (o:Occasion {name: $occasion})
         RETURN g.id as garment_id, g.title as title, r.weight as score
         ORDER BY r.weight DESC
         """
