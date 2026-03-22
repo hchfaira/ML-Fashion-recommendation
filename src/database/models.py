@@ -1,5 +1,5 @@
 """SQLAlchemy ORM models for outfit storage and user subscriptions."""
-from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, JSON, ForeignKey, Text
+from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, JSON, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from uuid import uuid4
@@ -130,4 +130,157 @@ class OutfitAnalysis(Base):
             "generated_at": self.generated_at.isoformat() if self.generated_at else None,
             "user_season": self.user_season,
             "body_shape": self.body_shape,
+        }
+
+
+# ── Mood Board Feature ──
+
+class SharedOutfit(Base):
+    """A outfit shared publicly by a user for others to discover and save."""
+    __tablename__ = "shared_outfits"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    owner_user_id = Column(String(36), nullable=False, index=True)
+
+    # Reference to the logical outfit (garment IDs + scores)
+    outfit_data = Column(JSON, nullable=False)  # snapshot: garment_ids, scores, attributes
+
+    # Display metadata
+    title = Column(String(255), nullable=True)
+    occasion_tags = Column(JSON, default=list)   # ["casual", "summer"]
+    style_tags = Column(JSON, default=list)       # ["minimalist", "parisian"]
+    formality_score = Column(Float, nullable=True)
+    dominant_colors = Column(JSON, default=list)  # ["beige", "white"]
+    dominant_styles = Column(JSON, default=dict)  # {"minimalist": 0.8}
+    embedding_vector = Column(JSON, default=list) # serialized list[float]
+
+    # Social counters (denormalized for query speed)
+    likes_count = Column(Integer, default=0)
+    saves_count = Column(Integer, default=0)
+
+    is_public = Column(Boolean, default=True)
+    shared_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+    # Relationships
+    mood_board_items = relationship("MoodBoardItem", back_populates="shared_outfit")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "owner_user_id": self.owner_user_id,
+            "outfit_data": self.outfit_data,
+            "title": self.title,
+            "occasion_tags": self.occasion_tags or [],
+            "style_tags": self.style_tags or [],
+            "formality_score": self.formality_score,
+            "dominant_colors": self.dominant_colors or [],
+            "dominant_styles": self.dominant_styles or {},
+            "embedding_vector": self.embedding_vector or [],
+            "likes_count": self.likes_count,
+            "saves_count": self.saves_count,
+            "is_public": self.is_public,
+            "shared_at": self.shared_at.isoformat() if self.shared_at else None,
+        }
+
+
+class SharedOutfitLike(Base):
+    """Tracks which users liked which shared outfits."""
+    __tablename__ = "shared_outfit_likes"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    user_id = Column(String(36), nullable=False, index=True)
+    shared_outfit_id = Column(String(36), ForeignKey("shared_outfits.id"), nullable=False, index=True)
+    liked_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (UniqueConstraint("user_id", "shared_outfit_id", name="uq_user_outfit_like"),)
+
+
+class MoodBoard(Base):
+    """A curated collection of shared outfits saved by a user."""
+    __tablename__ = "mood_boards"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    user_id = Column(String(36), nullable=False, index=True)
+    name = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=False)  # Only one active board per user
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    items = relationship("MoodBoardItem", back_populates="board", cascade="all, delete-orphan")
+    style_profile = relationship("MoodBoardStyleProfile", back_populates="board", uselist=False, cascade="all, delete-orphan")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "description": self.description,
+            "is_active": self.is_active,
+            "items_count": len(self.items) if self.items else 0,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class MoodBoardItem(Base):
+    """A single shared outfit saved inside a mood board."""
+    __tablename__ = "mood_board_items"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    board_id = Column(String(36), ForeignKey("mood_boards.id"), nullable=False, index=True)
+    shared_outfit_id = Column(String(36), ForeignKey("shared_outfits.id"), nullable=False, index=True)
+    personal_note = Column(Text, nullable=True)
+    saved_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    __table_args__ = (UniqueConstraint("board_id", "shared_outfit_id", name="uq_board_outfit"),)
+
+    # Relationships
+    board = relationship("MoodBoard", back_populates="items")
+    shared_outfit = relationship("SharedOutfit", back_populates="mood_board_items")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "board_id": self.board_id,
+            "shared_outfit_id": self.shared_outfit_id,
+            "personal_note": self.personal_note,
+            "saved_at": self.saved_at.isoformat() if self.saved_at else None,
+        }
+
+
+class MoodBoardStyleProfile(Base):
+    """Aggregated style profile computed from all outfits saved in a mood board."""
+    __tablename__ = "mood_board_style_profiles"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    board_id = Column(String(36), ForeignKey("mood_boards.id"), nullable=False, unique=True, index=True)
+
+    # Aggregated style signals
+    dominant_colors = Column(JSON, default=list)   # [{"color": "beige", "frequency": 0.4}, ...]
+    dominant_styles = Column(JSON, default=dict)   # {"minimalist": 0.72, "parisian": 0.45}
+    formality_average = Column(Float, nullable=True)
+    occasions_distribution = Column(JSON, default=dict)  # {"casual": 0.6, "work": 0.3}
+    embedding_centroid = Column(JSON, default=list)  # list[float]
+    coherence_score = Column(Float, nullable=True)   # 0-1: how homogeneous the board is
+    items_count = Column(Integer, default=0)
+    is_stale = Column(Boolean, default=True)  # True when board changed and needs recompute
+    last_computed_at = Column(DateTime, nullable=True)
+
+    # Relationship
+    board = relationship("MoodBoard", back_populates="style_profile")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "board_id": self.board_id,
+            "dominant_colors": self.dominant_colors or [],
+            "dominant_styles": self.dominant_styles or {},
+            "formality_average": self.formality_average,
+            "occasions_distribution": self.occasions_distribution or {},
+            "coherence_score": self.coherence_score,
+            "items_count": self.items_count,
+            "is_stale": self.is_stale,
+            "last_computed_at": self.last_computed_at.isoformat() if self.last_computed_at else None,
         }
