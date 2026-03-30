@@ -34,8 +34,19 @@ class LLMService:
     def __init__(self):
         self.settings = get_settings()
         self.config = get_config()
-        self.client = AsyncOpenAI(api_key=self.settings.openai_api_key)
-        self.model = self.settings.llm_model
+
+        # Prefer OpenAI when the key is set; fall back to Gemini's OpenAI-compat endpoint
+        if self.settings.openai_api_key:
+            self.client = AsyncOpenAI(api_key=self.settings.openai_api_key)
+            self.model = self.settings.llm_model
+        else:
+            # Gemini OpenAI-compatible endpoint
+            self.client = AsyncOpenAI(
+                api_key=self.settings.google_api_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            )
+            # Use a Gemini model name — settings.llm_model is already "gemini-2.5-flash"
+            self.model = self.settings.llm_model
         
         # Load tone presets from configuration
         self.tone_presets = self.config.get_parameters(

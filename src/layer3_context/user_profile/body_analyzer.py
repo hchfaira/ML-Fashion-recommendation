@@ -168,11 +168,23 @@ class BodyAnalyzer:
         # Extract keypoints
         keypoints = self._extract_keypoints(landmarks, image.size)
         
+        # Estimate waist width from raw landmarks (before converting to keypoints)
+        waist_width_px = self._estimate_waist_width(landmarks, image.size)
+        
         # Compute metrics
         metrics = self._compute_metrics(keypoints, height_cm, weight_kg, image.size)
         
-        # Classify body shape
-        metrics.body_shape = self._classify_body_shape(metrics)
+        # Store waist width in metrics
+        metrics.waist_width_px = waist_width_px
+        if waist_width_px and metrics.hip_width_px and metrics.hip_width_px > 0:
+            metrics.waist_width_ratio = waist_width_px / metrics.hip_width_px
+        
+        # Classify body shape (continuous scoring)
+        shape, secondary, scores, confidence = self._classify_body_shape(metrics)
+        metrics.body_shape = shape
+        metrics.body_shape_secondary = secondary
+        metrics.body_shape_scores = scores
+        metrics.body_shape_confidence = confidence
         
         return metrics
     
@@ -426,52 +438,160 @@ class BodyAnalyzer:
         else:
             return "EU 48+"
     
-    def _classify_body_shape(self, metrics: BodyMetrics) -> Optional[BodyShape]:
+    def _estimate_waist_width(
+        self,
+        landmarks,
+        image_size: Tuple[int, int],
+    ) -> Optional[float]:
         """
-        Classify body shape based on proportions.
-        
-        Classification logic:
-        - HOURGLASS: Balanced shoulders/hips, defined waist
-        - INVERTED_TRIANGLE: Shoulders notably wider than hips
-        - TRIANGLE (Pear): Hips notably wider than shoulders  
-        - RECTANGLE: Similar measurements throughout
-        - OVAL (Apple): Based on BMI + waist emphasis
-        - ATHLETIC: Based on proportions + muscle indicators
+        Estimate waist width in pixels from pose landmarks.
+
+        The waist is approximated at ``y_shoulder + 0.6 * (y_hip - y_shoulder)``
+        and its width is linearly interpolated between the shoulder→hip
+        landmarks on each side.
+
+        Returns ``None`` (never raises) if any required landmark is missing
+        or has low visibility.
+        """
+        try:
+            width, height = image_size
+
+            def _lm(idx: int):
+                if idx >= len(landmarks):
+                    return None
+                lm = landmarks[idx]
+                if getattr(lm, "visibility", 0) < 0.5:
+                    return None
+                return (lm.x * width, lm.y * height)
+
+            left_shoulder  = _lm(self.LANDMARK_INDICES["left_shoulder"])   # 11
+            right_shoulder = _lm(self.LANDMARK_INDICES["right_shoulder"])  # 12
+            left_hip       = _lm(self.LANDMARK_INDICES["left_hip"])        # 23
+            right_hip      = _lm(self.LANDMARK_INDICES["right_hip"])       # 24
+
+            if not all([left_shoulder, right_shoulder, left_hip, right_hip]):
+                return None
+
+            # y coordinates for the waist line (60 % down from shoulders to hips)
+            y_shoulder = (left_shoulder[1] + right_shoulder[1]) / 2
+            y_hip = (left_hip[1] + right_hip[1]) / 2
+            t = 0.6  # interpolation factor
+            # y_waist = y_shoulder + t * (y_hip - y_shoulder)
+
+            # x of the left body edge at waist level (lerp shoulder→hip)
+            left_x = left_shoulder[0] + t * (left_hip[0] - left_shoulder[0])
+            # x of the right body edge at waist level
+            right_x = right_shoulder[0] + t * (right_hip[0] - right_shoulder[0])
+
+            waist_w = abs(right_x - left_x)
+            return waist_w if waist_w > 0 else None
+
+        except Exception:
+            return None
+
+    def _classify_body_shape(
+        self, metrics: BodyMetrics
+    ) -> Tuple[Optional[BodyShape], Optional[BodyShape], Dict[str, float], float]:
+        """
+        Classify body shape using continuous scoring.
+
+        Returns:
+            (primary_shape, secondary_shape, scores_dict, confidence)
+
+        ``scores_dict`` values are normalised to sum = 1.
+        ``secondary_shape`` is set only when its score > 0.25.
+        ``confidence`` is the primary shape's score.
         """
         ratio = metrics.shoulder_hip_ratio
-        
+
         if ratio is None:
             logger.warning("Cannot classify body shape: missing shoulder/hip ratio")
-            return None
-        
+            return (None, None, {}, 0.0)
+
         # Use BMI as additional signal if available
-        is_higher_bmi = metrics.bmi and metrics.bmi > 28
-        
+        is_higher_bmi = metrics.bmi is not None and metrics.bmi > 28
+
+        # Waist-hip ratio (from the new waist estimation)
+        whr = metrics.waist_width_ratio  # may be None
+
+        # ---- raw scores (un-normalised) ----
+        raw: Dict[str, float] = {}
+
         # Inverted triangle: shoulders significantly wider
-        if ratio > self.SHAPE_THRESHOLDS["inverted_triangle_ratio"]:
-            return BodyShape.INVERTED_TRIANGLE
-        
+        if ratio > 1.0:
+            raw["inverted_triangle"] = (ratio - 1.0) * 10  # e.g. ratio 1.12 → 1.2
+        else:
+            raw["inverted_triangle"] = 0.0
+
         # Triangle (pear): hips significantly wider
-        if ratio < self.SHAPE_THRESHOLDS["triangle_ratio"]:
-            return BodyShape.TRIANGLE
-        
-        # Oval (apple): higher BMI with relatively balanced proportions
-        if is_higher_bmi and 0.95 <= ratio <= 1.05:
-            return BodyShape.OVAL
-        
-        # Balanced proportions - could be hourglass or rectangle
-        # Without waist measurement, we estimate based on other factors
-        if 0.95 <= ratio <= 1.05:
-            # Default to rectangle for balanced without waist data
-            # Hourglass requires visible waist definition
-            return BodyShape.RECTANGLE
-        
-        # Athletic: slightly broader shoulders, good proportions
-        if 1.0 <= ratio <= 1.10 and metrics.leg_torso_ratio and metrics.leg_torso_ratio > 1.0:
-            return BodyShape.ATHLETIC
-        
-        # Fallback to rectangle
-        return BodyShape.RECTANGLE
+        if ratio < 1.0:
+            raw["triangle"] = (1.0 - ratio) * 10
+        else:
+            raw["triangle"] = 0.0
+
+        # Hourglass: balanced shoulders/hips AND defined waist
+        balanced = max(0.0, 1.0 - abs(ratio - 1.0) * 10)
+        if whr is not None and whr < self.SHAPE_THRESHOLDS["hourglass_waist_ratio"]:
+            raw["hourglass"] = balanced * (1.0 - whr)
+        else:
+            # Without waist data, hourglass gets a small score only if balanced
+            raw["hourglass"] = balanced * 0.1
+
+        # Oval (apple): higher BMI with balanced proportions
+        if is_higher_bmi:
+            raw["oval"] = balanced * 0.8
+        else:
+            raw["oval"] = 0.0
+
+        # Athletic: slightly broader shoulders, good leg-torso ratio
+        athletic_signal = 0.0
+        if 1.0 <= ratio <= 1.10:
+            athletic_signal += 0.5
+        if metrics.leg_torso_ratio and metrics.leg_torso_ratio > 1.0:
+            athletic_signal += 0.5
+        raw["athletic"] = athletic_signal * (1.0 - abs(ratio - 1.05) * 5)
+        raw["athletic"] = max(0.0, raw["athletic"])
+
+        # Rectangle: balanced, no waist definition
+        if whr is not None:
+            waist_def = max(0.0, 1.0 - abs(whr - 1.0) * 3)
+        else:
+            waist_def = 0.5  # uncertain → moderate rectangle score
+        raw["rectangle"] = balanced * waist_def
+
+        # ---- normalise so sum = 1 ----
+        total = sum(raw.values())
+        if total <= 0:
+            # Fallback: uniform
+            n = len(raw)
+            scores = {k: round(1.0 / n, 3) for k in raw}
+            return (BodyShape.RECTANGLE, None, scores, round(1.0 / n, 3))
+
+        scores = {k: v / total for k, v in raw.items()}
+
+        # Map keys → BodyShape enums
+        _KEY_TO_SHAPE = {
+            "hourglass": BodyShape.HOURGLASS,
+            "inverted_triangle": BodyShape.INVERTED_TRIANGLE,
+            "triangle": BodyShape.TRIANGLE,
+            "rectangle": BodyShape.RECTANGLE,
+            "oval": BodyShape.OVAL,
+            "athletic": BodyShape.ATHLETIC,
+        }
+
+        sorted_shapes = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        primary_key = sorted_shapes[0][0]
+        primary_score = sorted_shapes[0][1]
+        primary_shape = _KEY_TO_SHAPE.get(primary_key, BodyShape.RECTANGLE)
+
+        secondary_shape = None
+        if len(sorted_shapes) > 1 and sorted_shapes[1][1] > 0.25:
+            secondary_shape = _KEY_TO_SHAPE.get(sorted_shapes[1][0])
+
+        # Round scores for cleanliness
+        scores = {k: round(v, 3) for k, v in scores.items()}
+
+        return (primary_shape, secondary_shape, scores, round(primary_score, 3))
     
     def _calculate_bmi(
         self,

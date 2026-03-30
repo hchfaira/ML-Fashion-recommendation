@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "description": "Capsule wardrobe builder configuration — rule-based, no LLM required",
+
+  "score_weights": {
+    "valid_combinations": 0.40,
+    "occasion_coverage":  0.25,
+    "color_cohesion":     0.20,
+    "practicality":       0.15
+  },
+
+  "confidence_min": 0.60,
+
+  "outfit_targets": {
+    "small":  { "max_pieces_le": 5,  "target_outfits": 6  },
+    "medium": { "max_pieces_le": 7,  "target_outfits": 10 },
+    "large":  { "max_pieces_le": 99, "target_outfits": 15 }
+  },
+
+  "material_practicality": {
+    "jersey":    1.00,
+    "bamboo":    0.95,
+    "linen":     0.90,
+    "merino":    0.85,
+    "cotton":    0.80,
+    "denim":     0.75,
+    "polyester": 0.70,
+    "wool":      0.60,
+    "silk":      0.40,
+    "leather":   0.35,
+    "default":   0.65
+  },
+
+  "climate_seasons": {
+    "warm":  ["summer", "spring"],
+    "cold":  ["winter", "autumn"],
+    "mixed": ["summer", "spring", "winter", "autumn"]
+  },
+
+  "neutral_families": [
+    { "name": "White",     "rgb": [255, 255, 255] },
+    { "name": "Off-White", "rgb": [250, 250, 249] },
+    { "name": "Nude",      "rgb": [237, 232, 226] },
+    { "name": "Stone",     "rgb": [158, 148, 144] },
+    { "name": "Charcoal",  "rgb": [58,  54,  51]  },
+    { "name": "Navy",      "rgb": [27,  42,  74]  },
+    { "name": "Camel",     "rgb": [193, 154, 107] },
+    { "name": "Black",     "rgb": [0,   0,   0]   }
+  ],
+
+  "formality_tiers": {
+    "casual":       0,
+    "smart_casual": 1,
+    "business":     2,
+    "formal":       3,
+    "evening":      3
+  },
+
+  "occasion_formalities": {
+    "travel":     ["casual", "smart_casual"],
+    "work_trip":  ["smart_casual", "business"],
+    "weekend":    ["casual"],
+    "city_break": ["casual", "smart_casual"],
+    "beach":      ["casual"],
+    "date_night": ["smart_casual", "formal"]
+  },
+
+  "category_roles": {
+    "top":       "anchor",
+    "dress":     "anchor",
+    "bottom":    "anchor",
+    "outerwear": "layer",
+    "shoes":     "shoes",
+    "accessory": "accent"
+  },
+
+  "category_versatility_base": {
+    "top":       1.00,
+    "dress":     0.95,
+    "bottom":    0.90,
+    "outerwear": 0.70,
+    "shoes":     0.60,
+    "accessory": 0.40,
+    "default":   0.50
+  },
+
+  "occasion_templates": {
+    "travel":     { "top": 3, "bottom": 2, "dress": 1, "outerwear": 1, "shoes": 1, "accessory": 1 },
+    "work_trip":  { "top": 2, "bottom": 1, "dress": 1, "outerwear": 1, "shoes": 2 },
+    "weekend":    { "top": 3, "bottom": 2, "shoes": 1 },
+    "city_break": { "top": 2, "bottom": 2, "outerwear": 1, "shoes": 1 },
+    "beach":      { "top": 2, "bottom": 1, "dress": 1, "shoes": 1 },
+    "date_night": { "top": 1, "bottom": 1, "shoes": 1, "accessory": 1 }
+  },
+
+  "missing_piece_labels": {
+    "top":       "Versatile top",
+    "bottom":    "Casual trousers or skirt",
+    "dress":     "Lightweight dress",
+    "outerwear": "Packable jacket",
+    "shoes":     "Comfortable walking shoes",
+    "accessory": "Lightweight scarf or belt"
+  },
+
+  "beach_allowed_materials": ["linen", "cotton", "jersey", "bamboo", "polyester"],
+
+  "short_trip_days_threshold": 3,
+  "short_trip_practicality_min": 0.70,
+
+  "seeding_order": ["top", "bottom", "shoes", "dress", "outerwear", "accessory"],
+
+  "max_missing_pieces": 5
+}

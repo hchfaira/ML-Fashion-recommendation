@@ -102,7 +102,8 @@ class TotalStyleScorer:
         self,
         items: List[Garment],
         user_season: Optional[ColorSeason] = None,
-        body_shape: Optional[BodyShape] = None
+        body_shape: Optional[BodyShape] = None,
+        season_sub: Optional[str] = None,
     ) -> StyleReport:
         """
         Perform complete style analysis.
@@ -111,6 +112,7 @@ class TotalStyleScorer:
             items: Outfit garments
             user_season: Optional user color season for personalized color scoring
             body_shape: Optional body shape for personalized volume advice
+            season_sub: Optional 12-sub-season string (e.g. "Light Spring")
             
         Returns:
             Complete StyleReport
@@ -123,7 +125,9 @@ class TotalStyleScorer:
         
         # Color harmony - use season if provided, otherwise basic harmony
         if user_season:
-            color_result = self.color_scorer.analyze_outfit(items, user_season)
+            color_result = self.color_scorer.analyze_outfit(
+                items, user_season, season_sub=season_sub
+            )
         else:
             # Use a default neutral analysis
             color_result = SeasonColorResult(

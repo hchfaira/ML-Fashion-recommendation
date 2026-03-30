@@ -162,6 +162,7 @@ class OutfitScorecard:
         # Parse context values needed for multiple scorers
         body_shape = self._parse_body_shape(context)
         user_season = self._parse_color_season(context)
+        season_sub = self._parse_season_sub(context)
         
         # Calculate 7-Point Rule (if enabled)
         if self._is_criterion_enabled("seven_point"):
@@ -236,7 +237,7 @@ class OutfitScorecard:
             }
         
         # Calculate Total Style Score (always calculated for internal use)
-        total_result = self._total_scorer.analyze_outfit(self.garments, user_season, body_shape)
+        total_result = self._total_scorer.analyze_outfit(self.garments, user_season, body_shape, season_sub=season_sub)
         self.scores["total_style"] = total_result.overall_score
         self.details["total_style"] = {
             "grade": total_result.grade,
@@ -286,6 +287,12 @@ class OutfitScorecard:
             return ColorSeason(context.color_season.upper())
         except (ValueError, AttributeError):
             return None
+    
+    def _parse_season_sub(self, context: Optional[UserContext]) -> Optional[str]:
+        """Parse 12-sub-season from context (passthrough string)."""
+        if not context:
+            return None
+        return getattr(context, "season_sub", None)
     
     def _calculate_overall_score(self) -> float:
         """Calculate weighted overall score."""

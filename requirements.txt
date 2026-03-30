@@ -14,6 +14,8 @@ torch>=2.1.0
 torchvision>=0.16.0
 transformers>=4.36.0
 sentence-transformers>=2.2.0
+implicit>=0.7.2
+scipy>=1.11.0
 
 # Image Processing
 Pillow>=10.1.0

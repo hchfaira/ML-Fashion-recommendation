@@ -36,6 +36,22 @@ class ColorSeason(str, Enum):
     WINTER = "winter"  # Cool + Deep: Bold, clear, high contrast
 
 
+class ColorSeasonSub(str, Enum):
+    """12-sub-season colour classification."""
+    LIGHT_SPRING = "Light Spring"
+    TRUE_SPRING = "True Spring"
+    WARM_SPRING = "Warm Spring"
+    LIGHT_SUMMER = "Light Summer"
+    TRUE_SUMMER = "True Summer"
+    COOL_SUMMER = "Cool Summer"
+    TRUE_AUTUMN = "True Autumn"
+    WARM_AUTUMN = "Warm Autumn"
+    DEEP_AUTUMN = "Deep Autumn"
+    TRUE_WINTER = "True Winter"
+    COOL_WINTER = "Cool Winter"
+    DEEP_WINTER = "Deep Winter"
+
+
 @dataclass
 class SeasonColorResult:
     """Result of season color analysis."""
@@ -68,6 +84,10 @@ class SeasonColorHarmonyScorer:
         
         # Colors that clash with specific seasons
         self.season_clashes = self._initialize_clashes()
+        
+        # 12-sub-season palettes & clashes
+        self.season_sub_palettes = self._initialize_sub_palettes()
+        self.season_sub_clashes = self._initialize_sub_clashes()
     
     def _initialize_palettes(self) -> Dict[ColorSeason, set]:
         """Initialize color palettes for each season."""
@@ -137,17 +157,143 @@ class SeasonColorHarmonyScorer:
             }
         }
     
+    # ------------------------------------------------------------------
+    # 12-sub-season palettes & clashes
+    # ------------------------------------------------------------------
+
+    def _initialize_sub_palettes(self) -> Dict[str, set]:
+        """Color palettes for each of the 12 colour sub-seasons."""
+        return {
+            "Light Spring": {
+                "peach", "light coral", "apricot", "warm pink",
+                "butter yellow", "cream", "light turquoise", "aqua",
+                "mint", "light camel", "warm white", "golden beige",
+            },
+            "True Spring": {
+                "coral", "salmon", "golden yellow", "sunflower",
+                "warm green", "apple green", "turquoise", "periwinkle",
+                "camel", "ivory", "tan", "warm beige",
+            },
+            "Warm Spring": {
+                "marigold", "amber", "honey", "golden brown",
+                "lime", "teal", "copper", "terracotta",
+                "bronze", "khaki", "burnt orange", "warm red",
+            },
+            "Light Summer": {
+                "powder blue", "lavender", "soft pink", "rose",
+                "dove grey", "sky blue", "seafoam", "cool beige",
+                "soft white", "periwinkle", "lilac", "light mauve",
+            },
+            "True Summer": {
+                "dusty rose", "mauve", "soft blue", "blue-grey",
+                "taupe", "sage", "plum", "raspberry",
+                "cocoa", "cool beige", "rose brown", "soft teal",
+            },
+            "Cool Summer": {
+                "blue-grey", "soft fuchsia", "cool pink", "lavender",
+                "soft navy", "pewter", "charcoal", "silver",
+                "icy blue", "steel blue", "orchid", "wine",
+            },
+            "True Autumn": {
+                "mustard", "gold", "olive", "moss",
+                "rust", "brick red", "chocolate", "coffee",
+                "cream", "warm beige", "oyster", "burnt sienna",
+            },
+            "Warm Autumn": {
+                "terracotta", "pumpkin", "amber", "caramel",
+                "khaki", "forest green", "burgundy", "mahogany",
+                "bronze", "copper", "honey", "tan",
+            },
+            "Deep Autumn": {
+                "burnt orange", "deep gold", "olive", "forest green",
+                "wine", "mahogany", "espresso", "charcoal",
+                "aubergine", "deep teal", "rust", "brick red",
+            },
+            "True Winter": {
+                "true red", "royal blue", "emerald", "black",
+                "white", "hot pink", "fuchsia", "purple",
+                "silver", "icy pink", "icy blue", "cobalt",
+            },
+            "Cool Winter": {
+                "icy lavender", "icy pink", "icy blue", "silver",
+                "charcoal", "navy", "deep purple", "magenta",
+                "cool red", "pine", "true white", "black",
+            },
+            "Deep Winter": {
+                "black", "true red", "emerald", "royal purple",
+                "navy", "cobalt", "cherry", "burgundy",
+                "charcoal", "white", "crimson", "pine",
+            },
+        }
+
+    def _initialize_sub_clashes(self) -> Dict[str, set]:
+        """Colors that typically clash with each of the 12 sub-seasons."""
+        return {
+            "Light Spring": {
+                "black", "charcoal", "dark navy", "burgundy", "wine",
+                "forest green", "deep purple",
+            },
+            "True Spring": {
+                "dusty pink", "mauve", "charcoal", "burgundy",
+                "olive drab", "grey",
+            },
+            "Warm Spring": {
+                "icy pink", "icy blue", "lavender", "silver", "grey",
+                "pastel pink", "powder blue",
+            },
+            "Light Summer": {
+                "bright orange", "golden yellow", "rust", "terracotta",
+                "hot pink", "lime green", "black",
+            },
+            "True Summer": {
+                "bright orange", "golden yellow", "rust", "terracotta",
+                "electric blue", "lime green", "hot pink",
+            },
+            "Cool Summer": {
+                "mustard", "rust", "terracotta", "camel",
+                "warm beige", "peach", "coral", "gold",
+            },
+            "True Autumn": {
+                "icy pink", "icy blue", "lavender", "silver",
+                "pastel pink", "powder blue", "hot pink",
+            },
+            "Warm Autumn": {
+                "icy pink", "icy blue", "lavender", "silver",
+                "grey", "pastel pink", "powder blue",
+            },
+            "Deep Autumn": {
+                "pastel pink", "powder blue", "lavender", "light peach",
+                "soft pink", "icy blue", "silver",
+            },
+            "True Winter": {
+                "mustard", "rust", "terracotta", "camel",
+                "warm beige", "olive", "peach", "coral",
+            },
+            "Cool Winter": {
+                "mustard", "rust", "terracotta", "camel",
+                "warm beige", "olive", "peach", "gold",
+            },
+            "Deep Winter": {
+                "pastel pink", "powder blue", "light peach",
+                "warm beige", "camel", "mustard", "coral",
+            },
+        }
+    
     def analyze_outfit(
         self,
         items: List[Garment],
-        user_season: ColorSeason
+        user_season: ColorSeason,
+        season_sub: Optional[str] = None,
     ) -> SeasonColorResult:
         """
         Analyze outfit colors for a user's color season.
         
         Args:
             items: Outfit garments
-            user_season: User's color season
+            user_season: User's color season (4-season)
+            season_sub: Optional 12-sub-season string (e.g. "Light Spring").
+                        When provided the finer sub-palettes are used instead
+                        of the broad 4-season palettes.
             
         Returns:
             SeasonColorResult with scoring and recommendations
@@ -161,8 +307,13 @@ class SeasonColorHarmonyScorer:
                 recommendation="Add items to analyze"
             )
         
-        palette = self.season_palettes[user_season]
-        clashes = self.season_clashes[user_season]
+        # Choose palette & clash set: prefer 12-sub when available
+        if season_sub and season_sub in self.season_sub_palettes:
+            palette = self.season_sub_palettes[season_sub]
+            clashes = self.season_sub_clashes.get(season_sub, set())
+        else:
+            palette = self.season_palettes[user_season]
+            clashes = self.season_clashes[user_season]
         
         total_points = 0
         matches = []

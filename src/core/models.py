@@ -904,6 +904,7 @@ class UserContext(BaseModel):
     hair_color: Optional[str] = None  # for contrast analysis
     eye_color: Optional[str] = None
     color_season: Optional[str] = None  # spring, summer, autumn, winter
+    season_sub: Optional[str] = None    # 12-season sub-classification (e.g. "Light Spring")
     contrast_type: Optional[str] = None  # high, medium, low (skin vs hair)
     
     # Body shape (for volume balance scoring)

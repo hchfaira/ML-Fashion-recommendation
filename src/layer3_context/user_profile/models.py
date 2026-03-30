@@ -255,6 +255,12 @@ class BodyMetrics:
     body_shape: Optional[BodyShape] = None
     body_shape_confidence: float = 0.0
     
+    # Enhanced morphology — 3D estimation
+    waist_width_px: Optional[float] = None        # Estimated waist width in pixels
+    waist_width_ratio: Optional[float] = None      # waist_width / shoulder_width
+    body_shape_secondary: Optional[BodyShape] = None
+    body_shape_scores: Dict[str, float] = field(default_factory=dict)  # normalised, sum ≈ 1
+    
     # Keypoints
     keypoints: Optional[BodyKeypoints] = None
     
@@ -279,6 +285,11 @@ class SkinAnalysis:
     
     # Detected skin region
     skin_mask_coverage: float = 0.0  # Percentage of face that is skin
+    
+    # 12-season colour analysis
+    chroma: Optional[str] = None              # "clear" or "muted"
+    season_sub: Optional[str] = None          # e.g. "Light Spring", "Deep Winter", …
+    season_confidence: float = 0.0
     
     @property
     def confidence(self) -> float:
@@ -368,6 +379,11 @@ class StyleProfile:
     skin_tone: Optional[SkinTone] = None
     undertone: Optional[Undertone] = None
     
+    # 12-season colour analysis (propagated from SkinAnalysis)
+    season_sub: Optional[str] = None
+    chroma: Optional[str] = None
+    season_confidence: float = 0.0
+    
     # Hair analysis
     hair_analysis: Optional[HairAnalysis] = None
     hair_color: Optional[HairColor] = None
@@ -376,6 +392,11 @@ class StyleProfile:
     contrast_analysis: Optional[ContrastAnalysis] = None
     contrast_level: Optional[ContrastLevel] = None
     visual_weight: Optional[VisualWeight] = None
+    
+    # Enhanced morphology (propagated from BodyMetrics)
+    body_shape_secondary: Optional[BodyShape] = None
+    body_shape_scores: Dict[str, float] = field(default_factory=dict)
+    waist_hip_ratio: Optional[float] = None
     
     # Optional clothing detection
     detected_clothing: Optional[DetectedClothing] = None
@@ -400,6 +421,14 @@ class StyleProfile:
             "hair_color": self.hair_color.value if self.hair_color else None,
             "contrast_level": self.contrast_level.value if self.contrast_level else None,
             "visual_weight": self.visual_weight.value if self.visual_weight else None,
+            # 12-season colour fields
+            "season_sub": self.season_sub,
+            "chroma": self.chroma,
+            "season_confidence": round(self.season_confidence, 2) if self.season_confidence else None,
+            # Enhanced morphology fields
+            "body_shape_secondary": self.body_shape_secondary.value if self.body_shape_secondary else None,
+            "body_shape_scores": {k: round(v, 3) for k, v in self.body_shape_scores.items()} if self.body_shape_scores else {},
+            "waist_hip_ratio": round(self.waist_hip_ratio, 3) if self.waist_hip_ratio else None,
         }
         
         # Add composite skin tone string
@@ -446,6 +475,17 @@ class StyleProfile:
             profile.contrast_level = ContrastLevel(data["contrast_level"])
         if data.get("visual_weight"):
             profile.visual_weight = VisualWeight(data["visual_weight"])
+        
+        # 12-season colour fields
+        profile.season_sub = data.get("season_sub")
+        profile.chroma = data.get("chroma")
+        profile.season_confidence = data.get("season_confidence", 0.0)
+        
+        # Enhanced morphology fields
+        if data.get("body_shape_secondary"):
+            profile.body_shape_secondary = BodyShape(data["body_shape_secondary"])
+        profile.body_shape_scores = data.get("body_shape_scores", {})
+        profile.waist_hip_ratio = data.get("waist_hip_ratio")
         
         if data.get("_metadata"):
             profile.overall_confidence = data["_metadata"].get("overall_confidence", 0.0)

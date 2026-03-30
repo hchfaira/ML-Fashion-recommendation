@@ -7,7 +7,8 @@ Uses perceptual color space (LAB) for accurate analysis.
 """
 
 import logging
-from typing import Optional, Tuple, List
+import math
+from typing import Optional, Tuple, List, Dict
 import numpy as np
 from PIL import Image
 from dataclasses import dataclass
@@ -15,6 +16,13 @@ from dataclasses import dataclass
 from .models import SkinAnalysis, SkinTone, Undertone
 
 logger = logging.getLogger(__name__)
+
+# Conditional import – MediaPipe FaceMesh is optional
+try:
+    import mediapipe as mp
+    _FACE_MESH_AVAILABLE = True
+except ImportError:
+    _FACE_MESH_AVAILABLE = False
 
 
 @dataclass
@@ -123,6 +131,13 @@ class ColorAnalyzer:
         # Confidence based on sample consistency
         confidence = self._compute_confidence(samples)
         
+        # ---- 12-season colour analysis ----
+        chroma = self._compute_chroma(avg_lab)
+        depth = self._skin_tone_to_depth(skin_tone)
+        season_sub, season_confidence = self._classify_season_12(
+            undertone, depth, chroma
+        )
+        
         return SkinAnalysis(
             skin_tone=skin_tone,
             undertone=undertone,
@@ -130,18 +145,23 @@ class ColorAnalyzer:
             dominant_skin_rgb=avg_rgb,
             skin_tone_confidence=confidence,
             undertone_confidence=confidence,
+            chroma=chroma,
+            season_sub=season_sub,
+            season_confidence=season_confidence,
         )
     
     def _sample_skin_colors(
         self,
         face_image: Image.Image
     ) -> List[ColorSample]:
-        """Sample skin colors from predefined face regions."""
+        """Sample skin colors from face regions (FaceMesh when available, else fixed regions)."""
+        regions = self._detect_face_zones(face_image)
+        
         samples = []
         img_rgb = np.array(face_image.convert("RGB"))
         height, width = img_rgb.shape[:2]
         
-        for region in self.SAMPLE_REGIONS:
+        for region in regions:
             # Compute region center and size
             cx = int(region["x"] * width)
             cy = int(region["y"] * height)
@@ -361,3 +381,141 @@ class ColorAnalyzer:
     def _rgb_to_hex(self, rgb: Tuple[int, int, int]) -> str:
         """Convert RGB to hex color code."""
         return "#{:02X}{:02X}{:02X}".format(*rgb)
+
+    # ------------------------------------------------------------------
+    # MediaPipe FaceMesh – adaptive face zone detection
+    # ------------------------------------------------------------------
+
+    # FaceMesh landmark indices for skin zones (468-point model).
+    _FOREHEAD_LANDMARKS = [10, 67, 109, 338, 297]
+    _LEFT_CHEEK_LANDMARKS = [116, 123, 147, 187, 205]
+    _RIGHT_CHEEK_LANDMARKS = [345, 352, 376, 411, 425]
+    _CHIN_LANDMARKS = [152, 175, 199, 200, 18]
+
+    def _detect_face_zones(
+        self,
+        face_image: Image.Image,
+    ) -> List[Dict[str, float]]:
+        """
+        Return sampling regions as dicts with keys *x*, *y*, *size* (all relative).
+
+        When MediaPipe FaceMesh is available the zones are derived from actual
+        landmark positions; otherwise we fall back to the fixed ``SAMPLE_REGIONS``.
+        """
+        if not _FACE_MESH_AVAILABLE:
+            return self.SAMPLE_REGIONS
+
+        try:
+            face_mesh = mp.solutions.face_mesh.FaceMesh(
+                static_image_mode=True,
+                max_num_faces=1,
+                refine_landmarks=False,
+                min_detection_confidence=0.5,
+            )
+            img_rgb = np.array(face_image.convert("RGB"))
+            results = face_mesh.process(img_rgb)
+            face_mesh.close()
+
+            if not results.multi_face_landmarks:
+                logger.debug("FaceMesh detected no face – falling back to fixed regions")
+                return self.SAMPLE_REGIONS
+
+            lms = results.multi_face_landmarks[0].landmark
+
+            def _zone_center(indices):
+                xs = [lms[i].x for i in indices if i < len(lms)]
+                ys = [lms[i].y for i in indices if i < len(lms)]
+                if not xs:
+                    return None
+                return (sum(xs) / len(xs), sum(ys) / len(ys))
+
+            zones = []
+            for name, indices, default_size in [
+                ("forehead", self._FOREHEAD_LANDMARKS, 0.15),
+                ("left_cheek", self._LEFT_CHEEK_LANDMARKS, 0.12),
+                ("right_cheek", self._RIGHT_CHEEK_LANDMARKS, 0.12),
+                ("chin", self._CHIN_LANDMARKS, 0.10),
+            ]:
+                center = _zone_center(indices)
+                if center:
+                    zones.append({"name": name, "x": center[0], "y": center[1], "size": default_size})
+
+            if not zones:
+                return self.SAMPLE_REGIONS
+            return zones
+
+        except Exception as exc:  # noqa: BLE001 – never crash, just fall back
+            logger.warning("FaceMesh detection failed (%s) – using fixed regions", exc)
+            return self.SAMPLE_REGIONS
+
+    # ------------------------------------------------------------------
+    # 12-season colour classification
+    # ------------------------------------------------------------------
+
+    # Mapping from (undertone_bucket, depth, chroma) → season sub-name
+    _SEASON_12_MATRIX: Dict[Tuple[str, str, str], str] = {
+        ("warm", "light", "clear"):  "Light Spring",
+        ("warm", "light", "muted"):  "True Spring",
+        ("warm", "medium", "clear"): "Warm Spring",
+        ("warm", "medium", "muted"): "True Autumn",
+        ("warm", "deep", "clear"):   "Deep Autumn",
+        ("warm", "deep", "muted"):   "Warm Autumn",
+        ("cool", "light", "clear"):  "Light Summer",
+        ("cool", "light", "muted"):  "True Summer",
+        ("cool", "medium", "clear"): "Cool Summer",
+        ("cool", "medium", "muted"): "True Winter",
+        ("cool", "deep", "clear"):   "Deep Winter",
+        ("cool", "deep", "muted"):   "Cool Winter",
+    }
+
+    @staticmethod
+    def _compute_chroma(lab: Tuple[float, float, float]) -> str:
+        """Return ``'clear'`` or ``'muted'`` based on LAB chroma distance."""
+        _, a, b = lab
+        c = math.sqrt(a * a + b * b)
+        return "clear" if c >= 20 else "muted"
+
+    @staticmethod
+    def _skin_tone_to_depth(tone: SkinTone) -> str:
+        """Map a :class:`SkinTone` value to a three-level depth bucket."""
+        light = {SkinTone.VERY_LIGHT, SkinTone.LIGHT}
+        medium = {SkinTone.MEDIUM_LIGHT, SkinTone.MEDIUM}
+        # MEDIUM_DARK, DARK, VERY_DARK → deep
+        if tone in light:
+            return "light"
+        if tone in medium:
+            return "medium"
+        return "deep"
+
+    def _classify_season_12(
+        self,
+        undertone: Undertone,
+        depth: str,
+        chroma: str,
+    ) -> Tuple[str, float]:
+        """
+        Classify into one of 12 colour-seasons.
+
+        Returns:
+            (season_sub_name, confidence) – confidence is 0.0-1.0.
+        """
+        # Map undertone to warm/cool bucket; NEUTRAL and OLIVE → cool as safe default
+        if undertone == Undertone.WARM:
+            tone_bucket = "warm"
+            base_confidence = 0.85
+        elif undertone in (Undertone.COOL,):
+            tone_bucket = "cool"
+            base_confidence = 0.85
+        else:
+            # Neutral / Olive – less certainty, lean cool
+            tone_bucket = "cool"
+            base_confidence = 0.55
+
+        key = (tone_bucket, depth, chroma)
+        season_sub = self._SEASON_12_MATRIX.get(key)
+
+        if season_sub is None:
+            logger.warning("No 12-season match for key %s", key)
+            return ("Unknown", 0.0)
+
+        return (season_sub, round(base_confidence, 2))

@@ -126,6 +126,11 @@ class ProfileBuilder:
             profile.bmi = body_metrics.bmi
             profile.shoulder_hip_ratio = body_metrics.shoulder_hip_ratio
             profile.leg_torso_ratio = body_metrics.leg_torso_ratio
+            # Enhanced morphology fields
+            profile.body_shape_secondary = getattr(body_metrics, "body_shape_secondary", None)
+            profile.body_shape_scores = getattr(body_metrics, "body_shape_scores", {})
+            whr = getattr(body_metrics, "waist_width_ratio", None)
+            profile.waist_hip_ratio = whr
         
         # Face analysis
         profile.facial_landmarks = face_landmarks
@@ -136,6 +141,10 @@ class ProfileBuilder:
             profile.skin_analysis = skin_analysis
             profile.skin_tone = skin_analysis.skin_tone
             profile.undertone = skin_analysis.undertone
+            # 12-season colour fields
+            profile.season_sub = getattr(skin_analysis, "season_sub", None)
+            profile.chroma = getattr(skin_analysis, "chroma", None)
+            profile.season_confidence = getattr(skin_analysis, "season_confidence", 0.0)
         
         # Hair analysis
         if hair_analysis:

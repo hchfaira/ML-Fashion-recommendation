@@ -225,10 +225,15 @@ class OutfitExplainer:
                 return f"May need adjustments for {occasion}"
         
         # Default based on formality
+        _formality_order = {"casual": 1, "smart_casual": 2, "business_casual": 3, "business": 4, "formal": 5}
         avg_formality = sum(
-            item.garment.attributes.formality_level.value 
+            _formality_order.get(
+                (item.garment.attributes.formality_level.value
+                 if item.garment.attributes.formality_level else "casual"),
+                1
+            )
             for item in outfit.items
-        ) / len(outfit.items) if outfit.items else "casual"
+        ) / len(outfit.items) if outfit.items else 1
         
         return f"Versatile for everyday wear"
     

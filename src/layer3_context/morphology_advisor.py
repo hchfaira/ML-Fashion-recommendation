@@ -339,6 +339,11 @@ class MorphologyAdvisor:
         """
         Score outfit with body measurements for enhanced precision.
         
+        When ``body_metrics.body_shape_confidence < 0.75`` **and** a
+        ``body_shape_secondary`` is present, the base score is blended
+        70 % primary / 30 % secondary so that the advice accounts for
+        ambiguous silhouettes.
+
         Args:
             garments: List of garments
             body_type: Body type string
@@ -347,9 +352,18 @@ class MorphologyAdvisor:
         Returns:
             EnhancedMorphologyScore with detailed analysis
         """
-        # Get base body type score
+        # ---- Blended base score when classification is uncertain ----
         base_score = self.score_for_body_type(garments, body_type)
-        
+
+        if body_metrics is not None:
+            confidence = getattr(body_metrics, "body_shape_confidence", 1.0) or 1.0
+            secondary = getattr(body_metrics, "body_shape_secondary", None)
+            if confidence < 0.75 and secondary is not None:
+                secondary_score = self.score_for_body_type(
+                    garments, secondary.value
+                )
+                base_score = 0.70 * base_score + 0.30 * secondary_score
+
         measurement_adjustments = 0.0
         notes = []
         measurement_tips = []
@@ -416,6 +430,22 @@ class MorphologyAdvisor:
         base_recs = self.get_recommendations_for_body_type(body_type)
         
         if body_metrics:
+            # Blend secondary recommendations when confidence is low
+            confidence = getattr(body_metrics, "body_shape_confidence", 1.0) or 1.0
+            secondary = getattr(body_metrics, "body_shape_secondary", None)
+            if confidence < 0.75 and secondary is not None:
+                sec_recs = self.get_recommendations_for_body_type(secondary.value)
+                # Merge secondary styling tips into base (de-duplicated)
+                existing_tips = set(base_recs.get("styling_tips", []))
+                for tip in sec_recs.get("styling_tips", []):
+                    if tip not in existing_tips:
+                        base_recs.setdefault("styling_tips", []).append(tip)
+                base_recs["blended_with"] = secondary.value
+                base_recs["blend_reason"] = (
+                    f"Classification confidence {confidence:.0%} – "
+                    f"also considering {secondary.value} advice"
+                )
+            
             # Add measurement-specific tips
             measurement_tips = []
             

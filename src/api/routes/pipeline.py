@@ -126,6 +126,14 @@ class PipelineRequest(BaseModel):
         "catvton",
         description="Try-on backend: catvton, replicate",
     )
+    enable_cf_boost: bool = Field(
+        False,
+        description="Apply collaborative-filtering personalisation (Layer 7). Requires user_id.",
+    )
+    user_id: Optional[str] = Field(
+        None,
+        description="User ID for collaborative-filtering boost. Required when enable_cf_boost=True.",
+    )
 
 
 # --- Nested response models ---
@@ -159,10 +167,22 @@ class UserProfileOut(BaseModel):
     undertone: Optional[str] = None
     hair_color: Optional[str] = None
     contrast_level: Optional[str] = None
+    visual_weight: Optional[str] = None
+    face_shape: Optional[str] = None
     estimated_top_size: Optional[str] = None
     estimated_bottom_size: Optional[str] = None
     height_cm: Optional[float] = None
     weight_kg: Optional[float] = None
+
+    # 12-season colour analysis
+    season_sub: Optional[str] = None
+    chroma: Optional[str] = None
+    season_confidence: Optional[float] = None
+
+    # Enhanced morphology
+    body_shape_secondary: Optional[str] = None
+    body_shape_scores: Optional[Dict[str, float]] = None
+    waist_hip_ratio: Optional[float] = None
 
 
 class PipelineResponse(BaseModel):
@@ -316,30 +336,8 @@ async def full_pipeline_recommend(request: PipelineRequest):
     errors: List[str] = []
 
     # ------------------------------------------------------------------
-    # STAGE 0+1 — Extract garments from wardrobe images
-    # ------------------------------------------------------------------
-    all_garments: List[Garment] = []
-    try:
-        all_garments = await _extract_garments_from_images(
-            request.wardrobe_images
-        )
-        stages.append("garment_extraction")
-    except Exception as exc:
-        logger.error(f"Garment extraction failed: {exc}")
-        errors.append(f"garment_extraction: {exc}")
-
-    if len(all_garments) < 2:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"Need at least 2 garments to build outfits, "
-                f"but only {len(all_garments)} were extracted. "
-                "Check your images or extraction settings."
-            ),
-        )
-
-    # ------------------------------------------------------------------
-    # STAGE 3a — User profile extraction (optional)
+    # STAGE 3a — User profile extraction (run FIRST so that profile-only
+    #            requests still return data even without a full wardrobe)
     # ------------------------------------------------------------------
     user_profile_out: Optional[UserProfileOut] = None
     style_profile = None
@@ -354,6 +352,44 @@ async def full_pipeline_recommend(request: PipelineRequest):
         except Exception as exc:
             logger.error(f"User profile extraction failed: {exc}")
             errors.append(f"user_profile: {exc}")
+
+    # ------------------------------------------------------------------
+    # STAGE 0+1 — Extract garments from wardrobe images
+    # ------------------------------------------------------------------
+    all_garments: List[Garment] = []
+    try:
+        all_garments = await _extract_garments_from_images(
+            request.wardrobe_images
+        )
+        stages.append("garment_extraction")
+    except Exception as exc:
+        logger.error(f"Garment extraction failed: {exc}")
+        errors.append(f"garment_extraction: {exc}")
+
+    if len(all_garments) < 2:
+        # If we have a user profile, return it even without enough garments
+        if user_profile_out is not None:
+            processing_time = (time.time() - start) * 1000
+            return PipelineResponse(
+                recommendations=[],
+                total_garments_extracted=len(all_garments),
+                total_combinations_scored=0,
+                user_profile=user_profile_out,
+                processing_time_ms=round(processing_time, 1),
+                stages_completed=stages,
+                errors=[
+                    f"garment_extraction: only {len(all_garments)} garments found "
+                    "(need ≥ 2 for outfit building)"
+                ],
+            )
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Need at least 2 garments to build outfits, "
+                f"but only {len(all_garments)} were extracted. "
+                "Check your images or extraction settings."
+            ),
+        )
 
     # ------------------------------------------------------------------
     # STAGE 2 — Build outfit combinations & score
@@ -407,6 +443,37 @@ async def full_pipeline_recommend(request: PipelineRequest):
     except Exception as exc:
         logger.error(f"Context scoring failed: {exc}")
         errors.append(f"context_scoring: {exc}")
+
+    # ------------------------------------------------------------------
+    # STAGE 3c — Collaborative-filtering personalisation (optional)
+    # ------------------------------------------------------------------
+    if request.enable_cf_boost and request.user_id:
+        try:
+            from src.layer7_cf.cf_engine import get_cf_engine
+            cf_engine = get_cf_engine()
+            if cf_engine.cf.is_trained:
+                # Convert candidates to dicts for the hybrid recommender
+                cand_dicts = []
+                for cand in top_candidates:
+                    cand_dicts.append({
+                        "id": getattr(cand, "name", str(id(cand))),
+                        "overall_score": cand.overall_score,
+                        "_candidate": cand,
+                    })
+                reranked = cf_engine.recommender.rerank(
+                    cand_dicts, request.user_id, cf_engine.cf
+                )
+                # Re-sort top_candidates based on combined_score order
+                id_order = {d["id"]: i for i, d in enumerate(reranked)}
+                top_candidates.sort(
+                    key=lambda c: id_order.get(
+                        getattr(c, "name", str(id(c))), 999
+                    )
+                )
+                stages.append("cf_boost")
+        except Exception as exc:
+            logger.error(f"CF boost failed (non-blocking): {exc}")
+            errors.append(f"cf_boost: {exc}")
 
     # ------------------------------------------------------------------
     # STAGE 4 — LLM explanations
@@ -579,17 +646,23 @@ def _extract_user_profile(profile_input: UserProfileInput):
 
     profile = result.profile
 
+    # Helper to safely extract enum .value
+    def _val(obj):
+        return obj.value if hasattr(obj, "value") else str(obj) if obj else None
+
+    body_shape_raw = getattr(profile, "body_shape", None) if profile else None
+
     out = UserProfileOut(
-        body_shape=getattr(profile, "body_shape", None) if profile else None,
+        body_shape=_val(body_shape_raw),
         skin_tone=(
             profile.color_profile.skin_tone.value
             if profile and hasattr(profile, "color_profile") and profile.color_profile and profile.color_profile.skin_tone
-            else None
+            else (profile.skin_tone.value if profile and profile.skin_tone else None)
         ),
         undertone=(
             profile.color_profile.undertone.value
             if profile and hasattr(profile, "color_profile") and profile.color_profile and profile.color_profile.undertone
-            else None
+            else (profile.undertone.value if profile and profile.undertone else None)
         ),
         hair_color=(
             profile.hair_color.value
@@ -599,6 +672,16 @@ def _extract_user_profile(profile_input: UserProfileInput):
         contrast_level=(
             profile.contrast_level.value
             if profile and hasattr(profile, "contrast_level") and profile.contrast_level
+            else None
+        ),
+        visual_weight=(
+            profile.visual_weight.value
+            if profile and hasattr(profile, "visual_weight") and profile.visual_weight
+            else None
+        ),
+        face_shape=(
+            profile.face_shape.value
+            if profile and hasattr(profile, "face_shape") and profile.face_shape
             else None
         ),
         estimated_top_size=(
@@ -613,6 +696,14 @@ def _extract_user_profile(profile_input: UserProfileInput):
         ),
         height_cm=profile_input.height_cm,
         weight_kg=profile_input.weight_kg,
+        # 12-season colour analysis (propagated from SkinAnalysis → StyleProfile)
+        season_sub=getattr(profile, "season_sub", None) if profile else None,
+        chroma=getattr(profile, "chroma", None) if profile else None,
+        season_confidence=getattr(profile, "season_confidence", None) if profile else None,
+        # Enhanced morphology (propagated from BodyMetrics → StyleProfile)
+        body_shape_secondary=_val(getattr(profile, "body_shape_secondary", None)) if profile else None,
+        body_shape_scores=getattr(profile, "body_shape_scores", None) if profile else None,
+        waist_hip_ratio=getattr(profile, "waist_hip_ratio", None) if profile else None,
     )
 
     return out, profile
