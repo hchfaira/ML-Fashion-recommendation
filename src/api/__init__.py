@@ -1,12 +1,13 @@
 # API Module
 from fastapi import APIRouter
-from .routes import recommendation, wardrobe, analysis, chat, scoring, context, pipeline, wardrobe_analysis, custom_outfits, moodboard, prompt_search, capsule, cf
+from .routes import recommendation, wardrobe, analysis, chat, scoring, context, pipeline, wardrobe_analysis, custom_outfits, moodboard, prompt_search, capsule, cf, inspiration
 
 router = APIRouter()
 
 # Include all route modules
 router.include_router(capsule.router, prefix="/capsule", tags=["Capsule Builder"])
 router.include_router(pipeline.router, prefix="/pipeline", tags=["Full Pipeline"])
+router.include_router(inspiration.router, prefix="/pipeline", tags=["Inspiration Pipeline"])
 router.include_router(recommendation.router, prefix="/recommend", tags=["Recommendations"])
 router.include_router(wardrobe.router, prefix="/wardrobe", tags=["Wardrobe"])
 router.include_router(wardrobe_analysis.router, prefix="/wardrobe-analysis", tags=["Wardrobe Analysis"])

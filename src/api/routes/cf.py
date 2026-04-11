@@ -10,13 +10,16 @@ Endpoints
 ---------
 GET  /cf/recommendations/{user_id}
 GET  /cf/similar-garments/{garment_id}
+GET  /cf/similar-users/{user_id}
+GET  /cf/item-pairs/{garment_id}
 GET  /cf/boost-score/{user_id}/{garment_id}
+POST /cf/hybrid-score
 POST /cf/retrain
 GET  /cf/status
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
@@ -50,12 +53,66 @@ class SimilarGarmentsResponse(BaseModel):
     similar: List[CFRecommendationItem] = Field(default_factory=list)
 
 
+class UserNeighbourItem(BaseModel):
+    user_id: str
+    similarity: float
+    shared_items: int
+
+
+class SimilarUsersResponse(BaseModel):
+    trained: bool
+    user_id: str
+    similar_users: List[UserNeighbourItem] = Field(default_factory=list)
+
+
+class ItemPairItem(BaseModel):
+    source_id: str
+    paired_id: str
+    score: float
+    co_users: int
+
+
+class ItemPairsResponse(BaseModel):
+    trained: bool
+    garment_id: str
+    pairs: List[ItemPairItem] = Field(default_factory=list)
+
+
 class BoostScoreResponse(BaseModel):
     trained: bool
     user_id: str
     garment_id: str
     score: float
     confidence: float
+
+
+class HybridScoreCandidate(BaseModel):
+    id: str = Field(..., description="Outfit or garment ID")
+    overall_score: float = Field(0.5, description="Style pipeline score in [0, 1]")
+
+
+class HybridScoreRequest(BaseModel):
+    user_id: str
+    candidates: List[HybridScoreCandidate]
+    context_scores: Optional[Dict[str, float]] = Field(
+        default=None,
+        description="Mapping of outfit_id → context score in [0, 1]",
+    )
+
+
+class HybridScoreItem(BaseModel):
+    outfit_id: str
+    style_score: float
+    cf_score: float
+    context_score: float
+    combined_score: float
+    personalization_active: bool
+
+
+class HybridScoreResponse(BaseModel):
+    trained: bool
+    user_id: str
+    results: List[HybridScoreItem] = Field(default_factory=list)
 
 
 class RetrainRequest(BaseModel):
@@ -72,11 +129,13 @@ class RetrainResponse(BaseModel):
 
 class CFStatusResponse(BaseModel):
     trained: bool
+    model_type: str = "als"
     factors: int
     iterations: int
     regularization: float
     n_users: int
     n_garments: int
+    redis_connected: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -94,10 +153,7 @@ async def get_recommendations(
     n: int = Query(default=10, ge=1, le=100),
     filter_owned: bool = Query(default=True),
 ) -> CFRecommendationsResponse:
-    """Return top-N personalised recommendations for *user_id*.
-
-    If the model is not trained, returns an empty list with ``trained=false``.
-    """
+    """Return top-N personalised recommendations for *user_id*."""
     engine = get_cf_engine()
     recs = engine.cf.recommend(user_id, n=n, filter_owned=filter_owned)
     return CFRecommendationsResponse(
@@ -115,7 +171,7 @@ async def get_recommendations(
 @router.get(
     "/cf/similar-garments/{garment_id}",
     response_model=SimilarGarmentsResponse,
-    summary="Find similar garments",
+    summary="Find similar garments in latent space",
     tags=["Collaborative Filtering"],
 )
 async def get_similar_garments(
@@ -138,6 +194,68 @@ async def get_similar_garments(
 
 
 @router.get(
+    "/cf/similar-users/{user_id}",
+    response_model=SimilarUsersResponse,
+    summary="Find users with similar style (user-based CF)",
+    tags=["Collaborative Filtering"],
+)
+async def get_similar_users(
+    user_id: str,
+    n: int = Query(default=5, ge=1, le=50),
+) -> SimilarUsersResponse:
+    """Users with a similar style profile to *user_id*.
+
+    Each neighbour includes the cosine similarity and number of
+    shared items in the interaction matrix.
+    """
+    engine = get_cf_engine()
+    neighbours = engine.similar_users(user_id, n=n)
+    return SimilarUsersResponse(
+        trained=engine.cf.is_trained,
+        user_id=user_id,
+        similar_users=[
+            UserNeighbourItem(
+                user_id=nb.user_id,
+                similarity=round(nb.similarity, 4),
+                shared_items=nb.shared_items,
+            )
+            for nb in neighbours
+        ],
+    )
+
+
+@router.get(
+    "/cf/item-pairs/{garment_id}",
+    response_model=ItemPairsResponse,
+    summary="Find co-used item pairs (item-based CF)",
+    tags=["Collaborative Filtering"],
+)
+async def get_item_pairs(
+    garment_id: str,
+    n: int = Query(default=5, ge=1, le=50),
+) -> ItemPairsResponse:
+    """Users who wore this garment also paired it with these items.
+
+    Based on co-occurrence in the binary interaction matrix.
+    """
+    engine = get_cf_engine()
+    pairs = engine.item_pairs(garment_id, n=n)
+    return ItemPairsResponse(
+        trained=engine.cf.is_trained,
+        garment_id=garment_id,
+        pairs=[
+            ItemPairItem(
+                source_id=p.source_id,
+                paired_id=p.paired_id,
+                score=round(p.score, 4),
+                co_users=p.co_users,
+            )
+            for p in pairs
+        ],
+    )
+
+
+@router.get(
     "/cf/boost-score/{user_id}/{garment_id}",
     response_model=BoostScoreResponse,
     summary="Get CF affinity score for user × garment",
@@ -153,6 +271,44 @@ async def get_boost_score(user_id: str, garment_id: str) -> BoostScoreResponse:
         garment_id=garment_id,
         score=result.score,
         confidence=result.confidence,
+    )
+
+
+@router.post(
+    "/cf/hybrid-score",
+    response_model=HybridScoreResponse,
+    summary="Compute hybrid scores (style 40% + CF 40% + context 20%)",
+    tags=["Collaborative Filtering"],
+)
+async def compute_hybrid_score(body: HybridScoreRequest) -> HybridScoreResponse:
+    """Blend style, CF, and context scores for a list of candidates.
+
+    Accepts pre-computed style scores (``overall_score``) and optional
+    per-outfit context scores.  Returns the re-ranked list with full
+    score breakdown.
+    """
+    engine = get_cf_engine()
+    candidates = [
+        {"id": c.id, "overall_score": c.overall_score}
+        for c in body.candidates
+    ]
+    ranked = engine.hybrid_score(
+        candidates, body.user_id, context_scores=body.context_scores,
+    )
+    return HybridScoreResponse(
+        trained=engine.cf.is_trained,
+        user_id=body.user_id,
+        results=[
+            HybridScoreItem(
+                outfit_id=r.get("id", ""),
+                style_score=r["style_score"],
+                cf_score=r["cf_score"],
+                context_score=r["context_score"],
+                combined_score=r["combined_score"],
+                personalization_active=r["personalization_active"],
+            )
+            for r in ranked
+        ],
     )
 
 

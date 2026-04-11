@@ -37,6 +37,7 @@ import tempfile
 from src.core.models import (
     Garment, GarmentAttributes, UserContext, Outfit, OutfitItem,
     GarmentCategory, ColorProfile, Occasion,
+    FormalityLevel, PatternInfo, MaterialProfile,
 )
 from src.core import get_logger
 
@@ -63,6 +64,24 @@ class WardrobeImageItem(BaseModel):
     )
 
 
+class PreAnalyzedGarmentItem(BaseModel):
+    """
+    A garment whose vision attributes were already extracted (cached at save-time).
+    Bypasses Stage 0+1 entirely — no ML inference needed.
+    """
+    id: str = Field(..., description="Garment ID from the caller's database")
+    category: str = Field(..., description="Garment category: top, bottom, shoes, outerwear, accessory, dress")
+    subcategory: Optional[str] = Field(None, description="e.g. 'oxford shirt', 'chino', 'sneakers'")
+    color_primary: str = Field(..., description="Primary color name")
+    color_secondary: Optional[str] = Field(None)
+    color_hex: Optional[str] = Field(None, description="Hex code e.g. '#1B2A4A'")
+    pattern: Optional[str] = Field("solid", description="Pattern type")
+    material: Optional[str] = Field(None, description="Primary material")
+    formality: Optional[str] = Field("casual", description="Formality level")
+    seasons: Optional[List[str]] = Field(default_factory=list, description="Suitable seasons")
+    confidence: float = Field(default=0.85, ge=0, le=1)
+
+
 class UserProfileInput(BaseModel):
     """Optional user physical profile (photo + measurements)."""
     image_b64: Optional[str] = Field(
@@ -75,11 +94,20 @@ class UserProfileInput(BaseModel):
 class PipelineRequest(BaseModel):
     """Full-pipeline recommendation request."""
 
-    # --- Wardrobe ---
+    # --- Wardrobe (at least one of the two must be provided) ---
     wardrobe_images: List[WardrobeImageItem] = Field(
-        ...,
-        min_length=1,
+        default_factory=list,
         description="List of wardrobe images with optional extraction hints",
+    )
+
+    # --- Pre-analyzed garments (fast path — skips Stage 0+1) ---
+    pre_analyzed_garments: List[PreAnalyzedGarmentItem] = Field(
+        default_factory=list,
+        description=(
+            "Garments whose attributes were already extracted. "
+            "These bypass vision ML entirely. Use when the caller cached "
+            "vision_features at garment-add time."
+        ),
     )
 
     # --- User profile (optional) ---
@@ -313,6 +341,46 @@ def _garment_to_out(g: Garment) -> GarmentOut:
     )
 
 
+def _pre_analyzed_to_garment(item: PreAnalyzedGarmentItem) -> Garment:
+    """
+    Convert a PreAnalyzedGarmentItem to a full Garment model.
+    This skips ALL ML inference — attributes are taken as-is from the caller.
+    """
+    cat_str = item.category.lower()
+    try:
+        cat = GarmentCategory(cat_str)
+    except ValueError:
+        cat = GarmentCategory.TOP  # safe fallback
+
+    formality_str = (item.formality or "casual").lower()
+    try:
+        formality = FormalityLevel(formality_str)
+    except ValueError:
+        formality = FormalityLevel.CASUAL
+
+    from src.core.models import Season
+    season_map = {"spring": Season.SPRING, "summer": Season.SUMMER, "fall": Season.FALL, "winter": Season.WINTER}
+    seasons = [season_map[s.lower()] for s in (item.seasons or []) if s.lower() in season_map]
+
+    return Garment(
+        id=item.id,
+        attributes=GarmentAttributes(
+            category=cat,
+            subcategory=item.subcategory,
+            color=ColorProfile(
+                primary=item.color_primary,
+                secondary=item.color_secondary,
+                hex_codes=[item.color_hex] if item.color_hex else [],
+            ),
+            pattern=PatternInfo(type=item.pattern or "solid"),
+            material=MaterialProfile(primary=item.material) if item.material else None,
+            formality_level=formality,
+            season_suitable=seasons,
+            confidence_score=item.confidence,
+        ),
+    )
+
+
 # ---------------------------------------------------------------------------
 # Main pipeline endpoint
 # ---------------------------------------------------------------------------
@@ -342,6 +410,7 @@ async def full_pipeline_recommend(request: PipelineRequest):
     user_profile_out: Optional[UserProfileOut] = None
     style_profile = None
     if request.user_profile:
+        t_stage = time.time()
         try:
             user_profile_out, style_profile = _extract_user_profile(
                 request.user_profile
@@ -352,19 +421,46 @@ async def full_pipeline_recommend(request: PipelineRequest):
         except Exception as exc:
             logger.error(f"User profile extraction failed: {exc}")
             errors.append(f"user_profile: {exc}")
+        logger.info(f"⏱ STAGE 3a — User profile: {(time.time() - t_stage) * 1000:.1f}ms")
 
     # ------------------------------------------------------------------
     # STAGE 0+1 — Extract garments from wardrobe images
+    #             Fast path: if pre_analyzed_garments are provided, convert
+    #             them directly to Garment objects (skips all ML inference).
     # ------------------------------------------------------------------
     all_garments: List[Garment] = []
-    try:
-        all_garments = await _extract_garments_from_images(
-            request.wardrobe_images
+    t_stage = time.time()
+
+    # Fast path — pre-analyzed garments (no ML, ~0ms)
+    if request.pre_analyzed_garments:
+        for pa in request.pre_analyzed_garments:
+            try:
+                all_garments.append(_pre_analyzed_to_garment(pa))
+            except Exception as exc:
+                logger.warning(f"Could not convert pre-analyzed garment {pa.id}: {exc}")
+        if all_garments:
+            stages.append("pre_analyzed_garment_conversion")
+        logger.info(f"⏱ STAGE 0+1 — Pre-analyzed fast path: {(time.time() - t_stage) * 1000:.1f}ms ({len(request.pre_analyzed_garments)} → {len(all_garments)} garments)")
+
+    # Slow path — raw images requiring ML extraction
+    if request.wardrobe_images:
+        t_img = time.time()
+        try:
+            extracted = await _extract_garments_from_images(
+                request.wardrobe_images
+            )
+            all_garments.extend(extracted)
+            stages.append("garment_extraction")
+        except Exception as exc:
+            logger.error(f"Garment extraction failed: {exc}")
+            errors.append(f"garment_extraction: {exc}")
+        logger.info(f"⏱ STAGE 0+1 — Image extraction: {(time.time() - t_img) * 1000:.1f}ms ({len(request.wardrobe_images)} images → {len(all_garments)} garments)")
+
+    if not request.pre_analyzed_garments and not request.wardrobe_images:
+        raise HTTPException(
+            status_code=400,
+            detail="Provide at least one of 'wardrobe_images' or 'pre_analyzed_garments'.",
         )
-        stages.append("garment_extraction")
-    except Exception as exc:
-        logger.error(f"Garment extraction failed: {exc}")
-        errors.append(f"garment_extraction: {exc}")
 
     if len(all_garments) < 2:
         # If we have a user profile, return it even without enough garments
@@ -394,6 +490,7 @@ async def full_pipeline_recommend(request: PipelineRequest):
     # ------------------------------------------------------------------
     # STAGE 2 — Build outfit combinations & score
     # ------------------------------------------------------------------
+    t_stage = time.time()
     builder = get_outfit_builder()
     builder.context = request.context
 
@@ -409,8 +506,10 @@ async def full_pipeline_recommend(request: PipelineRequest):
         )
         stages.append("outfit_scoring")
     except Exception as exc:
-        logger.error(f"Outfit scoring failed: {exc}")
+        import traceback as _tb
+        logger.error(f"Outfit scoring failed: {exc}\n{''.join(_tb.format_exception(type(exc), exc, exc.__traceback__))}")
         errors.append(f"outfit_scoring: {exc}")
+    logger.info(f"⏱ STAGE 2 — Outfit scoring: {(time.time() - t_stage) * 1000:.1f}ms ({len(candidates)} candidates)")
 
     if not candidates:
         raise HTTPException(
@@ -426,6 +525,7 @@ async def full_pipeline_recommend(request: PipelineRequest):
     # ------------------------------------------------------------------
     # STAGE 3b — Context scoring
     # ------------------------------------------------------------------
+    t_stage = time.time()
     try:
         ctx_engine = get_context_engine()
         if style_profile:
@@ -443,11 +543,13 @@ async def full_pipeline_recommend(request: PipelineRequest):
     except Exception as exc:
         logger.error(f"Context scoring failed: {exc}")
         errors.append(f"context_scoring: {exc}")
+    logger.info(f"⏱ STAGE 3b — Context scoring: {(time.time() - t_stage) * 1000:.1f}ms")
 
     # ------------------------------------------------------------------
     # STAGE 3c — Collaborative-filtering personalisation (optional)
     # ------------------------------------------------------------------
     if request.enable_cf_boost and request.user_id:
+        t_stage = time.time()
         try:
             from src.layer7_cf.cf_engine import get_cf_engine
             cf_engine = get_cf_engine()
@@ -474,32 +576,55 @@ async def full_pipeline_recommend(request: PipelineRequest):
         except Exception as exc:
             logger.error(f"CF boost failed (non-blocking): {exc}")
             errors.append(f"cf_boost: {exc}")
+        logger.info(f"⏱ STAGE 3c — CF boost: {(time.time() - t_stage) * 1000:.1f}ms")
+    else:
+        logger.info(f"⏱ STAGE 3c — CF boost: SKIPPED (enable_cf_boost={request.enable_cf_boost}, user_id={request.user_id})")
 
     # ------------------------------------------------------------------
-    # STAGE 4 — LLM explanations
+    # STAGE 4 — LLM explanations (parallelized with asyncio.gather)
     # ------------------------------------------------------------------
     explanations: Dict[int, str] = {}
     if request.enable_explanation:
+        t_stage = time.time()
         try:
+            import asyncio
             explainer = get_outfit_explainer()
-            for idx, cand in enumerate(top_candidates):
+
+            async def _explain_one(idx: int, cand) -> tuple:
+                t_exp = time.time()
                 outfit_obj = _candidate_to_outfit(cand, idx)
                 explanation = await explainer.explain(
                     outfit_obj,
                     request.context,
                     detail_level=request.explanation_detail,
                 )
-                explanations[idx] = explanation.summary
+                elapsed = (time.time() - t_exp) * 1000
+                logger.info(f"⏱ STAGE 4 — LLM explanation #{idx + 1}: {elapsed:.1f}ms")
+                return idx, explanation.summary
+
+            results = await asyncio.gather(
+                *[_explain_one(i, c) for i, c in enumerate(top_candidates)],
+                return_exceptions=True,
+            )
+            for result in results:
+                if isinstance(result, Exception):
+                    logger.warning(f"LLM explanation failed for one outfit: {result}")
+                else:
+                    explanations[result[0]] = result[1]
             stages.append("llm_explanation")
         except Exception as exc:
             logger.error(f"LLM explanation failed: {exc}")
             errors.append(f"llm_explanation: {exc}")
+        logger.info(f"⏱ STAGE 4 — LLM explanations TOTAL: {(time.time() - t_stage) * 1000:.1f}ms ({len(explanations)} outfits)")
+    else:
+        logger.info("⏱ STAGE 4 — LLM explanations: SKIPPED")
 
     # ------------------------------------------------------------------
     # STAGE 5 — Visualisation
     # ------------------------------------------------------------------
     catalogue_images: Dict[int, str] = {}
     if request.enable_visualization:
+        t_stage = time.time()
         try:
             viz = get_visualizer()
             for idx, cand in enumerate(top_candidates):
@@ -513,12 +638,16 @@ async def full_pipeline_recommend(request: PipelineRequest):
         except Exception as exc:
             logger.error(f"Visualization failed: {exc}")
             errors.append(f"visualization: {exc}")
+        logger.info(f"⏱ STAGE 5 — Visualization: {(time.time() - t_stage) * 1000:.1f}ms ({len(catalogue_images)} images)")
+    else:
+        logger.info("⏱ STAGE 5 — Visualization: SKIPPED")
 
     # ------------------------------------------------------------------
     # STAGE 6 — Virtual try-on (optional, top outfit only)
     # ------------------------------------------------------------------
     tryon_images: Dict[int, str] = {}
     if request.enable_tryon:
+        t_stage = time.time()
         if not request.user_profile or not request.user_profile.image_b64:
             errors.append("tryon: user_profile.image_b64 is required for virtual try-on")
         else:
@@ -539,6 +668,9 @@ async def full_pipeline_recommend(request: PipelineRequest):
             except Exception as exc:
                 logger.error(f"Try-on failed: {exc}")
                 errors.append(f"tryon: {exc}")
+        logger.info(f"⏱ STAGE 6 — Try-on: {(time.time() - t_stage) * 1000:.1f}ms")
+    else:
+        logger.info("⏱ STAGE 6 — Try-on: SKIPPED")
 
     # ------------------------------------------------------------------
     # Build response
@@ -558,6 +690,9 @@ async def full_pipeline_recommend(request: PipelineRequest):
         recommendations.append(rec)
 
     processing_time = (time.time() - start) * 1000
+    logger.info(
+        f"⏱ PIPELINE TOTAL: {processing_time:.1f}ms | stages={stages} | garments={len(all_garments)} | outfits={len(recommendations)} | errors={errors or 'none'}",
+    )
 
     return PipelineResponse(
         recommendations=recommendations,

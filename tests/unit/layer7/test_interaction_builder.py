@@ -9,6 +9,7 @@ from src.layer7_cf.interaction_builder import (
     SIGNAL_WEIGHTS,
     InteractionBuilder,
     _COUNTER_SIGNALS,
+    _NEGATIVE_SIGNALS,
 )
 from src.layer7_cf.models import InteractionMatrix, InteractionRecord
 
@@ -105,7 +106,7 @@ class TestLog1pCompression:
         assert records[0].raw_value == 3.0
 
     def test_counter_signals_set_is_correct(self):
-        assert _COUNTER_SIGNALS == {"times_worn", "worn_count"}
+        assert _COUNTER_SIGNALS == {"times_worn", "worn_count", "view"}
 
 
 # ---------------------------------------------------------------------------

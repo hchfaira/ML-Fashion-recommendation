@@ -21,13 +21,17 @@ import pytest
 # Inject a fake ``implicit`` package BEFORE importing CF modules
 # ---------------------------------------------------------------------------
 _mock_als_class = MagicMock(name="AlternatingLeastSquares")
+_mock_bpr_class = MagicMock(name="BayesianPersonalizedRanking")
 
 if "implicit" not in sys.modules:
     _mock_implicit = MagicMock()
     _mock_implicit_als = MagicMock()
     _mock_implicit_als.AlternatingLeastSquares = _mock_als_class
+    _mock_implicit_bpr = MagicMock()
+    _mock_implicit_bpr.BayesianPersonalizedRanking = _mock_bpr_class
     sys.modules["implicit"] = _mock_implicit
     sys.modules["implicit.als"] = _mock_implicit_als
+    sys.modules["implicit.bpr"] = _mock_implicit_bpr
 else:
     # Grab the existing mock
     _mock_als_class = sys.modules["implicit.als"].AlternatingLeastSquares

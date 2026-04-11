@@ -1,11 +1,11 @@
 """Unit tests for CFHybridRecommender — Layer 7 CF.
 
-The hybrid recommender blends style scores with CF scores
+The hybrid recommender blends style, CF, and context scores
 using the formula:
 
-    combined = style_weight × style_score + cf_weight × cf_score
+    combined = style_weight × style + cf_weight × cf + context_weight × context
 
-Default weights: style=0.70, cf=0.30.
+Default weights: style=0.40, cf=0.40, context=0.20.
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from src.layer7_cf.hybrid_recommender import (
     CFHybridRecommender,
     _DEFAULT_CF_WEIGHT,
     _DEFAULT_STYLE_WEIGHT,
+    _DEFAULT_CONTEXT_WEIGHT,
 )
 from src.layer7_cf.models import CFScore
 
@@ -60,18 +61,22 @@ def _mock_cf(trained: bool = True, boost_scores: dict | None = None):
 @pytest.mark.unit
 class TestDefaults:
     def test_default_style_weight(self):
-        assert _DEFAULT_STYLE_WEIGHT == 0.70
+        assert _DEFAULT_STYLE_WEIGHT == 0.40
 
     def test_default_cf_weight(self):
-        assert _DEFAULT_CF_WEIGHT == 0.30
+        assert _DEFAULT_CF_WEIGHT == 0.40
+
+    def test_default_context_weight(self):
+        assert _DEFAULT_CONTEXT_WEIGHT == 0.20
 
     def test_weights_sum_to_one(self):
-        assert _DEFAULT_STYLE_WEIGHT + _DEFAULT_CF_WEIGHT == pytest.approx(1.0)
+        assert _DEFAULT_STYLE_WEIGHT + _DEFAULT_CF_WEIGHT + _DEFAULT_CONTEXT_WEIGHT == pytest.approx(1.0)
 
     def test_custom_weights(self):
-        r = CFHybridRecommender(style_weight=0.5, cf_weight=0.5)
+        r = CFHybridRecommender(style_weight=0.5, cf_weight=0.3, context_weight=0.2)
         assert r.style_weight == 0.5
-        assert r.cf_weight == 0.5
+        assert r.cf_weight == 0.3
+        assert r.context_weight == 0.2
 
 
 # ---------------------------------------------------------------------------
@@ -81,16 +86,17 @@ class TestDefaults:
 @pytest.mark.unit
 class TestBlending:
     def test_combined_score_formula(self):
-        """combined = 0.70 × style + 0.30 × cf."""
+        """combined = 0.40 × style + 0.40 × cf + 0.20 × context."""
         cands = [{"id": "o1", "overall_score": 0.8}]
         cf = _mock_cf(trained=True, boost_scores={
             "o1": CFScore(garment_id="o1", score=1.0, confidence=0.8),
         })
+        ctx = {"o1": 0.9}
 
         r = CFHybridRecommender()
-        result = r.rerank(cands, "u0", cf)
+        result = r.rerank(cands, "u0", cf, context_scores=ctx)
 
-        expected = 0.70 * 0.8 + 0.30 * 1.0
+        expected = 0.40 * 0.8 + 0.40 * 1.0 + 0.20 * 0.9
         assert result[0]["combined_score"] == pytest.approx(expected, abs=0.001)
 
     def test_equal_weights(self):
@@ -98,9 +104,10 @@ class TestBlending:
         cf = _mock_cf(trained=True, boost_scores={
             "o1": CFScore(garment_id="o1", score=0.4, confidence=0.5),
         })
-        r = CFHybridRecommender(style_weight=0.5, cf_weight=0.5)
-        result = r.rerank(cands, "u0", cf)
-        expected = 0.5 * 0.6 + 0.5 * 0.4
+        ctx = {"o1": 0.5}
+        r = CFHybridRecommender(style_weight=0.34, cf_weight=0.33, context_weight=0.33)
+        result = r.rerank(cands, "u0", cf, context_scores=ctx)
+        expected = 0.34 * 0.6 + 0.33 * 0.4 + 0.33 * 0.5
         assert result[0]["combined_score"] == pytest.approx(expected, abs=0.001)
 
     def test_cf_only_weight(self):
@@ -108,9 +115,21 @@ class TestBlending:
         cf = _mock_cf(trained=True, boost_scores={
             "o1": CFScore(garment_id="o1", score=0.9, confidence=0.9),
         })
-        r = CFHybridRecommender(style_weight=0.0, cf_weight=1.0)
+        r = CFHybridRecommender(style_weight=0.0, cf_weight=1.0, context_weight=0.0)
         result = r.rerank(cands, "u0", cf)
         assert result[0]["combined_score"] == pytest.approx(0.9, abs=0.001)
+
+    def test_default_context_is_half(self):
+        """When no context_scores are provided, context defaults to 0.5."""
+        cands = [{"id": "o1", "overall_score": 0.8}]
+        cf = _mock_cf(trained=True, boost_scores={
+            "o1": CFScore(garment_id="o1", score=0.6, confidence=0.7),
+        })
+        r = CFHybridRecommender()
+        result = r.rerank(cands, "u0", cf)  # no context_scores
+        expected = 0.40 * 0.8 + 0.40 * 0.6 + 0.20 * 0.5
+        assert result[0]["combined_score"] == pytest.approx(expected, abs=0.001)
+        assert result[0]["context_score"] == pytest.approx(0.5, abs=0.001)
 
 
 # ---------------------------------------------------------------------------
@@ -183,13 +202,17 @@ class TestFallback:
         result = r.rerank(cands, "u0", cf)
         assert result[0]["cf_score"] == 0.5
 
-    def test_untrained_combined_equals_style_plus_half_cf(self):
+    def test_untrained_redistributes_cf_weight(self):
+        """When untrained, cf_weight is redistributed to style and context."""
         cands = [{"id": "o1", "overall_score": 0.8}]
         cf = _mock_cf(trained=False)
-        r = CFHybridRecommender()
+        r = CFHybridRecommender()  # 0.40 / 0.40 / 0.20
 
         result = r.rerank(cands, "u0", cf)
-        expected = 0.70 * 0.8 + 0.30 * 0.5
+        # cf_weight redistributed: style gets 0.40 + 0.40*(0.40/0.60) = 0.6667
+        # context gets 0.20 + 0.40*(0.20/0.60) = 0.3333
+        # cf_score is used as 0.5 but weight is 0
+        expected = (0.40 + 0.40 * (0.40 / 0.60)) * 0.8 + (0.20 + 0.40 * (0.20 / 0.60)) * 0.5
         assert result[0]["combined_score"] == pytest.approx(expected, abs=0.001)
 
     def test_empty_candidates_returns_empty(self):
@@ -210,7 +233,7 @@ class TestOutputKeys:
         r = CFHybridRecommender()
 
         result = r.rerank(cands, "u0", cf)
-        for key in ["style_score", "cf_score", "combined_score", "personalization_active"]:
+        for key in ["style_score", "cf_score", "context_score", "combined_score", "personalization_active"]:
             assert key in result[0], f"Missing key: {key}"
 
     def test_style_score_matches_overall(self):

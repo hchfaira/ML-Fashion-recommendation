@@ -66,12 +66,13 @@ class CFScore:
 
 @dataclass
 class HybridScore:
-    """Combined style + CF score for one outfit candidate.
+    """Combined style + CF + context score for one outfit candidate.
 
     Attributes:
         outfit_id:             Identifier of the outfit.
         style_score:           Score from the style pipeline (Layer 2/3).
         cf_score:              Score from collaborative filtering.
+        context_score:         Score from context engine (weather, occasion, …).
         combined_score:        Blended final score.
         personalization_active: ``True`` when the CF model contributed
                                 a meaningful signal.
@@ -79,5 +80,37 @@ class HybridScore:
     outfit_id: str
     style_score: float
     cf_score: float
+    context_score: float
     combined_score: float
     personalization_active: bool
+
+
+@dataclass
+class UserCFNeighbour:
+    """A similar user discovered via user-based CF.
+
+    Attributes:
+        user_id:    Identifier of the similar user.
+        similarity: Cosine similarity in ``[0, 1]``.
+        shared_items: Number of items both users interacted with.
+    """
+    user_id: str
+    similarity: float
+    shared_items: int = 0
+
+
+@dataclass
+class ItemPair:
+    """An item-based CF pairing: users who wore *source_id* also
+    paired it with *paired_id*.
+
+    Attributes:
+        source_id:  The query garment.
+        paired_id:  The co-occurring garment.
+        score:      Affinity / co-occurrence score in ``[0, 1]``.
+        co_users:   Number of users who co-used both items.
+    """
+    source_id: str
+    paired_id: str
+    score: float
+    co_users: int = 0

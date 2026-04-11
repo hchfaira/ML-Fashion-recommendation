@@ -3,7 +3,7 @@ Interaction Builder — constructs the user × garment matrix.
 =============================================================
 
 Converts raw interaction dictionaries (as they come from the DB / API)
-into an :class:`InteractionMatrix` ready for ALS training.
+into an :class:`InteractionMatrix` ready for ALS / BPR training.
 
 Signal weights
 --------------
@@ -16,12 +16,18 @@ Each interaction type has a predefined importance weight:
   | is_favorite     |  3.0   | Explicit preference                       |
   | worn_count      |  4.0   | Alias for historical wear frequency       |
   | outfit_created  |  2.0   | User actively assembled an outfit         |
+  | outfit_worn     |  4.5   | User actually wore a recommended outfit   |
   | outfit_liked    |  1.5   | Passive positive signal                   |
   | outfit_saved    |  1.0   | Weakest positive signal                   |
+  | view            |  0.5   | User viewed the garment / outfit          |
+  | skip            | -1.0   | User explicitly skipped / dismissed       |
   +-----------------+--------+-------------------------------------------+
 
-Counters (``times_worn``, ``worn_count``) are compressed via
+Counters (``times_worn``, ``worn_count``, ``view``) are compressed via
 ``np.log1p`` before weighting to dampen extreme values.
+
+Negative signals (``skip``) are clamped so that they subtract from
+existing affinity but never drive the cell below zero.
 """
 from __future__ import annotations
 
@@ -39,12 +45,18 @@ SIGNAL_WEIGHTS: Dict[str, float] = {
     "is_favorite": 3.0,
     "worn_count": 4.0,
     "outfit_created": 2.0,
+    "outfit_worn": 4.5,
     "outfit_liked": 1.5,
     "outfit_saved": 1.0,
+    "view": 0.5,
+    "skip": -1.0,
 }
 
 # Signals that represent counters and should be log-compressed
-_COUNTER_SIGNALS = {"times_worn", "worn_count"}
+_COUNTER_SIGNALS = {"times_worn", "worn_count", "view"}
+
+# Signals that can be negative (subtractive)
+_NEGATIVE_SIGNALS = {"skip"}
 
 
 class InteractionBuilder:
@@ -119,6 +131,24 @@ class InteractionBuilder:
                 if raw is None:
                     continue
                 raw = float(raw)
+
+                # Negative signals (e.g. skip): keep raw positive but weight
+                # is negative; skip if raw is 0
+                if signal in _NEGATIVE_SIGNALS:
+                    if raw <= 0:
+                        continue
+                    # Use absolute raw value; the negative weight handles the sign
+                    records.append(
+                        InteractionRecord(
+                            user_id=uid,
+                            garment_id=gid,
+                            signal_type=signal,
+                            raw_value=raw,
+                            weight=weight,
+                        )
+                    )
+                    continue
+
                 if raw <= 0:
                     continue
 
@@ -163,6 +193,12 @@ class InteractionBuilder:
             u = user_set[r.user_id]
             g = garment_set[r.garment_id]
             data[u][g] += r.raw_value * r.weight
+
+        # Clamp negative cells to zero (implicit feedback must be ≥ 0)
+        for row in data:
+            for j in range(len(row)):
+                if row[j] < 0:
+                    row[j] = 0.0
 
         user_ids = list(user_set.keys())
         garment_ids = list(garment_set.keys())

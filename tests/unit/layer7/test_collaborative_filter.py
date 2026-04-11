@@ -21,18 +21,23 @@ from src.layer7_cf.models import CFScore, InteractionMatrix
 # ---------------------------------------------------------------------------
 # Install a fake ``implicit`` package into sys.modules so that
 # ``from implicit.als import AlternatingLeastSquares`` resolves.
+# ``from implicit.bpr import BayesianPersonalizedRanking`` resolves.
 # ---------------------------------------------------------------------------
 
 _mock_als_class = MagicMock(name="AlternatingLeastSquares")
+_mock_bpr_class = MagicMock(name="BayesianPersonalizedRanking")
 
 _mock_implicit = MagicMock()
 _mock_implicit_als = MagicMock()
 _mock_implicit_als.AlternatingLeastSquares = _mock_als_class
+_mock_implicit_bpr = MagicMock()
+_mock_implicit_bpr.BayesianPersonalizedRanking = _mock_bpr_class
 
 # Inject BEFORE importing CollaborativeFilter
 if "implicit" not in sys.modules:
     sys.modules["implicit"] = _mock_implicit
     sys.modules["implicit.als"] = _mock_implicit_als
+    sys.modules["implicit.bpr"] = _mock_implicit_bpr
 
 from src.layer7_cf.collaborative_filter import (  # noqa: E402
     CollaborativeFilter,
@@ -66,10 +71,12 @@ def _make_matrix(n_users: int = 15, n_garments: int = 10) -> InteractionMatrix:
 
 @pytest.fixture(autouse=True)
 def _reset_als_mock():
-    """Reset the global ALS mock before each test."""
+    """Reset the global ALS and BPR mocks before each test."""
     _mock_als_class.reset_mock()
+    _mock_bpr_class.reset_mock()
     mock_instance = MagicMock(name="als_instance")
     _mock_als_class.return_value = mock_instance
+    _mock_bpr_class.return_value = MagicMock(name="bpr_instance")
     yield
 
 
@@ -331,7 +338,7 @@ class TestStatus:
     def test_status_keys(self):
         cf = CollaborativeFilter()
         s = cf.status()
-        for key in ["trained", "factors", "iterations", "regularization", "n_users", "n_garments"]:
+        for key in ["trained", "model_type", "factors", "iterations", "regularization", "n_users", "n_garments", "redis_connected"]:
             assert key in s
 
     def test_status_untrained(self):

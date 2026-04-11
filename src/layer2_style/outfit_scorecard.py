@@ -225,7 +225,8 @@ class OutfitScorecard:
         
         # Calculate Design Principles (if enabled)
         if self._is_criterion_enabled("design_principles"):
-            design_result = self._design_scorer.analyze_outfit(self.garments, context)
+            body_type_str = body_shape.value if body_shape else None
+            design_result = self._design_scorer.analyze_outfit(self.garments, body_type_str)
             self.scores["design_principles"] = design_result.overall_score
             self.details["design_principles"] = {
                 "grade": design_result.grade,
